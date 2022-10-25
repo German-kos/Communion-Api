@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "cZsBJ55lx8kI/7oNOnqBv3FlMUAZKK6CGJbzJJM1CXfkrVgfA4BfboKK9CZkCg5F/CYaThsE9lSU023NgLwAwQ==",
+  "dgSpecHash": "zYhcZPfDp6oU2o0T3uQ3ADD7llY8zPDLGTXoueGeHG/u51ETjRI3fVN2P87VkusYNP4Ejvs7NMJQgYIZoq1dHw==",
   "success": true,
-  "projectFilePath": "D:\\Communion\\Communion-Api\\API\\API.csproj",
+  "projectFilePath": "D:\\Communion\\Communion-Api\\api\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Kosti\\.nuget\\packages\\microsoft.entityframeworkcore\\6.0.10\\microsoft.entityframeworkcore.6.0.10.nupkg.sha512",
     "C:\\Users\\Kosti\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\6.0.10\\microsoft.entityframeworkcore.abstractions.6.0.10.nupkg.sha512",

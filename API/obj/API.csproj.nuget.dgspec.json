@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Communion\\Communion-Api\\API\\API.csproj": {}
+    "D:\\Communion\\Communion-Api\\api\\API.csproj": {}
   },
   "projects": {
-    "D:\\Communion\\Communion-Api\\API\\API.csproj": {
+    "D:\\Communion\\Communion-Api\\api\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Communion\\Communion-Api\\API\\API.csproj",
+        "projectUniqueName": "D:\\Communion\\Communion-Api\\api\\API.csproj",
         "projectName": "API",
-        "projectPath": "D:\\Communion\\Communion-Api\\API\\API.csproj",
+        "projectPath": "D:\\Communion\\Communion-Api\\api\\API.csproj",
         "packagesPath": "C:\\Users\\Kosti\\.nuget\\packages\\",
-        "outputPath": "D:\\Communion\\Communion-Api\\API\\obj\\",
+        "outputPath": "D:\\Communion\\Communion-Api\\api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Kosti\\AppData\\Roaming\\NuGet\\NuGet.Config"
