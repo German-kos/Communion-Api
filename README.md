@@ -19,3 +19,12 @@ They are as follow:
 
 If you are trying to register with an existing username, a bad request will be sent back,
 and the registering process will halt.
+
+### Things to next
+
+- Login request
+- Get users request
+- Get user by id request
+- Get user by name request
+- Cors
+- JWT Authentication
