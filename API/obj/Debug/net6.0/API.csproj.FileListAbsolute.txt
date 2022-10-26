@@ -61,3 +61,9 @@ D:\Communion\Communion-Api\api\bin\Debug\net6.0\runtimes\win-arm\native\e_sqlite
 D:\Communion\Communion-Api\api\bin\Debug\net6.0\runtimes\win-arm64\native\e_sqlite3.dll
 D:\Communion\Communion-Api\api\bin\Debug\net6.0\runtimes\win-x64\native\e_sqlite3.dll
 D:\Communion\Communion-Api\api\bin\Debug\net6.0\runtimes\win-x86\native\e_sqlite3.dll
+D:\Communion\Communion-Api\API\bin\Debug\net6.0\System.Web.Cors.dll
+D:\Communion\Communion-Api\API\bin\Debug\net6.0\System.Net.Http.Formatting.dll
+D:\Communion\Communion-Api\API\bin\Debug\net6.0\System.Web.Http.dll
+D:\Communion\Communion-Api\API\bin\Debug\net6.0\System.Web.Http.Cors.dll
+D:\Communion\Communion-Api\API\bin\Debug\net6.0\Newtonsoft.Json.dll
+D:\Communion\Communion-Api\API\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll

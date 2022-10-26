@@ -26,7 +26,7 @@ app.UseHttpsRedirection();
 app.UseCors(policy => policy
 .AllowAnyHeader()
 .AllowAnyMethod()
-.WithOrigins("http://http://localhost:3000")
+.WithOrigins("http://localhost:3000")
 );
 
 app.UseAuthorization();
