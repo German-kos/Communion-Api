@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Communion\\Communion-Api\\API\\API.csproj": {}
+    "d:\\Communion\\Communion-Api\\API\\API.csproj": {}
   },
   "projects": {
-    "D:\\Communion\\Communion-Api\\API\\API.csproj": {
+    "d:\\Communion\\Communion-Api\\API\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Communion\\Communion-Api\\API\\API.csproj",
+        "projectUniqueName": "d:\\Communion\\Communion-Api\\API\\API.csproj",
         "projectName": "API",
-        "projectPath": "D:\\Communion\\Communion-Api\\API\\API.csproj",
+        "projectPath": "d:\\Communion\\Communion-Api\\API\\API.csproj",
         "packagesPath": "C:\\Users\\Kosti\\.nuget\\packages\\",
-        "outputPath": "D:\\Communion\\Communion-Api\\API\\obj\\",
+        "outputPath": "d:\\Communion\\Communion-Api\\API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Kosti\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -38,6 +38,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "CloudinaryDotNet": {
+              "target": "Package",
+              "version": "[1.20.0, )"
+            },
             "Microsoft.AspNet.WebApi.Cors": {
               "target": "Package",
               "version": "[5.2.9, )"
