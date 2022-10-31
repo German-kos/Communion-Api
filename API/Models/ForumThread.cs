@@ -10,8 +10,8 @@ namespace API.Models
     {
         [Key]
         public int Id { get; set; }
-        public ForumCategory Category { get; set; }
-        public int CategoryId { get; set; }
+        public ForumSubCategory SubCategory { get; set; }
+        public int SubCategoryId { get; set; }
         public string Author { get; set; }
         public string Name { get; set; }
         public string Content { get; set; }
