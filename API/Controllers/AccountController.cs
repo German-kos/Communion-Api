@@ -8,6 +8,8 @@ using api.Data;
 using api.DTOs;
 using api.Models;
 using API.DTOs;
+using API.Interfaces;
+using API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,13 +18,16 @@ namespace api.Controllers
     public class AccountController : BaseApiController
     {
         private readonly DataContext _context;
-        public AccountController(DataContext context)
+        private readonly ITokenService _tokenService;
+        public AccountController(DataContext context, ITokenService tokenSerivce)
         {
+            _tokenService = tokenSerivce;
             _context = context;
         }
 
+
         [HttpPost("signup")]
-        public async Task<ActionResult<AppUser>> SignUp(RegisterDto registerDto)
+        public async Task<ActionResult<UserDto>> SignUp(RegisterDto registerDto)
         {
             // checking if the given username already exists in the database
             if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");
@@ -45,7 +50,11 @@ namespace api.Controllers
             };
             _context.Add(user);
             await _context.SaveChangesAsync();
-            return user;
+            return new UserDto
+            {
+                Username = user.Username,
+                Token = _tokenService.CreateToken(user)
+            };
         }
 
         [HttpPost("signin")]

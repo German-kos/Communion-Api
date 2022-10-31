@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "qYXi057PlyAsyZgd3dCpD6DxIYYcHMLKiaYS77aymzs5+qkFzlHgfwen/Iy7AB6lnaOPuq0gLAmib9zWEvqAqw==",
+  "dgSpecHash": "/q9d7hV9WT2sWTZtY751PnnLvzUEjsDoTgJ+Gindd8/SCog5gpmpIfA/HK9AoDAxqN/xXfn0eKyEWKVrX52BJg==",
   "success": true,
-  "projectFilePath": "d:\\Communion\\Communion-Api\\API\\API.csproj",
+  "projectFilePath": "D:\\Communion\\Communion-Api\\API\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Kosti\\.nuget\\packages\\cloudinarydotnet\\1.20.0\\cloudinarydotnet.1.20.0.nupkg.sha512",
     "C:\\Users\\Kosti\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
