@@ -16,5 +16,7 @@ namespace api.Data
         public DbSet<ForumSubCategory> SubCategories { get; set; }
         public DbSet<ForumThread> Threads { get; set; }
         public DbSet<ForumComment> Comments { get; set; }
+        public DbSet<ForumImage> Banners { get; set; }
+        public DbSet<UserImage> ProfilePictures { get; set; }
     }
 }
