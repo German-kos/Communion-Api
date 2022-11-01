@@ -10,6 +10,7 @@ using api.Models;
 using API.DTOs;
 using API.Interfaces;
 using API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -83,7 +84,22 @@ namespace api.Controllers
                 Id = user.Id,
                 Username = user.Username,
                 Name = user.Name,
-                Token = "None" // this should be replaced with a JWT when implemented
+                Token = _tokenService.CreateToken(user)
+            };
+        }
+        [Authorize]
+        [HttpPost("autosignin")]
+        public async Task<ActionResult<SignedInUserDto>> AutoSignIn(AutoSignInDto autoSignInUser)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Username.ToLower() == autoSignInUser.Username.ToLower());
+            if (user == null) return StatusCode(500);
+
+            return new SignedInUserDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Name = user.Name,
+                Token = _tokenService.CreateToken(user)
             };
         }
 
