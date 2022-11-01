@@ -13,5 +13,6 @@ namespace API.Models
         public ForumCategory Category { get; set; }
         public int CategoryId { get; set; }
         public string Name { get; set; }
+        public ICollection<ForumThread> Threads { get; set; }
     }
 }

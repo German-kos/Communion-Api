@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Models;
 
 namespace API.Models
 {
@@ -12,13 +13,15 @@ namespace API.Models
         public int Id { get; set; }
         public ForumSubCategory SubCategory { get; set; }
         public int SubCategoryId { get; set; }
-        public string Author { get; set; }
+        public AppUser Author { get; set; }
         public string Name { get; set; }
         public string Content { get; set; }
-        public int Views { get; set; }
-        public int Comments { get; set; }
+        public int ViewsAmount { get; set; }
+        public int CommentsAmount { get; set; }
         public DateTime TimePosted { get; set; }
         public DateTime LastUpdated { get; set; }
+        public ICollection<ForumComment> Comments { get; set; }
+
 
     }
 }

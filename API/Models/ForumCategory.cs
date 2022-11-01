@@ -13,5 +13,6 @@ namespace API.Models
         public string Name { get; set; }
         public string Info { get; set; }
         public ForumImage Banner { get; set; }
+        public ICollection<ForumSubCategory> SubCategories { get; set; }
     }
 }
