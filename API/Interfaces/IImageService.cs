@@ -6,9 +6,9 @@ using CloudinaryDotNet.Actions;
 
 namespace API.Interfaces
 {
-    public interface IPhotoService
+    public interface IImageService
     {
-        Task<ImageUploadResult> UploadPhotoAsync(IFormFile file);
-        Task<DeletionResult> DeletePhotoAsync(string publicId);
+        Task<ImageUploadResult> UploadImageAsync(IFormFile file);
+        Task<DeletionResult> DeleteImageAsync(string publicId);
     }
 }
