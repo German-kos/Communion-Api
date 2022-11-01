@@ -8,6 +8,7 @@ using CloudinaryDotNet;
 using Microsoft.EntityFrameworkCore;
 using API.Interfaces;
 using API.Services;
+using API.Helpers;
 
 namespace api.Extensions
 {
@@ -15,6 +16,7 @@ namespace api.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
+            services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
             services.AddScoped<ITokenService, TokenService>();
             services.AddDbContext<DataContext>(options =>
             {
