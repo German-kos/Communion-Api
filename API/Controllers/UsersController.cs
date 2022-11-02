@@ -23,13 +23,14 @@ namespace API.Controllers
         }
 
         [HttpPost("get-user-by-username")]
-        public async Task<ActionResult<API.Models.UserImage>> GetUserByUsername(UserByUsernameDto data)
+        public async Task<ActionResult<string>> GetUserByUsername(UserByUsernameDto data)
         {
             var user = await _context.Users.FirstOrDefaultAsync(user => user.Username.ToLower() == data.Username.ToLower());
             // user.ProfilePicture = await _context.ProfilePictures.OrderBy(img => img.Id).LastOrDefaultAsync(img => img.UserId == user.Id);
-            return await _context.ProfilePictures.FirstOrDefaultAsync(img => img.UserId == user.Id);
+            // return await _context.ProfilePictures.FirstOrDefaultAsync(img => img.UserId == user.Id);
             // return user;
             // return await _context.Users.Include(user => user.ProfilePicture).FirstOrDefaultAsync(user => user.Username.ToLower() == data.Username.ToLower());
+            return "nothing yet";
         }
     }
 }
