@@ -131,7 +131,11 @@ namespace api.Controllers
 
             if (await _accountRepository.SaveAllAsync())
             {
-                return CreatedAtRoute("GetUser", new { username = user.Username });
+                return new ImageDto
+                {
+                    Id = _context.ProfilePictures.SingleOrDefault(x => x.PublicId == image.PublicId).Id,
+                    Url = image.Url
+                };
             }
             return BadRequest("Failed to upload image");
         }
