@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using API.Interfaces;
 using API.Services;
 using API.Helpers;
+using API.Repositories;
 
 namespace api.Extensions
 {
@@ -18,6 +19,7 @@ namespace api.Extensions
         {
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IImageService, ImageService>();
             services.AddDbContext<DataContext>(options =>
             {

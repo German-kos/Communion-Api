@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,9 @@ using api.Data;
 using api.DTOs;
 using api.Models;
 using API.DTOs;
+using API.Extensions;
 using API.Interfaces;
+using API.Models;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,8 +23,12 @@ namespace api.Controllers
     {
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
-        public AccountController(DataContext context, ITokenService tokenSerivce)
+        private readonly IImageService _imageService;
+        private readonly IAccountRepository _accountRepository;
+        public AccountController(DataContext context, ITokenService tokenSerivce, IImageService imageService, IAccountRepository accountRepository)
         {
+            _accountRepository = accountRepository;
+            _imageService = imageService;
             _tokenService = tokenSerivce;
             _context = context;
         }
@@ -102,6 +109,33 @@ namespace api.Controllers
                 Token = _tokenService.CreateToken(user)
             };
         }
+
+        [HttpPost("upload-pfp")]
+        public async Task<ActionResult<ImageDto>> UploadPfp(IFormFile file)
+        {
+            var username = User.GetUsername();
+
+            var user = await _accountRepository.GetUserByUsernameAsync(username);
+
+            var result = await _imageService.UploadImageAsync(file);
+
+            if (result.Error != null) return BadRequest(result.Error.Message);
+
+            var image = new UserImage
+            {
+                Url = result.SecureUrl.AbsoluteUri,
+                PublicId = result.PublicId
+            };
+
+            user.ProfilePicture = image; // check if works
+
+            if (await _accountRepository.SaveAllAsync())
+            {
+                return CreatedAtRoute("GetUser", new { username = user.Username });
+            }
+            return BadRequest("Failed to upload image");
+        }
+
 
         private async Task<bool> UserExists(string username)
         {
