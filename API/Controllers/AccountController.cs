@@ -111,7 +111,7 @@ namespace api.Controllers
         }
 
         [HttpPost("upload-pfp")]
-        public async Task<ActionResult<ImageDto>> UploadPfp(IFormFile file)
+        public async Task<ActionResult<API.Models.UserImage>> UploadPfp(IFormFile file)
         {
             var username = User.GetUsername();
 
@@ -127,15 +127,16 @@ namespace api.Controllers
                 PublicId = result.PublicId
             };
 
-            user.ProfilePicture = image; // check if works
+            user.ProfilePicture = image.Url; // check if works
 
             if (await _accountRepository.SaveAllAsync())
             {
-                return new ImageDto
-                {
-                    Id = _context.ProfilePictures.SingleOrDefault(x => x.PublicId == image.PublicId).Id,
-                    Url = image.Url
-                };
+                return _context.ProfilePictures.SingleOrDefault(x => x.PublicId == image.PublicId);
+                // return new ImageDto
+                // {
+                //     Id = _context.ProfilePictures.SingleOrDefault(x => x.PublicId == image.PublicId).Id,
+                //     Url = image.Url
+                // };
             }
             return BadRequest("Failed to upload image");
         }

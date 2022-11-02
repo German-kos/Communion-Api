@@ -25,7 +25,6 @@ namespace API.Repositories
         public async Task<AppUser> GetUserByUsernameAsync(string username)
         {
             return await _context.Users
-            .Include(user => user.ProfilePicture)
             .SingleOrDefaultAsync(user => user.Username.ToLower() == username.ToLower());
         }
 
