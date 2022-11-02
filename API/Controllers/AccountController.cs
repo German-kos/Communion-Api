@@ -127,16 +127,18 @@ namespace api.Controllers
                 PublicId = result.PublicId
             };
 
+            // user.ProfilePicture = 
+
             // _context.ProfilePictures.AddAsync(image);
 
-            user.ProfilePicture = image.Url; // check if works
+            // user.ProfilePicture = image.Url; // check if works
 
             if (await _accountRepository.SaveAllAsync())
             {
                 // return _context.ProfilePictures.SingleOrDefault(x => x.UserId == user.Id);
                 // return new ImageDto
                 // {
-                //     Id = _context.ProfilePictures.SingleOrDefault(x => x.PublicId == image.PublicId).Id,
+                //     Id = _context.Users..SingleOrDefault(x => x.PublicId == image.PublicId).Id,
                 //     Url = image.Url
                 // };
             }
