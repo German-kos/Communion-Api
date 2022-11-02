@@ -20,7 +20,7 @@ namespace api.Models
         public string? Interests { get; set; }
         public string? Country { get; set; }
         public string? Gender { get; set; }
-        public UserImage? ProfilePicture { get; set; }
+        public ICollection<UserImage> ProfilePicture { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public DateTime RegistrationDate { get; set; }
     }

@@ -68,3 +68,5 @@ D:\Communion\Communion-Api\API\bin\Debug\net6.0\System.Web.Http.Cors.dll
 D:\Communion\Communion-Api\API\bin\Debug\net6.0\Newtonsoft.Json.dll
 D:\Communion\Communion-Api\API\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll
 D:\Communion\Communion-Api\API\bin\Debug\net6.0\CloudinaryDotNet.dll
+D:\Communion\Communion-Api\API\bin\Debug\net6.0\Microsoft.AspNetCore.JsonPatch.dll
+D:\Communion\Communion-Api\API\bin\Debug\net6.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll

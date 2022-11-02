@@ -127,6 +127,8 @@ namespace api.Controllers
                 PublicId = result.PublicId
             };
 
+            user.ProfilePicture.Add(image);
+            // user.ProfilePicture = image;
             // user.ProfilePicture = 
 
             // _context.ProfilePictures.AddAsync(image);
@@ -141,6 +143,7 @@ namespace api.Controllers
                 //     Id = _context.Users..SingleOrDefault(x => x.PublicId == image.PublicId).Id,
                 //     Url = image.Url
                 // };
+                return user.ProfilePicture.LastOrDefault(x => x.PublicId == image.PublicId);
             }
             return BadRequest("Failed to upload image");
         }
