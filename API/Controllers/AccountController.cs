@@ -69,12 +69,12 @@ namespace api.Controllers
         public async Task<ActionResult<SignedInUserDto>> SignIn(SignInDto signInDto)
         {
             // look up the username from sign in request in the database
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.Username.ToLower() == signInDto.Username.ToLower());
+            var user = _accountRepository.GetUserByUsernameAsync(signInDto.Username).Result;
+
             // if the user does not exist, throw an unauthorized
             if (user == null) return Unauthorized("Invalid username or password");
 
             // if user exists, compare the passwords
-
             // taking the key from the user found in the database, and assigning it to the hmac
             using var hmac = new HMACSHA512(user.PasswordSalt);
             // taking the password from the sign in request and encrypting it with the assigned key
@@ -91,14 +91,15 @@ namespace api.Controllers
                 Id = user.Id,
                 Username = user.Username,
                 Name = user.Name,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                ProfilePicture = user.ProfilePicture.LastOrDefault().Url
             };
         }
         [Authorize]
         [HttpPost("autosignin")]
         public async Task<ActionResult<SignedInUserDto>> AutoSignIn(AutoSignInDto autoSignInUser)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.Username.ToLower() == autoSignInUser.Username.ToLower());
+            var user = _accountRepository.GetUserByUsernameAsync(autoSignInUser.Username).Result;
             if (user == null) return StatusCode(500);
 
             return new SignedInUserDto
@@ -106,7 +107,8 @@ namespace api.Controllers
                 Id = user.Id,
                 Username = user.Username,
                 Name = user.Name,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                ProfilePicture = user.ProfilePicture.LastOrDefault().Url
             };
         }
 
