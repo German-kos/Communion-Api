@@ -8,5 +8,6 @@ namespace API.DTOs
     public class AutoSignInDto
     {
         public string Username { get; set; }
+        public bool Remember { get; set; }
     }
 }

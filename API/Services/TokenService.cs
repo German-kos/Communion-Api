@@ -19,7 +19,7 @@ namespace API.Services
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
         }
 
-        public string CreateToken(AppUser user)
+        public string CreateToken(AppUser user, bool remember)
         {
             // adding the claims to the token
             var claims = new List<Claim>{
@@ -29,11 +29,15 @@ namespace API.Services
             // adding the credentials. need the key and the algorithm
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
 
+            DateTime tokenExpiration;
+            if (remember) tokenExpiration = DateTime.Now.AddDays(7);
+            else tokenExpiration = DateTime.Now.AddDays(1);
+
             // describe the token
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(7),
+                Expires = tokenExpiration,
                 SigningCredentials = creds
             };
 

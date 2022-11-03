@@ -61,7 +61,7 @@ namespace api.Controllers
             return new UserDto
             {
                 Username = user.Username,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user, false)
             };
         }
 
@@ -91,8 +91,9 @@ namespace api.Controllers
                 Id = user.Id,
                 Username = user.Username,
                 Name = user.Name,
-                Token = _tokenService.CreateToken(user),
-                ProfilePicture = user.ProfilePicture.LastOrDefault().Url
+                Token = _tokenService.CreateToken(user, signInDto.Remember),
+                ProfilePicture = user.ProfilePicture.LastOrDefault().Url,
+                Remember = signInDto.Remember
             };
         }
         [Authorize]
@@ -107,8 +108,9 @@ namespace api.Controllers
                 Id = user.Id,
                 Username = user.Username,
                 Name = user.Name,
-                Token = _tokenService.CreateToken(user),
-                ProfilePicture = user.ProfilePicture.LastOrDefault().Url
+                Token = _tokenService.CreateToken(user, autoSignInUser.Remember),
+                ProfilePicture = user.ProfilePicture.LastOrDefault().Url,
+                Remember = autoSignInUser.Remember
             };
         }
 
