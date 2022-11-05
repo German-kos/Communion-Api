@@ -24,7 +24,7 @@ namespace API.Controllers
         }
 
         [HttpPost("get-user-by-username")]
-        public async Task<ActionResult<AppUser>> GetUserByUsername(UserByUsernameDto data)
+        public async Task<ActionResult<UserDetailsDto>> GetUserByUsername(UserByUsernameDto data)
         {
             // var user = await _context.Users.FirstOrDefaultAsync(user => user.Username.ToLower() == data.Username.ToLower());
             // user.ProfilePicture = await _context.ProfilePictures.OrderBy(img => img.Id).LastOrDefaultAsync(img => img.UserId == user.Id);
@@ -32,8 +32,20 @@ namespace API.Controllers
             // return user;
             // return await _context.Users.Include(user => user.ProfilePicture).FirstOrDefaultAsync(user => user.Username.ToLower() == data.Username.ToLower());
             // return "nothing yet";
-            var a = await _accountRepository.GetUserByUsernameAsync(data.Username);
-            return a;
+            var user = await _accountRepository.GetUserByUsernameAsync(data.Username);
+            return new UserDetailsDto
+            {
+                Username = user.Username,
+                Name = user.Name,
+                Email = user.Email,
+                Bio = user.Bio,
+                interests = user.Interests,
+                Country = user.Country,
+                Gender = user.Gender,
+                ProfilePicture = user.ProfilePicture.LastOrDefault().Url,
+                DateOfBirth = user.DateOfBirth,
+                RegistrationDate = user.RegistrationDate,
+            };
             // return a.ProfilePicture.LastOrDefault(x => x.UserId == a.Id).Url;
         }
     }
