@@ -114,6 +114,7 @@ namespace api.Controllers
             };
         }
 
+        [Authorize]
         [HttpPost("upload-pfp")]
         public async Task<ActionResult<API.Models.UserImage>> UploadPfp(IFormFile file)
         {
@@ -152,6 +153,12 @@ namespace api.Controllers
             return BadRequest("Failed to upload image");
         }
 
+        [Authorize]
+        [HttpPost("upload-pfp-test")]
+        public IFormFile UploadPfpTest(IFormFile file)
+        {
+            return file;
+        }
 
         private async Task<bool> UserExists(string username)
         {
