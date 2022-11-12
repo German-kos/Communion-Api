@@ -12,7 +12,7 @@ namespace API.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Info { get; set; }
-        public ForumImage Banner { get; set; }
+        public ICollection<ForumImage> Banner { get; set; }
         public ICollection<ForumSubCategory> SubCategories { get; set; }
     }
 }

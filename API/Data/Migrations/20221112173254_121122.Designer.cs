@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Data;
 
@@ -10,9 +11,10 @@ using api.Data;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221112173254_121122")]
+    partial class _121122
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.10");
@@ -116,7 +118,7 @@ namespace API.Data.Migrations
 
                     b.HasIndex("ThreadId");
 
-                    b.ToTable("ForumComment");
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("API.Models.ForumImage", b =>
@@ -160,7 +162,7 @@ namespace API.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("ForumSubCategory");
+                    b.ToTable("SubCategories");
                 });
 
             modelBuilder.Entity("API.Models.ForumThread", b =>
@@ -207,7 +209,7 @@ namespace API.Data.Migrations
 
                     b.HasIndex("SubCategoryId");
 
-                    b.ToTable("ForumThread");
+                    b.ToTable("Threads");
                 });
 
             modelBuilder.Entity("API.Models.UserImage", b =>

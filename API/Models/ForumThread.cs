@@ -19,7 +19,9 @@ namespace API.Models
         public int ViewsAmount { get; set; }
         public int CommentsAmount { get; set; }
         public DateTime TimePosted { get; set; }
-        public DateTime LastUpdated { get; set; }
+        public DateTime? LastUpdated { get; set; }
+        public bool Edited { get; set; }
+        public DateTime? TimeEdited { get; set; }
         public ICollection<ForumComment> Comments { get; set; }
 
 

@@ -17,5 +17,6 @@ namespace API.Models
         public string Content { get; set; }
         public DateTime TimePosted { get; set; }
         public bool Edited { get; set; }
+        public DateTime? TimeEdited { get; set; }
     }
 }
