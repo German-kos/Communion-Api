@@ -86,13 +86,18 @@ namespace api.Controllers
                     return Unauthorized("Invalid username or password");
             }
             // if the comparing loop passes, return the user found in the database in an appropriate format
+
+            string pfpUrl = "";
+            if (user.ProfilePicture.Count() > 0)
+                pfpUrl = user.ProfilePicture.LastOrDefault().Url;
+
             return new SignedInUserDto
             {
                 Id = user.Id,
                 Username = user.Username,
                 Name = user.Name,
                 Token = _tokenService.CreateToken(user, signInDto.Remember),
-                ProfilePicture = user.ProfilePicture.LastOrDefault().Url,
+                ProfilePicture = pfpUrl,
                 Remember = signInDto.Remember
             };
         }
@@ -103,13 +108,17 @@ namespace api.Controllers
             var user = _accountRepository.GetUserByUsernameAsync(autoSignInUser.Username).Result;
             if (user == null) return StatusCode(500);
 
+            string pfpUrl = "";
+            if (user.ProfilePicture.Count() > 0)
+                pfpUrl = user.ProfilePicture.LastOrDefault().Url;
+
             return new SignedInUserDto
             {
                 Id = user.Id,
                 Username = user.Username,
                 Name = user.Name,
                 Token = _tokenService.CreateToken(user, autoSignInUser.Remember),
-                ProfilePicture = user.ProfilePicture.LastOrDefault().Url,
+                ProfilePicture = pfpUrl,
                 Remember = autoSignInUser.Remember
             };
         }

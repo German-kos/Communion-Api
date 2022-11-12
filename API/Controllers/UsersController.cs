@@ -33,6 +33,11 @@ namespace API.Controllers
             // return await _context.Users.Include(user => user.ProfilePicture).FirstOrDefaultAsync(user => user.Username.ToLower() == data.Username.ToLower());
             // return "nothing yet";
             var user = await _accountRepository.GetUserByUsernameAsync(data.Username);
+
+            string pfpUrl = "";
+            if (user.ProfilePicture.Count() > 0)
+                pfpUrl = user.ProfilePicture.LastOrDefault().Url;
+
             return new UserDetailsDto
             {
                 Username = user.Username,
@@ -42,7 +47,7 @@ namespace API.Controllers
                 interests = user.Interests,
                 Country = user.Country,
                 Gender = user.Gender,
-                ProfilePicture = user.ProfilePicture.LastOrDefault().Url,
+                ProfilePicture = pfpUrl,
                 DateOfBirth = user.DateOfBirth,
                 RegistrationDate = user.RegistrationDate,
             };
