@@ -9,7 +9,7 @@ namespace API.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {
-        // dependancy injections
+        // Dependancy injections
         private readonly DataContext _context;
         private readonly IImageService _imageService;
         public CategoryRepository(DataContext context, IImageService imageService)
@@ -19,7 +19,7 @@ namespace API.Repositories
 
         }
 
-        // save changes made to the database
+        // Save changes made to the database *async
         public async Task<bool> SaveAllAsync()
         {
             return await _context.SaveChangesAsync() > 0;

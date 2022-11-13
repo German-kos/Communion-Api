@@ -10,12 +10,10 @@ namespace API.Controllers
 {
     public class CategoryController : BaseApiController
     {
-        private readonly IImageService _imageService;
-        private readonly DataContext _context;
-        public CategoryController(DataContext context, IImageService imageService)
+        // Dependancy injections
+        public CategoryController()
         {
-            _context = context;
-            _imageService = imageService;
+
         }
     }
 }
