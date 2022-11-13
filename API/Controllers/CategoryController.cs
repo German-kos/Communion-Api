@@ -16,7 +16,6 @@ namespace API.Controllers
         {
             _context = context;
             _imageService = imageService;
-
         }
     }
 }
