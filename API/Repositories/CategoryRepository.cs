@@ -11,11 +11,14 @@ namespace API.Repositories
     {
         // dependancy injections
         private readonly DataContext _context;
-        public CategoryRepository(DataContext context)
+        private readonly IImageService _imageService;
+        public CategoryRepository(DataContext context, IImageService imageService)
         {
+            _imageService = imageService;
             _context = context;
 
         }
+
         // save changes made to the database
         public async Task<bool> SaveAllAsync()
         {
