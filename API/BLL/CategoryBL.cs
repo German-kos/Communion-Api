@@ -48,8 +48,9 @@ namespace API.BLL
         public async Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories()
         {
             var categories = await _categoryRepository.GetCategoryList();
-            if (categories == null)
+            if (categories.Value.Count == 0)
                 return GenerateObjectResult(204, "No categories were found.");
+
             List<ForumCategoryDto> categoryList = RemapCategories(categories.Value);
             return categoryList;
         }
@@ -70,9 +71,9 @@ namespace API.BLL
             return null;
         }
 
-        private ObjectResult GenerateObjectResult(int statusCode, string message)
+        private ObjectResult GenerateObjectResult(int statusCode, string msg)
         {
-            var result = new ObjectResult(message);
+            var result = new ObjectResult(msg);
             result.StatusCode = statusCode;
             return result;
         }
