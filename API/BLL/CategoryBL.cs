@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using System.Web.Http;
 using API.DTOs;
 using API.Interfaces;
 using API.Models;
+using Microsoft.AspNetCore.Mvc;
+
 
 namespace API.BLL
 {
@@ -17,8 +21,11 @@ namespace API.BLL
             _userRepository = userRepository;
         }
 
-        public Task<ForumCategory> AddCategory(CreateCategoryDto categoryForm, string username)
+        public async Task<ActionResult<ForumCategory>> AddCategory(CreateCategoryDto categoryForm, string username)
         {
+            // var user = await _userRepository.GetUserByUsername(username);
+            // if (username == null || username == "" || user == null || !user.IsAdmin)
+            //     throw new HttpResponseException(HttpStatusCode.Unauthorized);
             throw new NotImplementedException();
         }
 
@@ -28,6 +35,11 @@ namespace API.BLL
         }
 
         public Task<List<ForumThread>> GetThreadsBySubCategoryId(int subCategoryId)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ForumCategory> ICategoryBL.AddCategory(CreateCategoryDto categoryForm, string username)
         {
             throw new NotImplementedException();
         }
