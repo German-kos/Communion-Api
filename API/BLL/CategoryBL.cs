@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using api.Models;
 using API.DTOs;
 using API.Interfaces;
 using API.Models;
@@ -16,17 +17,20 @@ namespace API.BLL
     {
         // Dependency Injections
         private readonly IUserRepository _userRepository;
-        public CategoryBL(IUserRepository userRepository)
+        private readonly ICategoryRepository _categoryRepository;
+        public CategoryBL(IUserRepository userRepository, ICategoryRepository categoryRepository)
         {
+            _categoryRepository = categoryRepository;
             _userRepository = userRepository;
         }
 
         public async Task<ActionResult<ForumCategory>> AddCategory(CreateCategoryDto categoryForm, string username)
         {
-            // var user = await _userRepository.GetUserByUsername(username);
-            // if (username == null || username == "" || user == null || !user.IsAdmin)
-            //     throw new HttpResponseException(HttpStatusCode.Unauthorized);
-            throw new NotImplementedException();
+            if (await CheckRights(username))
+            {
+                return await _categoryRepository.AddCategory(categoryForm);
+            }
+            throw new HttpResponseException(HttpStatusCode.InternalServerError);
         }
 
         public Task<List<ForumCategory>> GetCategories()
@@ -39,9 +43,13 @@ namespace API.BLL
             throw new NotImplementedException();
         }
 
-        Task<ForumCategory> ICategoryBL.AddCategory(CreateCategoryDto categoryForm, string username)
+        // Check if the provided username is valid, exists in the db, and is an admin
+        private async Task<bool> CheckRights(string username)
         {
-            throw new NotImplementedException();
+            var user = await _userRepository.GetUserByUsername(username);
+            if (username == null || username == "" || user == null || !user.IsAdmin)
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
+            return true;
         }
     }
 }

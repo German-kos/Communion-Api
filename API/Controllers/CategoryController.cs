@@ -7,6 +7,7 @@ using api.Data;
 using API.DTOs;
 using API.Extensions;
 using API.Interfaces;
+using API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,10 +24,10 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPost("create-new-category")]
-        public async Task<string> CreateCategory(CreateCategoryDto categoryForm)
+        public async Task<ActionResult<ForumCategory>> CreateCategory(CreateCategoryDto categoryForm)
         {
-            await _categoryBL.AddCategory(categoryForm, User.GetUsername());
-            return "temp return";
+            return await _categoryBL.AddCategory(categoryForm, User.GetUsername());
+
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Interfaces
 {
@@ -11,6 +12,6 @@ namespace API.Interfaces
     {
         Task<List<ForumCategory>> GetCategories();
         Task<List<ForumThread>> GetThreadsBySubCategoryId(int subCategoryId);
-        Task<ForumCategory> AddCategory(CreateCategoryDto categoryForm, string username); // should take in a dto for creating a category
+        Task<ActionResult<ForumCategory>> AddCategory(CreateCategoryDto categoryForm, string username); // should take in a dto for creating a category
     }
 }
