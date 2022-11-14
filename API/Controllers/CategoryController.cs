@@ -24,10 +24,9 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPost("create-new-category")]
-        public async Task<ActionResult<ForumCategory>> CreateCategory(CreateCategoryDto categoryForm)
+        public async Task<ActionResult<ForumCategory>> CreateCategory([FromForm] CreateCategoryDto categoryForm)
         {
             return await _categoryBL.AddCategory(categoryForm, User.GetUsername());
-
         }
     }
 }

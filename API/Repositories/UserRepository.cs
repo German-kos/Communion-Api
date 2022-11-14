@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using api.Data;
 using api.Models;
 using API.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories
 {
@@ -16,9 +17,9 @@ namespace API.Repositories
             _context = context;
 
         }
-        public Task<AppUser> GetUserByUsername(string username)
+        public async Task<AppUser> GetUserByUsername(string username)
         {
-            throw new NotImplementedException();
+            return await _context.Users.SingleOrDefaultAsync(user => user.Username.ToLower() == username.ToLower());
         }
     }
 }

@@ -30,7 +30,8 @@ namespace API.BLL
             {
                 return await _categoryRepository.AddCategory(categoryForm);
             }
-            throw new HttpResponseException(HttpStatusCode.InternalServerError);
+            var msg = new HttpResponseMessage(HttpStatusCode.InternalServerError) { ReasonPhrase = "Something went wrong." };
+            throw new HttpResponseException(msg);
         }
 
         public Task<List<ForumCategory>> GetCategories()
