@@ -10,6 +10,7 @@ using API.Interfaces;
 using API.Services;
 using API.Helpers;
 using API.Repositories;
+using API.BLL;
 
 namespace api.Extensions
 {
@@ -25,6 +26,7 @@ namespace api.Extensions
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICategoryBL, CategoryBL>();
             services.AddScoped<IImageService, ImageService>();
             services.AddDbContext<DataContext>(options =>
             {
