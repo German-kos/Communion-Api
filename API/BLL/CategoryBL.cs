@@ -32,7 +32,8 @@ namespace API.BLL
             if (rights != null)
                 return rights.Result;
 
-            // Check whether or not the category exists, if it does return a status code 409
+            // Check whether or not the category exists, 
+            // if it already exists return a status code 409
             if (await _categoryRepository.GetCategoryByName(categoryForm.Name) != null)
             {
                 var result = new ObjectResult("Category already exists.");
@@ -47,6 +48,8 @@ namespace API.BLL
         // Get the categories with their sub-categories
         public async Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories()
         {
+            // check if there are any categories recieved from the database
+            // if none exist, return 204, no categories were found
             var categories = await _categoryRepository.GetCategoryList();
             if (categories.Value.Count == 0)
                 return GenerateObjectResult(204, "No categories were found.");
