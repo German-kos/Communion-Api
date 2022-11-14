@@ -10,9 +10,11 @@ namespace API.BLL
 {
     public class CategoryBL : ICategoryBL
     {
-        public Task<ForumCategory> AddCategory()
+        // Dependency Injections
+        private readonly IUserRepository _userRepository;
+        public CategoryBL(IUserRepository userRepository)
         {
-            throw new NotImplementedException();
+            _userRepository = userRepository;
         }
 
         public Task<ForumCategory> AddCategory(CreateCategoryDto categoryForm, string username)
