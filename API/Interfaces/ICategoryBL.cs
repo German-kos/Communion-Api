@@ -10,7 +10,7 @@ namespace API.Interfaces
 {
     public interface ICategoryBL
     {
-        Task<List<ForumCategory>> GetCategories();
+        Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories();
         Task<List<ForumThread>> GetThreadsBySubCategoryId(int subCategoryId);
         Task<ActionResult<ForumCategory>> AddCategory(CreateCategoryDto categoryForm, string username); // should take in a dto for creating a category
     }

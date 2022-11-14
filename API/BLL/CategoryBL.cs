@@ -44,9 +44,14 @@ namespace API.BLL
             return await _categoryRepository.AddCategory(categoryForm);
         }
 
-        public Task<List<ForumCategory>> GetCategories()
+        // Get the categories with their sub-categories
+        public async Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories()
         {
-            throw new NotImplementedException();
+            var categories = await _categoryRepository.GetCategoryList();
+            if (categories == null)
+                return GenerateObjectResult(204, "No categories were found.");
+            List<ForumCategoryDto> categoryList = RemapCategories(categories.Value);
+            return categoryList;
         }
 
         public Task<List<ForumThread>> GetThreadsBySubCategoryId(int subCategoryId)
@@ -60,11 +65,52 @@ namespace API.BLL
             var user = await _userRepository.GetUserByUsername(username);
             if (username == null || username == "" || user == null || user.IsAdmin == false)
             {
-                var result = new ObjectResult("User is not authorized to perform this action.");
-                result.StatusCode = 401;
-                return result;
+                return GenerateObjectResult(401, "User is not authorized to perform this action.");
             }
             return null;
+        }
+
+        private ObjectResult GenerateObjectResult(int statusCode, string message)
+        {
+            var result = new ObjectResult(message);
+            result.StatusCode = statusCode;
+            return result;
+        }
+
+        private List<ForumCategoryDto> RemapCategories(List<ForumCategory> categories)
+        {
+            List<ForumCategoryDto> listOfCategories = new List<ForumCategoryDto>();
+            //
+            foreach (var category in categories)
+            {
+
+                // This is a test to check if the current category has a banner picture.
+                string banner = "";
+                if (category.Banner.Count() > 0)
+                    banner = category.Banner.LastOrDefault().Url;
+
+                // If there are no sub categories, add a sub-category named "No sub-categories" 
+                // to display in the client side
+                List<ForumSubCategory> subCategories = category.SubCategories.ToList();
+                if (category.SubCategories.Count == 0)
+                    category.SubCategories.Add(new ForumSubCategory
+                    {
+                        Name = "No sub-categories",
+
+                    });
+
+                // Mapping the category to a dto for the client side
+                listOfCategories.Add(new ForumCategoryDto
+                {
+                    Id = category.Id,
+                    Name = category.Name,
+                    Info = category.Info,
+                    Banner = banner,
+                    SubCategories = category.SubCategories.ToList<ForumSubCategory>()
+                });
+            }
+
+            return listOfCategories;
         }
     }
 }

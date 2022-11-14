@@ -64,6 +64,14 @@ namespace API.Repositories
             .FirstOrDefaultAsync(category => category.Name.ToLower() == categoryName.ToLower());
         }
 
+        public async Task<ActionResult<List<ForumCategory>>> GetCategoryList()
+        {
+            return await _context.Categories
+            .Include(c => c.Banner)
+            .Include(c => c.SubCategories)
+            .ToListAsync<ForumCategory>();
+        }
+
         // Save changes made to the database *async
         public async Task<bool> SaveAllAsync()
         {

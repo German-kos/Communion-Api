@@ -28,5 +28,11 @@ namespace API.Controllers
         {
             return await _categoryBL.AddCategory(categoryForm, User.GetUsername());
         }
+
+        [HttpGet("get-category-list")]
+        public async Task<ActionResult<List<ForumCategoryDto>>> GetCategories()
+        {
+            return await _categoryBL.GetAllCategories();
+        }
     }
 }
