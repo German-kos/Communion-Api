@@ -40,10 +40,8 @@ namespace API.BLL
                 return result;
             }
 
+            // If all the checks are valid, add the category to the database
             return await _categoryRepository.AddCategory(categoryForm);
-            // var res = new ObjectResult("Something went wrong.");
-            // res.StatusCode = 500;
-            // return res;
         }
 
         public Task<List<ForumCategory>> GetCategories()
