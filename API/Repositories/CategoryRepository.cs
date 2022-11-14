@@ -61,7 +61,7 @@ namespace API.Repositories
         {
             return await _context.Categories
             .Include(c => c.SubCategories)
-            .SingleOrDefaultAsync(category => category.Name.ToLower() == categoryName.ToLower());
+            .FirstOrDefaultAsync(category => category.Name.ToLower() == categoryName.ToLower());
         }
 
         // Save changes made to the database *async

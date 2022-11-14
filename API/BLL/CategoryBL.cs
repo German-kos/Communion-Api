@@ -32,6 +32,14 @@ namespace API.BLL
             if (rights != null)
                 return rights.Result;
 
+            // Check whether or not the category exists, if it does return a status code 409
+            if (await _categoryRepository.GetCategoryByName(categoryForm.Name) != null)
+            {
+                var result = new ObjectResult("Category already exists.");
+                result.StatusCode = 409;
+                return result;
+            }
+
             return await _categoryRepository.AddCategory(categoryForm);
             // var res = new ObjectResult("Something went wrong.");
             // res.StatusCode = 500;
