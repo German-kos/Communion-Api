@@ -14,7 +14,7 @@ namespace API.Controllers
 {
     public class CategoryController : BaseApiController
     {
-        // Dependancy injections
+        // Dependency Injections
         private readonly ICategoryBL _categoryBL;
         public CategoryController(ICategoryBL categoryBL)
         {

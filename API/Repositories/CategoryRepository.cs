@@ -9,7 +9,7 @@ namespace API.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {
-        // Dependancy injections
+        // Dependency Injections
         private readonly DataContext _context;
         private readonly IImageService _imageService;
         public CategoryRepository(DataContext context, IImageService imageService)
