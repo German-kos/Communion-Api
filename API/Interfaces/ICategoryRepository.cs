@@ -12,5 +12,6 @@ namespace API.Interfaces
     {
         Task<bool> SaveAllAsync();
         Task<ActionResult<ForumCategory>> AddCategory(CreateCategoryDto categoryForm);
+        Task<ForumCategory> GetCategoryByName(string categoryName);
     }
 }

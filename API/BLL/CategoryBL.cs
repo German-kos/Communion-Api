@@ -11,6 +11,7 @@ using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 
+
 namespace API.BLL
 {
     public class CategoryBL : ICategoryBL
@@ -26,12 +27,15 @@ namespace API.BLL
 
         public async Task<ActionResult<ForumCategory>> AddCategory(CreateCategoryDto categoryForm, string username)
         {
-            if (await CheckRights(username))
-            {
-                return await _categoryRepository.AddCategory(categoryForm);
-            }
-            var msg = new HttpResponseMessage(HttpStatusCode.InternalServerError) { ReasonPhrase = "Something went wrong." };
-            throw new HttpResponseException(msg);
+            // Check if the request's user has rights to perform this action
+            var rights = await CheckRights(username);
+            if (rights != null)
+                return rights.Result;
+
+            return await _categoryRepository.AddCategory(categoryForm);
+            // var res = new ObjectResult("Something went wrong.");
+            // res.StatusCode = 500;
+            // return res;
         }
 
         public Task<List<ForumCategory>> GetCategories()
@@ -45,12 +49,16 @@ namespace API.BLL
         }
 
         // Check if the provided username is valid, exists in the db, and is an admin
-        private async Task<bool> CheckRights(string username)
+        private async Task<ActionResult<bool>> CheckRights(string username)
         {
             var user = await _userRepository.GetUserByUsername(username);
-            if (username == null || username == "" || user == null || !user.IsAdmin)
-                throw new HttpResponseException(HttpStatusCode.Unauthorized);
-            return true;
+            if (username == null || username == "" || user == null || user.IsAdmin == false)
+            {
+                var result = new ObjectResult("User is not authorized to perform this action.");
+                result.StatusCode = 401;
+                return result;
+            }
+            return null;
         }
     }
 }

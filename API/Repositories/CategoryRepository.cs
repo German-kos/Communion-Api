@@ -9,6 +9,7 @@ using API.DTOs;
 using API.Interfaces;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories
 {
@@ -39,11 +40,14 @@ namespace API.Repositories
                 PublicId = bannerUploadResult.PublicId
             };
 
+            List<ForumImage> bannerCol = new List<ForumImage>();
+            bannerCol.Add(banner);
+
             var Category = new ForumCategory
             {
                 Name = categoryForm.Name,
                 Info = categoryForm.Info,
-                Banner = (ICollection<ForumImage>)banner
+                Banner = bannerCol
             };
 
             await _context.Categories.AddAsync(Category);
@@ -51,6 +55,13 @@ namespace API.Repositories
             await _context.SaveChangesAsync();
 
             return Category;
+        }
+
+        public async Task<ForumCategory> GetCategoryByName(string categoryName)
+        {
+            return await _context.Categories
+            .Include(c => c.SubCategories)
+            .SingleOrDefaultAsync(category => category.Name.ToLower() == categoryName.ToLower());
         }
 
         // Save changes made to the database *async
