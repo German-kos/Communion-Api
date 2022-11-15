@@ -57,6 +57,8 @@ namespace API.BLL
             if (category == null)
                 return GenerateObjectResult(409, "Category does not exist.");
 
+            // Check if the sub category exists in the current category,
+            // if it does, return status code 409
             if (CheckForSubCategory(category, subCategoryForm.Name) != null)
                 return GenerateObjectResult(409, "Sub category already exists.");
 
@@ -72,6 +74,7 @@ namespace API.BLL
             if (categories.Value.Count == 0)
                 return GenerateObjectResult(204, "No categories were found.");
 
+            // Remape the category to a proper form, for the client
             List<ForumCategoryDto> categoryList = RemapCategories(categories.Value);
             return categoryList;
         }
