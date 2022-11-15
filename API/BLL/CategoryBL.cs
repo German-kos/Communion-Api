@@ -59,7 +59,7 @@ namespace API.BLL
             List<ForumCategoryDto> categoryList = RemapCategories(categories.Value);
             return categoryList;
         }
-
+        // Get the threads for the requested sub-category *subject to change. *Not implemented yet.
         public Task<List<ForumThread>> GetThreadsBySubCategoryId(int subCategoryId)
         {
             throw new NotImplementedException();
