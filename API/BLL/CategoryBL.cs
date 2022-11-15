@@ -53,11 +53,11 @@ namespace API.BLL
 
             // Check whether or not the category exists,
             // if it doesnt, return status code 409
-            if (await _categoryRepository.GetCategoryByName(subCategoryForm.CategoryName) == null)
+            var category = await _categoryRepository.GetCategoryByName(subCategoryForm.CategoryName);
+            if (category == null)
                 return GenerateObjectResult(409, "Category does not exist.");
 
-
-            throw new NotImplementedException();
+            return await _categoryRepository.AddSubCategory(subCategoryForm, category);
         }
 
         // Get the categories with their sub-categories

@@ -57,9 +57,15 @@ namespace API.Repositories
             return Category;
         }
 
-        public async Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm)
+        public async Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category)
         {
-
+            category.SubCategories.Add(new ForumSubCategory
+            {
+                Name = subCategoryForm.Name
+            });
+            await SaveAllAsync();
+            return category.SubCategories
+            .FirstOrDefault(sub => sub.Name.ToLower() == subCategoryForm.Name.ToLower());
         }
 
         public async Task<ForumCategory> GetCategoryByName(string categoryName)
@@ -67,6 +73,11 @@ namespace API.Repositories
             return await _context.Categories
             .Include(c => c.SubCategories)
             .FirstOrDefaultAsync(category => category.Name.ToLower() == categoryName.ToLower());
+        }
+
+        public async Task<ForumSubCategory> GetSubCategory(ForumCategory category)
+        {
+
         }
 
         public async Task<ActionResult<List<ForumCategory>>> GetCategoryList()
