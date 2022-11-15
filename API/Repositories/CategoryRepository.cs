@@ -57,6 +57,11 @@ namespace API.Repositories
             return Category;
         }
 
+        public async Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm)
+        {
+
+        }
+
         public async Task<ForumCategory> GetCategoryByName(string categoryName)
         {
             return await _context.Categories
@@ -71,6 +76,7 @@ namespace API.Repositories
             .Include(c => c.SubCategories)
             .ToListAsync<ForumCategory>();
         }
+
 
         // Save changes made to the database *async
         public async Task<bool> SaveAllAsync()
