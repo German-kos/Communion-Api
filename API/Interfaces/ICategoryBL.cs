@@ -12,6 +12,6 @@ namespace API.Interfaces
     {
         Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories();
         Task<List<ForumThread>> GetThreadsBySubCategoryId(int subCategoryId);
-        Task<ActionResult<ForumCategory>> AddCategory(CreateCategoryDto categoryForm, string username); // should take in a dto for creating a category
+        Task<ActionResult<ForumCategory>> AddCategory(CreateCategoryDto categoryForm, string username);
     }
 }
