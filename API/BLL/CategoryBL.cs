@@ -37,11 +37,7 @@ namespace API.BLL
             // Check whether or not the category exists, 
             // if it already exists return a status code 409
             if (await _categoryRepository.GetCategoryByName(categoryForm.Name) != null)
-            {
-                var result = new ObjectResult("Category already exists.");
-                result.StatusCode = 409;
-                return result;
-            }
+                return GenerateObjectResult(409, "Category already exists.");
 
             // If all the checks are valid, add the category to the database
             return await _categoryRepository.AddCategory(categoryForm);
@@ -54,6 +50,11 @@ namespace API.BLL
             var rights = await CheckRights(username);
             if (rights != null)
                 return rights.Result;
+
+            // Check whether or not the category exists,
+            // if it doesnt, return status code 409
+            if (await _categoryRepository.GetCategoryByName(subCategoryForm.CategoryName) == null)
+                return GenerateObjectResult(409, "Category does not exist.");
 
 
             throw new NotImplementedException();
