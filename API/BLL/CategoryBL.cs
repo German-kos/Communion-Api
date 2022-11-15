@@ -24,7 +24,9 @@ namespace API.BLL
             _categoryRepository = categoryRepository;
             _userRepository = userRepository;
         }
-
+        // Methods
+        //
+        // Add a category to the database
         public async Task<ActionResult<ForumCategory>> AddCategory(CreateCategoryDto categoryForm, string username)
         {
             // Check if the request's user has rights to perform this action
@@ -63,6 +65,8 @@ namespace API.BLL
             throw new NotImplementedException();
         }
 
+        // Private methods
+        //
         // Check if the provided username is valid, exists in the db, and is an admin
         private async Task<ActionResult<bool>> CheckRights(string username)
         {
@@ -73,7 +77,6 @@ namespace API.BLL
             }
             return null;
         }
-
 
         // A method to easier generate and return status code responses
         private ObjectResult GenerateObjectResult(int statusCode, string msg)
