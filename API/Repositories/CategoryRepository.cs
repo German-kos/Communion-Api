@@ -75,7 +75,7 @@ namespace API.Repositories
             .FirstOrDefaultAsync(category => category.Name.ToLower() == categoryName.ToLower());
         }
 
-        public async Task<ForumSubCategory> GetSubCategory(ForumCategory category)
+        public async Task<ForumSubCategory> GetSubCategory(ForumCategory category, string subCategoryName)
         {
 
         }
