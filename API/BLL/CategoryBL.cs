@@ -48,7 +48,7 @@ namespace API.BLL
         {
             // Check if the request's user has rights to perform this action
             var rights = await CheckRights(username);
-            if (rights.Result != null)
+            if (rights != null)
                 return rights.Result;
 
             // Check whether or not the category exists,
@@ -115,18 +115,11 @@ namespace API.BLL
 
                 // This is a test to check if the current category has a banner picture.
                 string banner = "";
-                if (category.Banner.Count() > 0)
+                if (category.Banner.Count > 0)
                     banner = category.Banner.LastOrDefault().Url;
 
-                // If there are no sub categories, add a sub-category named "No sub-categories" 
-                // to display in the client side
-                List<ForumSubCategory> subCategories = category.SubCategories.ToList();
-                if (category.SubCategories.Count == 0)
-                    category.SubCategories.Add(new ForumSubCategory
-                    {
-                        Name = "No sub-categories",
-
-                    });
+                // Remap the sub-categories to something suitable for the client side
+                var subCategoriesRemap = RemapSubCategories(category.SubCategories.ToList());
 
                 // Mapping the category to a dto for the client side
                 listOfCategories.Add(new ForumCategoryDto
@@ -135,11 +128,38 @@ namespace API.BLL
                     Name = category.Name,
                     Info = category.Info,
                     Banner = banner,
-                    SubCategories = category.SubCategories.ToList<ForumSubCategory>()
+                    SubCategories = subCategoriesRemap,
                 });
             }
 
             return listOfCategories;
+        }
+
+        private List<ForumSubCategoryDto> RemapSubCategories(List<ForumSubCategory> subCategories)
+        {
+            List<ForumSubCategoryDto> subCategoriesRemap = new List<ForumSubCategoryDto>();
+
+            // If there are no sub categories, add a sub-category named "No sub-categories" 
+            // to display in the client side
+            if (subCategories.Count == 0)
+                subCategoriesRemap.Add(new ForumSubCategoryDto
+                {
+                    Name = "No sub-categories"
+                });
+            else
+            {
+                foreach (var sub in subCategories)
+                {
+                    subCategoriesRemap.Add(new ForumSubCategoryDto
+                    {
+                        Id = sub.Id,
+                        CategoryId = sub.CategoryId,
+                        Name = sub.Name,
+                        Threads = sub.Threads
+                    });
+                }
+            }
+            return subCategoriesRemap.OrderBy(i => i.Id).ToList<ForumSubCategoryDto>();
         }
 
         // Look for a sub category in a category by name, and return it
