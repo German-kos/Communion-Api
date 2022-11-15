@@ -7,7 +7,7 @@ namespace API.DTOs
 {
     public class CreateSubCategoryDto
     {
-        public int CategoryId { get; set; }
+        public string CategoryName { get; set; }
         public string Name { get; set; }
     }
 }

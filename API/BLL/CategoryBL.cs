@@ -47,6 +47,18 @@ namespace API.BLL
             return await _categoryRepository.AddCategory(categoryForm);
         }
 
+        // Add a sub-category to an existing category
+        public async Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm, string username)
+        {
+            // Check if the request's user has rights to perform this action
+            var rights = await CheckRights(username);
+            if (rights != null)
+                return rights.Result;
+
+
+            throw new NotImplementedException();
+        }
+
         // Get the categories with their sub-categories
         public async Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories()
         {
