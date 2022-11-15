@@ -34,5 +34,12 @@ namespace API.Controllers
         {
             return await _categoryBL.GetAllCategories();
         }
+
+        [Authorize]
+        [HttpPost("create-new-sub-category")]
+        public async Task<ActionResult<ForumSubCategory>> CreateSubCategory([FromForm] CreateSubCategoryDto subCategoryForm)
+        {
+            return await _categoryBL.AddSubCategory(subCategoryForm, User.GetUsername());
+        }
     }
 }
