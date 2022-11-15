@@ -48,7 +48,7 @@ namespace API.BLL
         {
             // Check if the request's user has rights to perform this action
             var rights = await CheckRights(username);
-            if (rights != null)
+            if (rights.Result != null)
                 return rights.Result;
 
             // Check whether or not the category exists,
