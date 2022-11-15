@@ -57,6 +57,9 @@ namespace API.BLL
             if (category == null)
                 return GenerateObjectResult(409, "Category does not exist.");
 
+            if (CheckForSubCategory(category, subCategoryForm.Name) != null)
+                return GenerateObjectResult(409, "Sub category already exists.");
+
             return await _categoryRepository.AddSubCategory(subCategoryForm, category);
         }
 
@@ -136,6 +139,7 @@ namespace API.BLL
             return listOfCategories;
         }
 
+        // Look for a sub category in a category by name, and return it
         private ForumSubCategory CheckForSubCategory(ForumCategory category, string subCategoryName)
         {
             return category.SubCategories.FirstOrDefault(sub => sub.Name.ToLower() == subCategoryName.ToLower());
