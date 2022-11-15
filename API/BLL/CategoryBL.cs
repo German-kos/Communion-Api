@@ -74,6 +74,8 @@ namespace API.BLL
             return null;
         }
 
+
+        // A method to easier generate and return status code responses
         private ObjectResult GenerateObjectResult(int statusCode, string msg)
         {
             var result = new ObjectResult(msg);
@@ -81,6 +83,7 @@ namespace API.BLL
             return result;
         }
 
+        // A method to process and remap the category list from the database to a dto for the client
         private List<ForumCategoryDto> RemapCategories(List<ForumCategory> categories)
         {
             List<ForumCategoryDto> listOfCategories = new List<ForumCategoryDto>();
