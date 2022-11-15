@@ -15,5 +15,6 @@ namespace API.Interfaces
         Task<ForumCategory> GetCategoryByName(string categoryName);
         Task<ActionResult<List<ForumCategory>>> GetCategoryList();
         Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category);
+        Task<ForumSubCategory> GetSubCategory(ForumCategory category);
     }
 }
