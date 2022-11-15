@@ -135,5 +135,10 @@ namespace API.BLL
 
             return listOfCategories;
         }
+
+        private ForumSubCategory CheckForSubCategory(ForumCategory category, string subCategoryName)
+        {
+            return category.SubCategories.FirstOrDefault(sub => sub.Name.ToLower() == subCategoryName.ToLower());
+        }
     }
 }
