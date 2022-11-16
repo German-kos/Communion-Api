@@ -29,7 +29,7 @@ namespace API.Controllers
         //
         //
         [HttpGet("get-category-list")] // [GET] api/category/get-category/list
-        public async Task<ActionResult<List<ForumCategoryDto>>> GetCategories()
+        public async Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories()
         {
             // Get a list of the categories from the database.
             return await _categoryBL.GetAllCategories();
@@ -54,6 +54,15 @@ namespace API.Controllers
             // Delete a category by name, and return an updated category list.
             return await _categoryBL.DeleteCategory(categoryName, User.GetUsername());
         }
+        //
+        //
+        //
+        // [Authorize] // Role of an admin is required
+        // [HttpPatch("edit-category")] // [PATCH] api/catagory/edit-category
+        // public async Task<ActionResult<List<ForumCategoryDto>>> UpdateCategory([FromForm] UpdateCategoryDto categoryForm)
+        // {
+        //     throw new NotImplementedException();
+        // }
         //
         //
         //

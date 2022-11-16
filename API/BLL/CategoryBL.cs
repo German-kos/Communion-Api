@@ -161,7 +161,8 @@ namespace API.BLL
         private ForumCategoryDto RemapCategory(ForumCategory category)
         {
             // Remap the sub-categories to a suitable Dto
-            var subCategoriesRemap = RemapSubCategories(category.SubCategories.ToList<ForumSubCategory>());
+
+            var subCategoriesRemap = RemapSubCategories(category.SubCategories?.ToList<ForumSubCategory>());
 
             // Mapping the category to a suitable Dto
             return new ForumCategoryDto
@@ -170,7 +171,7 @@ namespace API.BLL
                 Name = category.Name,
                 Info = category.Info,
                 Banner = GetBannerUrl(category),
-                SubCategories = RemapSubCategories(category.SubCategories.ToList<ForumSubCategory>())
+                SubCategories = RemapSubCategories(category.SubCategories?.ToList<ForumSubCategory>())
             };
         }
         //
@@ -186,6 +187,10 @@ namespace API.BLL
             // Mapping the categories to a suitable category list Dto
             foreach (var category in categories)
             {
+                var subCategoryList = category.SubCategories == null ?
+                new List<ForumSubCategoryDto>() { new ForumSubCategoryDto() { Name = "No sub-categories" } }
+                : RemapSubCategories(category.SubCategories.ToList<ForumSubCategory>());
+
 
                 listOfCategories.Add(new ForumCategoryDto
                 {
@@ -193,7 +198,7 @@ namespace API.BLL
                     Name = category.Name,
                     Info = category.Info,
                     Banner = GetBannerUrl(category),
-                    SubCategories = RemapSubCategories(category.SubCategories.ToList<ForumSubCategory>()),
+                    SubCategories = subCategoryList,
                 });
             }
 
@@ -202,23 +207,14 @@ namespace API.BLL
         }
         //
         //
-        // This method extracts the banner url, and if it doesnt exist, it returns an empty string.
-        private string GetBannerUrl(ForumCategory category)
-        {
-            var banner = category.Banner.LastOrDefault()?.Url;
-            if (category.Banner.Count() > 0 && banner != null) return banner;
-            return "";
-        }
-        //
-        //
-        // 
-        private List<ForumSubCategoryDto> RemapSubCategories(List<ForumSubCategory> subCategories)
+        // This method recieves a list of ForumSubCategory, and maps it to a list of ForumSubCategoryDto,
+        // more suitable for use in the client side
+        private List<ForumSubCategoryDto> RemapSubCategories(List<ForumSubCategory>? subCategories)
         {
             List<ForumSubCategoryDto> subCategoriesRemap = new List<ForumSubCategoryDto>();
-
             // If there are no sub categories, add a sub-category named "No sub-categories" 
             // to display in the client side
-            if (subCategories.Count == 0)
+            if (subCategories == null || subCategories.Count == 0)
                 subCategoriesRemap.Add(new ForumSubCategoryDto { Name = "No sub-categories" });
             else
             {
@@ -234,10 +230,23 @@ namespace API.BLL
             }
             return subCategoriesRemap.OrderBy(i => i.Id).ToList<ForumSubCategoryDto>();
         }
-
-        // Look for a sub category in a category by name, and return it
+        //
+        //
+        // This method extracts the banner url, and if it doesnt exist, it returns an empty string.
+        private string GetBannerUrl(ForumCategory category)
+        {
+            var banner = category.Banner.LastOrDefault()?.Url;
+            if (category.Banner.Count() > 0 && banner != null) return banner;
+            return "";
+        }
+        //
+        // 
+        // This method recieves a category, and a sub-category name, and attempts to find the 
+        // sub-category in the category
         private ForumSubCategory? CheckForSubCategory(ForumCategory category, string subCategoryName)
         {
+            if (category.SubCategories == null) return null;
+
             return category.SubCategories.FirstOrDefault(sub => sub.Name.ToLower() == subCategoryName.ToLower());
         }
 

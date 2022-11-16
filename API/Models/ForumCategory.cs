@@ -11,14 +11,10 @@ namespace API.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Info { get; set; }
-        public ICollection<ForumImage> Banner { get; set; }
-        public ICollection<ForumSubCategory> SubCategories { get; set; }
+        public string Name { get; set; } = null!;
+        public string Info { get; set; } = null!;
+        public ICollection<ForumImage> Banner { get; set; } = null!;
+        public ICollection<ForumSubCategory> SubCategories { get; set; } = new List<ForumSubCategory>();
 
-        public static explicit operator ForumCategory(ActionResult<List<ForumCategory>> v)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
