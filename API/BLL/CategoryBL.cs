@@ -37,11 +37,11 @@ namespace API.BLL
             // check if there are any categories recieved from the database
             // if none exist, return 204, no categories were found
             var categories = await _categoryRepository.GetAllCategories();
-            if (categories.Value == null || categories.Value.Count == 0)
+            if (categories == null || categories.Count == 0)
                 return GenerateObjectResult(204, "No categories were found.");
 
             // Remap the category list to a proper Dto and return it
-            return RemapCategories(categories.Value);
+            return RemapCategories(categories);
         }
         //
         //
@@ -73,12 +73,16 @@ namespace API.BLL
 
             // Check whether or not the category exists,
             // if it doesnt, return a status code 204, category does not exist
-            if (await _categoryRepository.GetCategoryByName(categoryName) == null)
+            var category = await _categoryRepository.GetCategoryByName(categoryName);
+            if (category == null)
                 return GenerateObjectResult(204, "The category does not exist");
 
             // If all the checks are valid, delete the category from the database,
             // and return an up to date category list
-            return RemapCategories(await _categoryRepository.DeleteCategory(categoryName));
+            var categoryList = await _categoryRepository.DeleteCategory(category);
+            if (categoryList == null || categoryList.Count() == 0) return _noContent;
+
+            return RemapCategories(categoryList);
         }
         //
         //

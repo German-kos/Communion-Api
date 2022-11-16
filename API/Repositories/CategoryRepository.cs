@@ -35,9 +35,10 @@ namespace API.Repositories
         //
         //
         // Get the categories from the database
-        public async Task<ActionResult<List<ForumCategory>>> GetAllCategories()
+        public async Task<List<ForumCategory>?> GetAllCategories()
         {
             // Return a list of categories, each category includes it's collection of banners and sub-categories
+
             return await _context.Categories
             .Include(c => c.Banner)
             .Include(c => c.SubCategories)
@@ -46,7 +47,7 @@ namespace API.Repositories
         //
         //
         // Create a category and add it to the database
-        public async Task<ActionResult<List<ForumCategory>>> CreateCategory(CreateCategoryDto categoryForm)
+        public async Task<ActionResult<List<ForumCategory>?>> CreateCategory(CreateCategoryDto categoryForm)
         {
             // Uploading the image to the cloudinary api
             var bannerUploadResult = await _imageService.UploadImageAsync(categoryForm.ImageFile);
@@ -88,18 +89,14 @@ namespace API.Repositories
         //
         //
         // Delete the requested category from the database
-        public async Task<List<ForumCategory>> DeleteCategory(string categoryName)
+        public async Task<List<ForumCategory>?> DeleteCategory(ForumCategory targetCategory)
         {
-            // Find the targeted row in the database
-            var removeTarget = await _context.Categories
-            .FirstOrDefaultAsync(category => category.Name.ToLower() == categoryName.ToLower());
-
             // Remove the targeted row from the database
-            _context.Categories.Remove(removeTarget);
+            _context.Categories.Remove(targetCategory);
             await SaveAllAsync();
 
             // Return an up to date category list
-            return GetAllCategories().Result.Value;
+            return await GetAllCategories();
         }
         //
         //
