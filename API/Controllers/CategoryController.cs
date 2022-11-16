@@ -40,12 +40,12 @@ namespace API.Controllers
         //
         //
         [Authorize]
-        [HttpDelete("delete-category")]
+        [HttpDelete("delete-category")] // [DELETE] api/category/delete-category
+        // Delete a category by name
         public async Task<ActionResult<ForumCategory>> DeleteCategory(string categoryName)
         {
-            return null;
+            return await _categoryBL.DeleteCategory(categoryName, User.GetUsername());
         }
-        //
         //
         [Authorize]
         [HttpPost("create-new-sub-category")] // [POST] api/category/create-new-sub-category

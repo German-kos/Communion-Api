@@ -24,7 +24,10 @@ namespace API.BLL
             _categoryRepository = categoryRepository;
             _userRepository = userRepository;
         }
+        //
+        //
         // Methods
+        //
         //
         // Get the categories with their sub-categories
         public async Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories()
@@ -39,30 +42,48 @@ namespace API.BLL
             List<ForumCategoryDto> categoryList = RemapCategories(categories.Value);
             return categoryList;
         }
+        //
+        //
         // Add a category to the database
         public async Task<ActionResult<ForumCategory>> CreateCategory(CreateCategoryDto categoryForm, string username)
         {
             // Check if the request's user has rights to perform this action
             var rights = await CheckRights(username);
-            if (rights != null)
-                return rights.Result;
+            if (rights != null) return rights;
 
             // Check whether or not the category exists, 
-            // if it already exists return a status code 409
+            // if it already exists, return a status code 409
             if (await _categoryRepository.GetCategoryByName(categoryForm.Name) != null)
                 return GenerateObjectResult(409, "Category already exists.");
 
             // If all the checks are valid, add the category to the database
             return await _categoryRepository.CreateCategory(categoryForm);
         }
+        //
+        //
+        // Delete a category from the database by name
+        public async Task<ActionResult<ForumCategory>> DeleteCategory(string categoryName, string username)
+        {
+            // Check if the request's user has the rights to perform this action
+            var rights = await CheckRights(username);
+            if (rights != null) return rights;
 
+            // Check whether or not the category exists,
+            // if it doesnt, return a status code 204
+            if (await _categoryRepository.GetCategoryByName(categoryName) == null)
+                return GenerateObjectResult(204, "The category does not exist");
+
+            // If all the checks are valid, delete the category from the database
+            return await _categoryRepository.DeleteCategory(categoryName);
+        }
+        //
+        //
         // Add a sub-category to an existing category
         public async Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm, string username)
         {
             // Check if the request's user has rights to perform this action
             var rights = await CheckRights(username);
-            if (rights != null)
-                return rights.Result;
+            if (rights != null) return rights;
 
             // Check whether or not the category exists,
             // if it doesnt, return status code 409
@@ -88,7 +109,7 @@ namespace API.BLL
         // Private methods
         //
         // Check if the provided username is valid, exists in the db, and is an admin
-        private async Task<ActionResult<bool>> CheckRights(string username)
+        private async Task<ActionResult> CheckRights(string username)
         {
             var user = await _userRepository.GetUserByUsername(username);
             if (username == null || username == "" || user == null || user.IsAdmin == false)
@@ -168,5 +189,7 @@ namespace API.BLL
         {
             return category.SubCategories.FirstOrDefault(sub => sub.Name.ToLower() == subCategoryName.ToLower());
         }
+
+
     }
 }

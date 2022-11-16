@@ -23,7 +23,22 @@ namespace API.Repositories
             _imageService = imageService;
             _context = context;
         }
-
+        //
+        //
+        // Methods
+        //
+        //
+        // Get the categories from the database
+        public async Task<ActionResult<List<ForumCategory>>> GetAllCategories()
+        {
+            return await _context.Categories
+            .Include(c => c.Banner)
+            .Include(c => c.SubCategories)
+            .ToListAsync<ForumCategory>();
+        }
+        //
+        //
+        //
         public async Task<ActionResult<ForumCategory>> CreateCategory(CreateCategoryDto categoryForm)
         {
             var bannerUploadResult = await _imageService.UploadImageAsync(categoryForm.ImageFile);
@@ -56,7 +71,23 @@ namespace API.Repositories
 
             return Category;
         }
-
+        //
+        //
+        //
+        public async Task<ActionResult<ForumCategory>> DeleteCategory(string categoryName)
+        {
+            // var removeQuery = await (from category in _context.Categories
+            //                    where category.Name.ToLower() == categoryName.ToLower()
+            //                    select category).FirstOrDefaultAsync();
+            var categoryEntity = new ForumCategory { Name = categoryName };
+            _context.Categories.Attach(categoryEntity);
+            _context.Categories.Remove(categoryEntity);
+            await SaveAllAsync();
+            return categoryEntity;
+        }
+        //
+        //
+        //
         public async Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category)
         {
             category.SubCategories.Add(new ForumSubCategory
@@ -75,13 +106,7 @@ namespace API.Repositories
             .FirstOrDefaultAsync(category => category.Name.ToLower() == categoryName.ToLower());
         }
 
-        public async Task<ActionResult<List<ForumCategory>>> GetAllCategories()
-        {
-            return await _context.Categories
-            .Include(c => c.Banner)
-            .Include(c => c.SubCategories)
-            .ToListAsync<ForumCategory>();
-        }
+
 
 
         // Save changes made to the database *async
@@ -89,5 +114,7 @@ namespace API.Repositories
         {
             return await _context.SaveChangesAsync() > 0;
         }
+
+
     }
 }

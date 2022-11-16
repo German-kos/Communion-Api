@@ -11,8 +11,9 @@ namespace API.Interfaces
     public interface ICategoryBL
     {
         Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories();
-        Task<List<ForumThread>> GetThreadsBySubCategoryId(int subCategoryId);
         Task<ActionResult<ForumCategory>> CreateCategory(CreateCategoryDto categoryForm, string username);
+        Task<ActionResult<ForumCategory>> DeleteCategory(string categoryName, string username);
         Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm, string username);
+        Task<List<ForumThread>> GetThreadsBySubCategoryId(int subCategoryId);
     }
 }
