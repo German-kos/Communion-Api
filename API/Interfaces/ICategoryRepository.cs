@@ -14,7 +14,7 @@ namespace API.Interfaces
         Task<ActionResult<ForumCategory>> CreateCategory(CreateCategoryDto categoryForm);
         Task<List<ForumCategory>> DeleteCategory(string categoryName);
         Task<ForumCategory> GetCategoryByName(string categoryName);
-        Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category);
+        Task<ActionResult<ForumSubCategory>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category);
         Task<bool> SaveAllAsync();
     }
 }

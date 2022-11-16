@@ -90,7 +90,7 @@ namespace API.Repositories
         //
         //
         //
-        public async Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category)
+        public async Task<ActionResult<ForumSubCategory>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category)
         {
             category.SubCategories.Add(new ForumSubCategory
             {

@@ -83,7 +83,7 @@ namespace API.BLL
         //
         //
         // Add a sub-category to an existing category
-        public async Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm, string username)
+        public async Task<ActionResult<ForumCategoryDto>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, string username)
         {
             // Check if the request's user has rights to perform this action
             var rights = await CheckRights(username);
@@ -100,7 +100,7 @@ namespace API.BLL
             if (CheckForSubCategory(category, subCategoryForm.Name) != null)
                 return GenerateObjectResult(409, "Sub category already exists.");
 
-            return await _categoryRepository.AddSubCategory(subCategoryForm, category);
+            return await _categoryRepository.CreateSubCategory(subCategoryForm, category);
         }
 
 
