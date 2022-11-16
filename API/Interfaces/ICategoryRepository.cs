@@ -13,8 +13,8 @@ namespace API.Interfaces
         Task<List<ForumCategory>?> GetAllCategories();
         Task<ActionResult<List<ForumCategory>?>> CreateCategory(CreateCategoryDto categoryForm);
         Task<List<ForumCategory>?> DeleteCategory(ForumCategory category);
-        Task<ForumCategory?> GetCategoryByName(string categoryName);
         Task<ForumCategory?> CreateSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category);
+        Task<ForumCategory?> GetCategoryByName(string categoryName);
         Task<bool> SaveAllAsync();
     }
 }
