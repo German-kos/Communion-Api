@@ -42,7 +42,7 @@ namespace API.Controllers
         [Authorize]
         [HttpDelete("delete-category")] // [DELETE] api/category/delete-category
         // Delete a category by name
-        public async Task<ActionResult<ForumCategory>> DeleteCategory(string categoryName)
+        public async Task<ActionResult<ForumCategory>> DeleteCategory([FromForm] string categoryName)
         {
             return await _categoryBL.DeleteCategory(categoryName, User.GetUsername());
         }

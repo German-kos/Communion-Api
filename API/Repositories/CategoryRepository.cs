@@ -76,14 +76,14 @@ namespace API.Repositories
         //
         public async Task<ActionResult<ForumCategory>> DeleteCategory(string categoryName)
         {
-            // var removeQuery = await (from category in _context.Categories
-            //                    where category.Name.ToLower() == categoryName.ToLower()
-            //                    select category).FirstOrDefaultAsync();
-            var categoryEntity = new ForumCategory { Name = categoryName };
-            _context.Categories.Attach(categoryEntity);
-            _context.Categories.Remove(categoryEntity);
+            var removeQuery = await (from category in _context.Categories
+                                     where category.Name.ToLower() == categoryName.ToLower()
+                                     select category).FirstOrDefaultAsync();
+            // var categoryEntity = new ForumCategory { Name = categoryName };
+            _context.Categories.Attach(removeQuery);
+            _context.Categories.Remove(removeQuery);
             await SaveAllAsync();
-            return categoryEntity;
+            return removeQuery;
         }
         //
         //
