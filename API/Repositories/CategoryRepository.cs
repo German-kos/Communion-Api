@@ -74,7 +74,7 @@ namespace API.Repositories
         //
         //
         //
-        public async Task<ActionResult<ForumCategory>> DeleteCategory(string categoryName)
+        public async Task<bool> DeleteCategory(string categoryName)
         {
             // Find the targeted row in the database
             var removeTarget = _context.Categories
@@ -83,10 +83,8 @@ namespace API.Repositories
             // Remove the targeted row from the database
             _context.Categories.Remove(removeTarget);
 
-            await SaveAllAsync();
-
             // return what was deleted
-            return removeTarget;
+            return await SaveAllAsync();
         }
         //
         //
