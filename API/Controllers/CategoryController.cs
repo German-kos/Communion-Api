@@ -22,38 +22,45 @@ namespace API.Controllers
             _categoryBL = categoryBL;
         }
         //
+        //
+        // Controllers
+        //
+        //
         [HttpGet("get-category-list")] // [GET] api/category/get-category/list
-        // Get a list of the categories from the database
         public async Task<ActionResult<List<ForumCategoryDto>>> GetCategories()
         {
+            // Get a list of the categories from the database.
             return await _categoryBL.GetAllCategories();
         }
         //
         //
-        [Authorize]
+        //
+        [Authorize] // Role of an admin is required
         [HttpPost("create-new-category")] // [POST] api/category/create-new-category
-        // Create a new category
         public async Task<ActionResult<ForumCategory>> CreateCategory([FromForm] CreateCategoryDto categoryForm)
         {
+            // Create a new category, return an updated category list.
             return await _categoryBL.CreateCategory(categoryForm, User.GetUsername());
         }
         //
         //
-        [Authorize]
+        //
+        [Authorize] // Role of an admin is required
         [HttpDelete("delete-category")] // [DELETE] api/category/delete-category
-        // Delete a category by name
         public async Task<ActionResult<List<ForumCategoryDto>>> DeleteCategory([FromForm] string categoryName)
         {
-            // Delete a category, and return an updated list with the remaining categories
+            // Delete a category by name, and return an updated category list.
             return await _categoryBL.DeleteCategory(categoryName, User.GetUsername());
         }
         //
-        [Authorize]
+        //
+        //
+        [Authorize] // Role of an admin is required
         [HttpPost("create-new-sub-category")] // [POST] api/category/create-new-sub-category
-        // Create a new sub-category in an existing category
-        public async Task<ActionResult<ForumSubCategory>> CreateSubCategory([FromForm] CreateSubCategoryDto subCategoryForm)
+        public async Task<ActionResult<ForumCategoryDto>> CreateSubCategory([FromForm] CreateSubCategoryDto subCategoryForm)
         {
-            return await _categoryBL.AddSubCategory(subCategoryForm, User.GetUsername());
+            // Create a sub category in the requested category, return the category with updated sub-category list
+            return await _categoryBL.CreateSubCategory(subCategoryForm, User.GetUsername());
         }
     }
 }
