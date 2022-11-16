@@ -43,7 +43,7 @@ namespace API.Controllers
         [HttpDelete("delete-category")]
         public async Task<ActionResult<ForumCategory>> DeleteCategory(string categoryName)
         {
-
+            return null;
         }
         //
         //
