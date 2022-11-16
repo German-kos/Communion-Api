@@ -57,8 +57,10 @@ namespace API.BLL
             if (await _categoryRepository.GetCategoryByName(categoryForm.Name) != null)
                 return GenerateObjectResult(409, "Category already exists.");
 
+            // Check if the response bears content
             var categoryListResult = await _categoryRepository.CreateCategory(categoryForm);
             if (categoryListResult.Value == null) return _noContent;
+
             // If all the checks are valid, add the category to the database, return the category list
             return RemapCategories(categoryListResult.Value);
         }
@@ -77,11 +79,12 @@ namespace API.BLL
             if (category == null)
                 return GenerateObjectResult(204, "The category does not exist");
 
-            // If all the checks are valid, delete the category from the database,
-            // and return an up to date category list
+            // Check if the response bears content
             var categoryList = await _categoryRepository.DeleteCategory(category);
             if (categoryList == null || categoryList.Count() == 0) return _noContent;
 
+            // If all the checks are valid, delete the category from the database,
+            // and return an up to date category list
             return RemapCategories(categoryList);
         }
         //
@@ -105,10 +108,12 @@ namespace API.BLL
             if (CheckForSubCategory(category, subCategoryForm.Name) != null)
                 return GenerateObjectResult(409, "Sub category already exists.");
 
-            // If all the checks are valid, create a new sub category, add it to the database,
-            // and return the updated category with an up to date sub-category list
+            // Check if the response bears content
             var result = await _categoryRepository.CreateSubCategory(subCategoryForm, category);
             if (result == null) return _noContent;
+
+            // If all the checks are valid, create a new sub category, add it to the database,
+            // and return the updated category with an up to date sub-category list
             return RemapCategory(result);
         }
         //
