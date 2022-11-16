@@ -16,8 +16,7 @@ namespace API.Repositories
     public class CategoryRepository : ICategoryRepository
     {
         //
-        private NoContentResult _noContent = new NoContentResult();
-
+        //
         // Dependency Injections
         private readonly DataContext _context;
         private readonly IImageService _imageService;
@@ -28,9 +27,6 @@ namespace API.Repositories
         }
         //
         //
-        //
-        //
-        //
         // Methods
         //
         //
@@ -38,7 +34,6 @@ namespace API.Repositories
         public async Task<List<ForumCategory>?> GetAllCategories()
         {
             // Return a list of categories, each category includes it's collection of banners and sub-categories
-
             return await _context.Categories
             .Include(c => c.Banner)
             .Include(c => c.SubCategories)
