@@ -29,7 +29,7 @@ namespace API.Repositories
         //
         //
         // Get the categories from the database
-        public async Task<ActionResult<List<ForumCategory>>> GetAllCategories()
+        public async Task<List<ForumCategory>> GetAllCategories()
         {
             return await _context.Categories
             .Include(c => c.Banner)
@@ -74,17 +74,18 @@ namespace API.Repositories
         //
         //
         //
-        public async Task<bool> DeleteCategory(string categoryName)
+        public async Task<List<ForumCategory>> DeleteCategory(string categoryName)
         {
             // Find the targeted row in the database
-            var removeTarget = _context.Categories
-            .FirstOrDefault(category => category.Name.ToLower() == categoryName.ToLower());
+            var removeTarget = await _context.Categories
+            .FirstOrDefaultAsync(category => category.Name.ToLower() == categoryName.ToLower());
 
             // Remove the targeted row from the database
             _context.Categories.Remove(removeTarget);
+            await SaveAllAsync();
 
             // return what was deleted
-            return await SaveAllAsync();
+            return await GetAllCategories();
         }
         //
         //

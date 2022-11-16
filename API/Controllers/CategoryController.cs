@@ -42,8 +42,9 @@ namespace API.Controllers
         [Authorize]
         [HttpDelete("delete-category")] // [DELETE] api/category/delete-category
         // Delete a category by name
-        public async Task<ActionResult> DeleteCategory([FromForm] string categoryName)
+        public async Task<ActionResult<List<ForumCategoryDto>>> DeleteCategory([FromForm] string categoryName)
         {
+            // Delete a category, and return an updated list with the remaining categories
             return await _categoryBL.DeleteCategory(categoryName, User.GetUsername());
         }
         //

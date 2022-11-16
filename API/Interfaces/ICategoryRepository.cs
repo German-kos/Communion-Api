@@ -10,9 +10,9 @@ namespace API.Interfaces
 {
     public interface ICategoryRepository
     {
-        Task<ActionResult<List<ForumCategory>>> GetAllCategories();
+        Task<List<ForumCategory>> GetAllCategories();
         Task<ActionResult<ForumCategory>> CreateCategory(CreateCategoryDto categoryForm);
-        Task<bool> DeleteCategory(string categoryName);
+        Task<List<ForumCategory>> DeleteCategory(string categoryName);
         Task<ForumCategory> GetCategoryByName(string categoryName);
         Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category);
         Task<bool> SaveAllAsync();

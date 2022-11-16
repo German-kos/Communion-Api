@@ -35,11 +35,11 @@ namespace API.BLL
             // check if there are any categories recieved from the database
             // if none exist, return 204, no categories were found
             var categories = await _categoryRepository.GetAllCategories();
-            if (categories.Value.Count == 0)
+            if (categories.Count == 0)
                 return GenerateObjectResult(204, "No categories were found.");
 
             // Remape the category to a proper form, for the client
-            List<ForumCategoryDto> categoryList = RemapCategories(categories.Value);
+            List<ForumCategoryDto> categoryList = RemapCategories(categories);
             return categoryList;
         }
         //
@@ -62,7 +62,7 @@ namespace API.BLL
         //
         //
         // Delete a category from the database by name
-        public async Task<ActionResult> DeleteCategory(string categoryName, string username)
+        public async Task<ActionResult<List<ForumCategoryDto>>> DeleteCategory(string categoryName, string username)
         {
             // Check if the request's user has the rights to perform this action
             var rights = await CheckRights(username);
@@ -74,11 +74,11 @@ namespace API.BLL
                 return GenerateObjectResult(204, "The category does not exist");
 
             // If all the checks are valid, delete the category from the database
-            if (await _categoryRepository.DeleteCategory(categoryName))
-                return new OkObjectResult("Deletion successful");
 
-            // Fallback
-            return GenerateObjectResult(500, "Something went wrong");
+            return RemapCategories(await _categoryRepository.DeleteCategory(categoryName));
+
+            // // Fallback
+            // return GenerateObjectResult(500, "Something went wrong");
         }
         //
         //
@@ -141,7 +141,7 @@ namespace API.BLL
 
                 // This is a test to check if the current category has a banner picture.
                 string banner = "";
-                if (category.Banner.Count > 0)
+                if (category.Banner.Count() > 0)
                     banner = category.Banner.LastOrDefault().Url;
 
                 // Remap the sub-categories to something suitable for the client side
