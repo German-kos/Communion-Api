@@ -26,6 +26,19 @@ namespace API.BLL
         }
         // Methods
         //
+        // Get the categories with their sub-categories
+        public async Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories()
+        {
+            // check if there are any categories recieved from the database
+            // if none exist, return 204, no categories were found
+            var categories = await _categoryRepository.GetAllCategories();
+            if (categories.Value.Count == 0)
+                return GenerateObjectResult(204, "No categories were found.");
+
+            // Remape the category to a proper form, for the client
+            List<ForumCategoryDto> categoryList = RemapCategories(categories.Value);
+            return categoryList;
+        }
         // Add a category to the database
         public async Task<ActionResult<ForumCategory>> CreateCategory(CreateCategoryDto categoryForm, string username)
         {
@@ -65,19 +78,7 @@ namespace API.BLL
             return await _categoryRepository.AddSubCategory(subCategoryForm, category);
         }
 
-        // Get the categories with their sub-categories
-        public async Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories()
-        {
-            // check if there are any categories recieved from the database
-            // if none exist, return 204, no categories were found
-            var categories = await _categoryRepository.GetCategoryList();
-            if (categories.Value.Count == 0)
-                return GenerateObjectResult(204, "No categories were found.");
 
-            // Remape the category to a proper form, for the client
-            List<ForumCategoryDto> categoryList = RemapCategories(categories.Value);
-            return categoryList;
-        }
         // Get the threads for the requested sub-category *subject to change. *Not implemented yet.
         public Task<List<ForumThread>> GetThreadsBySubCategoryId(int subCategoryId)
         {

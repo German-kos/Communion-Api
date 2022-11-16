@@ -24,7 +24,7 @@ namespace API.Repositories
             _context = context;
         }
 
-        public async Task<ActionResult<ForumCategory>> AddCategory(CreateCategoryDto categoryForm)
+        public async Task<ActionResult<ForumCategory>> CreateCategory(CreateCategoryDto categoryForm)
         {
             var bannerUploadResult = await _imageService.UploadImageAsync(categoryForm.ImageFile);
 
@@ -57,7 +57,7 @@ namespace API.Repositories
             return Category;
         }
 
-        public async Task<ActionResult<ForumSubCategory>> CreateCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category)
+        public async Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category)
         {
             category.SubCategories.Add(new ForumSubCategory
             {
@@ -75,7 +75,7 @@ namespace API.Repositories
             .FirstOrDefaultAsync(category => category.Name.ToLower() == categoryName.ToLower());
         }
 
-        public async Task<ActionResult<List<ForumCategory>>> GetCategoryList()
+        public async Task<ActionResult<List<ForumCategory>>> GetAllCategories()
         {
             return await _context.Categories
             .Include(c => c.Banner)
