@@ -15,6 +15,7 @@ namespace API.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {
+        //
         private NoContentResult _noContent = new NoContentResult();
 
         // Dependency Injections
@@ -37,14 +38,10 @@ namespace API.Repositories
         public async Task<ActionResult<List<ForumCategory>>> GetAllCategories()
         {
             // Return a list of categories, each category includes it's collection of banners and sub-categories
-            var categories = await _context.Categories
+            return await _context.Categories
             .Include(c => c.Banner)
             .Include(c => c.SubCategories)
             .ToListAsync<ForumCategory>();
-
-            if (categories == null) return _noContent;
-
-            return (List<ForumCategory>)categories;
         }
         //
         //
@@ -85,7 +82,8 @@ namespace API.Repositories
             await SaveAllAsync();
 
             // Return an up to date category list
-            return await GetAllCategories();
+            var categoryList = await GetAllCategories();
+            return categoryList;
         }
         //
         //
@@ -106,7 +104,7 @@ namespace API.Repositories
         //
         //
         // Create a sub-category in an existing category, and add it to the database
-        public async Task<ActionResult<ForumCategory>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category)
+        public async Task<ForumCategory?> CreateSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category)
         {
             // Initializing a new sub-category, add it to the sub-category collection in the requested category,
             // and add it to the database
@@ -117,19 +115,18 @@ namespace API.Repositories
             await SaveAllAsync();
 
             // Return the category with an up to date sub-category list
-            return GetCategoryByName(category.Name).Result.Value;
+
+            return await GetCategoryByName(category.Name);
         }
         //
         //
         // Find a category by name in the database
-        public async Task<ActionResult<ForumCategory>> GetCategoryByName(string categoryName)
+        public async Task<ForumCategory?> GetCategoryByName(string categoryName)
         {
             var category = await _context.Categories
             .Include(c => c.SubCategories)
             .Include(c => c.Banner)
             .FirstOrDefaultAsync(category => category.Name.ToLower() == categoryName.ToLower());
-
-            if (category == null) return _noContent;
 
             return category;
         }

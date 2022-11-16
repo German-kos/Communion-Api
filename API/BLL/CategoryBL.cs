@@ -16,6 +16,8 @@ namespace API.BLL
 {
     public class CategoryBL : ICategoryBL
     {
+        //
+        private NoContentResult _noContent = new NoContentResult();
         // Dependency Injections
         private readonly IUserRepository _userRepository;
         private readonly ICategoryRepository _categoryRepository;
@@ -55,8 +57,10 @@ namespace API.BLL
             if (await _categoryRepository.GetCategoryByName(categoryForm.Name) != null)
                 return GenerateObjectResult(409, "Category already exists.");
 
+            var categoryListResult = await _categoryRepository.CreateCategory(categoryForm);
+            if (categoryListResult.Value == null) return _noContent;
             // If all the checks are valid, add the category to the database, return the category list
-            return RemapCategories(_categoryRepository.CreateCategory(categoryForm).Result.Value);
+            return RemapCategories(categoryListResult.Value);
         }
         //
         //
@@ -88,7 +92,7 @@ namespace API.BLL
 
             // Check whether or not the category exists,
             // if it doesnt, return status code 409, category does not exist
-            var category = _categoryRepository.GetCategoryByName(subCategoryForm.CategoryName).Result.Value;
+            var category = await _categoryRepository.GetCategoryByName(subCategoryForm.CategoryName);
             if (category == null)
                 return GenerateObjectResult(409, "Category does not exist.");
 
@@ -99,7 +103,8 @@ namespace API.BLL
 
             // If all the checks are valid, create a new sub category, add it to the database,
             // and return the updated category with an up to date sub-category list
-            var result = _categoryRepository.CreateSubCategory(subCategoryForm, category).Result.Value;
+            var result = await _categoryRepository.CreateSubCategory(subCategoryForm, category);
+            if (result == null) return _noContent;
             return RemapCategory(result);
         }
         //
@@ -220,7 +225,7 @@ namespace API.BLL
         }
 
         // Look for a sub category in a category by name, and return it
-        private ForumSubCategory CheckForSubCategory(ForumCategory category, string subCategoryName)
+        private ForumSubCategory? CheckForSubCategory(ForumCategory category, string subCategoryName)
         {
             return category.SubCategories.FirstOrDefault(sub => sub.Name.ToLower() == subCategoryName.ToLower());
         }
