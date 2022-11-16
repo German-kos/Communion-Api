@@ -12,7 +12,7 @@ namespace API.Interfaces
     {
         Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories();
         Task<List<ForumThread>> GetThreadsBySubCategoryId(int subCategoryId);
-        Task<ActionResult<ForumCategory>> AddCategory(CreateCategoryDto categoryForm, string username);
+        Task<ActionResult<ForumCategory>> CreateCategory(CreateCategoryDto categoryForm, string username);
         Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm, string username);
     }
 }

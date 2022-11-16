@@ -27,7 +27,7 @@ namespace API.BLL
         // Methods
         //
         // Add a category to the database
-        public async Task<ActionResult<ForumCategory>> AddCategory(CreateCategoryDto categoryForm, string username)
+        public async Task<ActionResult<ForumCategory>> CreateCategory(CreateCategoryDto categoryForm, string username)
         {
             // Check if the request's user has rights to perform this action
             var rights = await CheckRights(username);
@@ -40,7 +40,7 @@ namespace API.BLL
                 return GenerateObjectResult(409, "Category already exists.");
 
             // If all the checks are valid, add the category to the database
-            return await _categoryRepository.AddCategory(categoryForm);
+            return await _categoryRepository.CreateCategory(categoryForm);
         }
 
         // Add a sub-category to an existing category

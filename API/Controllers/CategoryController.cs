@@ -35,7 +35,15 @@ namespace API.Controllers
         // Create a new category
         public async Task<ActionResult<ForumCategory>> CreateCategory([FromForm] CreateCategoryDto categoryForm)
         {
-            return await _categoryBL.AddCategory(categoryForm, User.GetUsername());
+            return await _categoryBL.CreateCategory(categoryForm, User.GetUsername());
+        }
+        //
+        //
+        [Authorize]
+        [HttpDelete("delete-category")]
+        public async Task<ActionResult<ForumCategory>> DeleteCategory(string categoryName)
+        {
+
         }
         //
         //

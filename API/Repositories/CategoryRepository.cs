@@ -57,7 +57,7 @@ namespace API.Repositories
             return Category;
         }
 
-        public async Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category)
+        public async Task<ActionResult<ForumSubCategory>> CreateCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category)
         {
             category.SubCategories.Add(new ForumSubCategory
             {

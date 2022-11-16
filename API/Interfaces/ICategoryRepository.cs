@@ -11,7 +11,7 @@ namespace API.Interfaces
     public interface ICategoryRepository
     {
         Task<bool> SaveAllAsync();
-        Task<ActionResult<ForumCategory>> AddCategory(CreateCategoryDto categoryForm);
+        Task<ActionResult<ForumCategory>> CreateCategory(CreateCategoryDto categoryForm);
         Task<ForumCategory> GetCategoryByName(string categoryName);
         Task<ActionResult<List<ForumCategory>>> GetCategoryList();
         Task<ActionResult<ForumSubCategory>> AddSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category);
