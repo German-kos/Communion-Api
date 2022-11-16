@@ -62,7 +62,7 @@ namespace API.BLL
         //
         //
         // Delete a category from the database by name
-        public async Task<ActionResult<ForumCategory>> DeleteCategory(string categoryName, string username)
+        public async Task<ActionResult> DeleteCategory(string categoryName, string username)
         {
             // Check if the request's user has the rights to perform this action
             var rights = await CheckRights(username);
@@ -74,7 +74,11 @@ namespace API.BLL
                 return GenerateObjectResult(204, "The category does not exist");
 
             // If all the checks are valid, delete the category from the database
-            return await _categoryRepository.DeleteCategory(categoryName);
+            if (await _categoryRepository.DeleteCategory(categoryName))
+                return new OkObjectResult("Deletion successful");
+
+            // Fallback
+            return GenerateObjectResult(500, "Something went wrong");
         }
         //
         //
