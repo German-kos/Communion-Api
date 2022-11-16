@@ -15,6 +15,8 @@ namespace API.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {
+        private NoContentResult _noContent = new NoContentResult();
+
         // Dependency Injections
         private readonly DataContext _context;
         private readonly IImageService _imageService;
@@ -25,55 +27,69 @@ namespace API.Repositories
         }
         //
         //
+        //
+        //
+        //
         // Methods
         //
         //
         // Get the categories from the database
-        public async Task<List<ForumCategory>> GetAllCategories()
+        public async Task<ActionResult<List<ForumCategory>>> GetAllCategories()
         {
-            return await _context.Categories
+            // Return a list of categories, each category includes it's collection of banners and sub-categories
+            var categories = await _context.Categories
             .Include(c => c.Banner)
             .Include(c => c.SubCategories)
             .ToListAsync<ForumCategory>();
+
+            if (categories == null) return _noContent;
+
+            return (List<ForumCategory>)categories;
         }
         //
         //
-        //
-        public async Task<ActionResult<ForumCategory>> CreateCategory(CreateCategoryDto categoryForm)
+        // Create a category and add it to the database
+        public async Task<ActionResult<List<ForumCategory>>> CreateCategory(CreateCategoryDto categoryForm)
         {
+            // Uploading the image to the cloudinary api
             var bannerUploadResult = await _imageService.UploadImageAsync(categoryForm.ImageFile);
 
+            // Check if the upload fails
+            // If it does, return the error
             if (bannerUploadResult.Error != null)
             {
-                var msg = new HttpResponseMessage(HttpStatusCode.BadRequest) { ReasonPhrase = bannerUploadResult.Error.Message };
-                throw new HttpResponseException(msg);
+                var result = new ObjectResult(bannerUploadResult.Error.Message);
+                result.StatusCode = 400;
+                return result;
             }
 
+            // Initializing a ForumImage with the upload result
             var banner = new ForumImage
             {
                 Url = bannerUploadResult.SecureUrl.AbsoluteUri,
                 PublicId = bannerUploadResult.PublicId
             };
 
+            // Initializing a collection for the category's banners
+            // Then add the banner to the collection
             List<ForumImage> bannerCol = new List<ForumImage>();
             bannerCol.Add(banner);
 
-            var Category = new ForumCategory
+            // Creating a new category, and adding it to the database
+            await _context.Categories.AddAsync(new ForumCategory
             {
                 Name = categoryForm.Name,
                 Info = categoryForm.Info,
                 Banner = bannerCol
-            };
+            });
+            await SaveAllAsync();
 
-            await _context.Categories.AddAsync(Category);
-
-            await _context.SaveChangesAsync();
-
-            return Category;
+            // Return an up to date category list
+            return await GetAllCategories();
         }
         //
         //
-        //
+        // Delete the requested category from the database
         public async Task<List<ForumCategory>> DeleteCategory(string categoryName)
         {
             // Find the targeted row in the database
@@ -84,39 +100,47 @@ namespace API.Repositories
             _context.Categories.Remove(removeTarget);
             await SaveAllAsync();
 
-            // return what was deleted
-            return await GetAllCategories();
+            // Return an up to date category list
+            return GetAllCategories().Result.Value;
         }
         //
         //
-        //
-        public async Task<ActionResult<ForumSubCategory>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category)
+        // Create a sub-category in an existing category, and add it to the database
+        public async Task<ActionResult<ForumCategory>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category)
         {
+            // Initializing a new sub-category, add it to the sub-category collection in the requested category,
+            // and add it to the database
             category.SubCategories.Add(new ForumSubCategory
             {
                 Name = subCategoryForm.Name
             });
             await SaveAllAsync();
-            return category.SubCategories
-            .FirstOrDefault(sub => sub.Name.ToLower() == subCategoryForm.Name.ToLower());
-        }
 
-        public async Task<ForumCategory> GetCategoryByName(string categoryName)
+            // Return the category with an up to date sub-category list
+            return GetCategoryByName(category.Name).Result.Value;
+        }
+        //
+        //
+        // Find a category by name in the database
+        public async Task<ActionResult<ForumCategory>> GetCategoryByName(string categoryName)
         {
-            return await _context.Categories
+            var category = await _context.Categories
             .Include(c => c.SubCategories)
+            .Include(c => c.Banner)
             .FirstOrDefaultAsync(category => category.Name.ToLower() == categoryName.ToLower());
+
+            if (category == null) return _noContent;
+
+            return category;
         }
-
-
-
-
-        // Save changes made to the database *async
+        //
+        //
+        //
+        // Save changes made to the database
         public async Task<bool> SaveAllAsync()
         {
             return await _context.SaveChangesAsync() > 0;
         }
-
-
+        //
     }
 }
