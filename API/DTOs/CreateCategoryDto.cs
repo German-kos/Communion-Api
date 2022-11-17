@@ -8,14 +8,8 @@ namespace API.DTOs
 {
     public class CreateCategoryDto
     {
-        public CreateCategoryDto(string name, string info, IFormFile imageFile)
-        {
-            Name = name;
-            Info = info;
-            ImageFile = imageFile;
-        }
-        public string Name { get; set; }
-        public string Info { get; set; }
-        public IFormFile ImageFile { get; set; }
+        public string Name { get; set; } = null!;
+        public string Info { get; set; } = null!;
+        public IFormFile ImageFile { get; set; } = null!;
     }
 }
