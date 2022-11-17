@@ -30,7 +30,7 @@ namespace API.Repositories
         // Methods
         //
         //
-        // Get the categories from the database
+        // Get the categories from the database.
         public async Task<List<ForumCategory>?> GetAllCategories()
         {
             // Return a list of categories, each category includes it's collection of banners and sub-categories
@@ -41,7 +41,7 @@ namespace API.Repositories
         }
         //
         //
-        // Create a category and add it to the database
+        // Create a category and add it to the database.
         public async Task<ActionResult<List<ForumCategory>?>> CreateCategory(CreateCategoryDto categoryForm)
         {
             // Uploading the image to the cloudinary api
@@ -83,7 +83,7 @@ namespace API.Repositories
         }
         //
         //
-        // Delete the requested category from the database
+        // Delete the requested category from the database.
         public async Task<List<ForumCategory>?> DeleteCategory(ForumCategory targetCategory)
         {
             // Remove the targeted row from the database
@@ -92,6 +92,52 @@ namespace API.Repositories
 
             // Return an up to date category list
             return await GetAllCategories();
+        }
+        //
+        //
+        // Update the requested category in the database.
+        public async Task<ActionResult<List<ForumCategory>?>> UpdateCategory(ForumCategory targetCategory, UpdateCategoryDto categoryForm)
+        {
+
+            // Initialize a list to update the category in the database, if needed
+            List<ForumImage> newBanner = new List<ForumImage>();
+
+            // Save PublicId to delete the previous banner, for storage space porouses
+            // If the data update successfully, delete the previous image
+            var previousBannerId = targetCategory.Banner.LastOrDefault()?.PublicId;
+
+            // If the an image file was passed, apply the changes to the banner
+            if (categoryForm.ImageFile != null)
+            {
+                // Initializing a collection for the category's banners
+                var bannerUploadResult = await _imageService.UploadImageAsync(categoryForm.ImageFile);
+
+                // Check if the upload fails
+                // If it does, return the error
+                if (bannerUploadResult.Error != null)
+                {
+                    var result = new ObjectResult(bannerUploadResult.Error.Message);
+                    result.StatusCode = 400;
+                    return result;
+                }
+
+                // Then add the banner to the collection
+                newBanner.Add(new ForumImage
+                {
+                    Url = bannerUploadResult.SecureUrl.AbsoluteUri,
+                    PublicId = bannerUploadResult.PublicId
+                });
+
+                // Apply banner change to the target category
+                targetCategory.Banner = newBanner;
+                _context
+            }
+
+            if (categoryForm.Name != null)
+            {
+
+            }
+
         }
         //
         //

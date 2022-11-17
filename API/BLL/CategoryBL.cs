@@ -79,7 +79,7 @@ namespace API.BLL
             // if it doesnt, return a status code 204, category does not exist
             var category = await _categoryRepository.GetCategoryByName(categoryName);
             if (category == null)
-                return GenerateObjectResult(204, "The category does not exist");
+                return GenerateObjectResult(204, $"{categoryName} does not exist");
 
             // Check if the response bears content
             var categoryList = await _categoryRepository.DeleteCategory(category);
@@ -88,6 +88,28 @@ namespace API.BLL
             // If all the checks are valid, delete the category from the database,
             // and return an up to date category list
             return RemapCategories(categoryList);
+        }
+        //
+        //
+        //
+        public async Task<ActionResult<List<ForumCategoryDto>>> UpdateCategory(UpdateCategoryDto categoryForm, string username)
+        {
+            // Check requestor for admin rights
+            var rights = await CheckRights(username);
+            if (!rights.Value && rights.Result != null) return rights.Result;
+
+            // Check if the modification field are empty, if they are there's nothing to change.
+            // return 304, no changes were submitted
+            if (categoryForm.Name == null && categoryForm.Info == null && categoryForm.ImageFile == null)
+                return GenerateObjectResult(304, "No changes were submitted");
+
+            //  Check whether or not the category that's target to change exists,
+            // if it doesnt, return a status code 204, category does not exist
+            var category = await _categoryRepository.GetCategoryByName(categoryForm.CategoryToChange);
+            if (category == null)
+                return GenerateObjectResult(204, $"{categoryForm.CategoryToChange} does not exist");
+
+            var categoryList = await _categoryRepository.UpdateCategory(category, categoryForm);
         }
         //
         //
