@@ -7,7 +7,7 @@ namespace API.DTOs
 {
     public class AutoSignInDto
     {
-        public string Username { get; set; }
+        public string Username { get; set; } = null!;
         public bool Remember { get; set; }
     }
 }
