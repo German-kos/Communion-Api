@@ -98,6 +98,10 @@ namespace API.Repositories
         // Update the requested category in the database.
         public async Task<ActionResult<List<ForumCategory>?>> UpdateCategory(ForumCategory targetCategory, UpdateCategoryDto categoryForm)
         {
+            var entry = _context.Entry(targetCategory);
+
+            // Begin tracking the targeted category
+            _context.Categories.Attach(targetCategory);
 
             // Initialize a list to update the category in the database, if needed
             List<ForumImage> newBanner = new List<ForumImage>();
@@ -106,7 +110,7 @@ namespace API.Repositories
             // If the data update successfully, delete the previous image
             var previousBannerId = targetCategory.Banner.LastOrDefault()?.PublicId;
 
-            // If the an image file was passed, apply the changes to the banner
+            // If an image file was passed, update the category's banner
             if (categoryForm.ImageFile != null)
             {
                 // Initializing a collection for the category's banners
@@ -130,13 +134,36 @@ namespace API.Repositories
 
                 // Apply banner change to the target category
                 targetCategory.Banner = newBanner;
-                _context
+
+                // Note modification
+                entry.Property(c => c.Banner).IsModified = true;
             }
 
+            // If a name was passed, update the category's name
             if (categoryForm.Name != null)
             {
+                // Changing the name
+                targetCategory.Name = categoryForm.Name;
 
+                // Note modification
+                entry.Property(c => c.Name).IsModified = true;
             }
+
+            // If info was passed, update the category's info
+            if (categoryForm.Info != null)
+            {
+                // Changing the info
+                targetCategory.Info = categoryForm.Info;
+
+                // Note modification
+                entry.Property(c => c.Info).IsModified = true;
+            }
+
+            // If the save was successful, use the public id saved prior to remove the previous banner from the cloudinary storage
+            if (await SaveAllAsync() && previousBannerId != null)
+                await _imageService.DeleteImageAsync(previousBannerId);
+
+            return await GetAllCategories();
 
         }
         //
@@ -177,5 +204,8 @@ namespace API.Repositories
             return await _context.SaveChangesAsync() > 0;
         }
         //
+        //
+        //
+
     }
 }

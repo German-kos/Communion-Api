@@ -59,12 +59,9 @@ namespace API.BLL
             if (await _categoryRepository.GetCategoryByName(categoryForm.Name) != null)
                 return GenerateObjectResult(409, "Category already exists.");
 
-            // Check if the response bears content
-            var categoryListResult = await _categoryRepository.CreateCategory(categoryForm);
-            if (categoryListResult.Value == null) return _noContent;
-
-            // If all the checks are valid, add the category to the database, return the category list
-            return RemapCategories(categoryListResult.Value);
+            // If all the checks are valid, create a new category in the database, 
+            // process the response and return it
+            return CheckReturnedActionResult(await _categoryRepository.CreateCategory(categoryForm));
         }
         //
         //
@@ -81,13 +78,9 @@ namespace API.BLL
             if (category == null)
                 return GenerateObjectResult(204, $"{categoryName} does not exist");
 
-            // Check if the response bears content
-            var categoryList = await _categoryRepository.DeleteCategory(category);
-            if (categoryList == null || categoryList.Count() == 0) return _noContent;
-
             // If all the checks are valid, delete the category from the database,
-            // and return an up to date category list
-            return RemapCategories(categoryList);
+            // process the returned value, and return it
+            return CheckReturnedList(await _categoryRepository.DeleteCategory(category));
         }
         //
         //
@@ -109,7 +102,8 @@ namespace API.BLL
             if (category == null)
                 return GenerateObjectResult(204, $"{categoryForm.CategoryToChange} does not exist");
 
-            var categoryList = await _categoryRepository.UpdateCategory(category, categoryForm);
+            // Update the database, process the returned value, and return it
+            return CheckReturnedActionResult(await _categoryRepository.UpdateCategory(category, categoryForm));
         }
         //
         //
@@ -272,6 +266,29 @@ namespace API.BLL
             return category.SubCategories.FirstOrDefault(sub => sub.Name.ToLower() == subCategoryName.ToLower());
         }
 
+        private ActionResult<List<ForumCategoryDto>> CheckReturnedList(List<ForumCategory>? dbCategoryList)
+        {
+            if (dbCategoryList == null || dbCategoryList.Count == 0)
+                return _noContent;
+            return RemapCategories(dbCategoryList);
+        }
 
+        private ActionResult<List<ForumCategoryDto>> CheckReturnedActionResult(ActionResult<List<ForumCategory>?> dbResponse)
+        {
+            // If recieved an unexpected null action result, return status code error
+            if (dbResponse == null)
+                return GenerateObjectResult(500, "Something went wrong");
+
+            // Check for an action result
+            if (dbResponse.Result != null)
+                return dbResponse.Result;
+
+            // Check for content in the returned value
+            if (dbResponse.Value != null && dbResponse.Value.Count < 0)
+                return CheckReturnedList(dbResponse.Value);
+
+            //  If both fields are empty return no content status code
+            return _noContent;
+        }
     }
 }
