@@ -94,16 +94,24 @@ namespace API.BLL
             // Check if the modification field are empty, if they are there's nothing to change.
             // return 304, no changes were submitted
             if (categoryForm.Name == null && categoryForm.Info == null && categoryForm.ImageFile == null)
-                return GenerateObjectResult(304, "No changes were submitted");
+                return GenerateObjectResult(304, "No changes were submitted.");
 
             //  Check whether or not the category that's target to change exists,
-            // if it doesnt, return a status code 204, category does not exist
+            // if it doesnt, return a status code 404, category does not exist
             var category = await _categoryRepository.GetCategoryByName(categoryForm.CategoryToChange);
             if (category == null)
-                return GenerateObjectResult(204, $"{categoryForm.CategoryToChange} does not exist");
+                return GenerateObjectResult(404, $"{categoryForm.CategoryToChange} does not exist.");
+
+            // Check whether or not the chosen name is already in use. 
+            // If it is, return 309
+            if (categoryForm.Name != null && await _categoryRepository.CategoryExists(categoryForm.Name))
+                return GenerateObjectResult(309, "The chosen category name is already in use.");
+
+            var cat = await _categoryRepository.UpdateCategory(category, categoryForm);
+            // return RemapCategories(cat.Value);
 
             // Update the database, process the returned value, and return it
-            return CheckReturnedActionResult(await _categoryRepository.UpdateCategory(category, categoryForm));
+            return CheckReturnedActionResult(cat);
         }
         //
         //
@@ -284,7 +292,7 @@ namespace API.BLL
                 return dbResponse.Result;
 
             // Check for content in the returned value
-            if (dbResponse.Value != null && dbResponse.Value.Count < 0)
+            if (dbResponse.Value != null && dbResponse.Value.Count > 0)
                 return CheckReturnedList(dbResponse.Value);
 
             //  If both fields are empty return no content status code

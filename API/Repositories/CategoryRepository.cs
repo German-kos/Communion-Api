@@ -98,9 +98,10 @@ namespace API.Repositories
         // Update the requested category in the database.
         public async Task<ActionResult<List<ForumCategory>?>> UpdateCategory(ForumCategory targetCategory, UpdateCategoryDto categoryForm)
         {
-            var entry = _context.Entry(targetCategory);
+            // var targetCategory = await GetCategoryByName(categoryForm.CategoryToChange);
+            // if (targetCategory == null)
+            //     return new NotFoundObjectResult("not found");
 
-            // Begin tracking the targeted category
             _context.Categories.Attach(targetCategory);
 
             // Initialize a list to update the category in the database, if needed
@@ -136,7 +137,7 @@ namespace API.Repositories
                 targetCategory.Banner = newBanner;
 
                 // Note modification
-                entry.Property(c => c.Banner).IsModified = true;
+                _context.Entry(targetCategory).Collection(c => c.Banner).IsModified = true;
             }
 
             // If a name was passed, update the category's name
@@ -146,7 +147,7 @@ namespace API.Repositories
                 targetCategory.Name = categoryForm.Name;
 
                 // Note modification
-                entry.Property(c => c.Name).IsModified = true;
+                _context.Entry(targetCategory).Property(c => c.Name).IsModified = true;
             }
 
             // If info was passed, update the category's info
@@ -156,7 +157,7 @@ namespace API.Repositories
                 targetCategory.Info = categoryForm.Info;
 
                 // Note modification
-                entry.Property(c => c.Info).IsModified = true;
+                _context.Entry(targetCategory).Property(c => c.Info).IsModified = true;
             }
 
             // If the save was successful, use the public id saved prior to remove the previous banner from the cloudinary storage
@@ -196,6 +197,12 @@ namespace API.Repositories
             return category;
         }
         //
+        //
+        // Check if a category exists already
+        public Task<bool> CategoryExists(string categoryName)
+        {
+            return _context.Categories.AnyAsync(c => c.Name.ToLower() == categoryName.ToLower());
+        }
         //
         //
         // Save changes made to the database
