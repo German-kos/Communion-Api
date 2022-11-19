@@ -17,10 +17,7 @@ namespace API.BLL
 {
     public class CategoryBL : ICategoryBL
     {
-        //
-        //
-        //
-        private NoContentResult _noContent = new NoContentResult();
+
         // Dependency Injections
         private readonly IUserRepository _userRepository;
         private readonly ICategoryRepository _categoryRepository;
@@ -34,7 +31,6 @@ namespace API.BLL
         // Methods
         //
         //
-        // Get a category list from the database and return it.
         public async Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories()
         {
             // check if there are any categories recieved from the database
@@ -125,7 +121,7 @@ namespace API.BLL
                     return RemapCategory(updateResult.Value);
             }
             // if there was a problem with the processing of the result, return no content
-            return _noContent;
+            return NoContent(); ;
         }
         //
         //
@@ -173,7 +169,7 @@ namespace API.BLL
 
             // Check if the response bears content
             var result = await _categoryRepository.CreateSubCategory(subCategoryForm, category);
-            if (result == null) return _noContent;
+            if (result == null) return NoContent(); ;
 
             // If all the checks are valid, create a new sub category, add it to the database,
             // and return the updated category with an up to date sub-category list
@@ -200,7 +196,7 @@ namespace API.BLL
             var deletionResult = await _categoryRepository.DeleteSubCategory(deleteSubCatForm);
             if (deletionResult != null) return RemapSubCategories(deletionResult);
 
-            return _noContent;
+            return NoContent(); ;
         }
         //
         //
@@ -375,7 +371,7 @@ namespace API.BLL
         private ActionResult<List<ForumCategoryDto>> CheckReturnedList(List<ForumCategory>? dbCategoryList)
         {
             if (dbCategoryList == null || dbCategoryList.Count == 0)
-                return _noContent;
+                return NoContent(); ;
             return RemapCategories(dbCategoryList);
         }
         //
