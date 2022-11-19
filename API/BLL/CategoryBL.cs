@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using System.Web.Http;
-using api.Models;
 using API.DTOs;
+using API.Helpers;
 using API.Interfaces;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
-using static API.Helpers.HttpResult;
+using static API.Helpers.HttpResponse;
+
 
 
 
@@ -17,12 +12,14 @@ namespace API.BLL
 {
     public class CategoryBL : ICategoryBL
     {
+        private readonly Validations _validate;
 
         // Dependency Injections
         private readonly IUserRepository _userRepository;
         private readonly ICategoryRepository _categoryRepository;
-        public CategoryBL(IUserRepository userRepository, ICategoryRepository categoryRepository)
+        public CategoryBL(IUserRepository userRepository, ICategoryRepository categoryRepository, Validations validate)
         {
+            _validate = validate;
             _categoryRepository = categoryRepository;
             _userRepository = userRepository;
         }
@@ -35,30 +32,35 @@ namespace API.BLL
         {
             // check if there are any categories recieved from the database
             // if none exist, return 204, no categories were found
-            var categories = await _categoryRepository.GetAllCategories();
-            if (categories == null || categories.Count == 0)
+            var result = await _categoryRepository.GetAllCategories();
+            if (result == null || result.Count == 0)
                 return NoContent();
 
-            // Remap the category list to a proper Dto and return it
-            return RemapCategories(categories);
+
+            return RemapCategories(result);
         }
         //
         //
         // Create a new category, add it to the database, and return an up to date category list.
-        public async Task<ActionResult<List<ForumCategoryDto>>> CreateCategory(CreateCategoryDto categoryForm, string username)
+        public async Task<ActionResult<List<ForumCategoryDto>>> CreateCategory(CreateCategoryDto createCategory, string username)
         {
+
             // Check requestor for admin rights
             var rights = await CheckRights(username);
             if (!rights.Value && rights.Result != null) return rights.Result;
 
+            if (await _validate.NotAdmin(username))
+                return Unauthorized();
+
             // Check whether or not the category exists, 
             // if it already exists, return 'already exists'
-            if (await CategoryExists(categoryForm.Name))
-                return AlreadyExistsResult(categoryForm.Name);
-
+            if (await CategoryExists(createCategory.Name))
+                return AlreadyExistsResult(createCategory.Name);
             // If all the checks are valid, create a new category in the database, 
             // process the response and return it
-            return CheckReturnedActionResult(await _categoryRepository.CreateCategory(categoryForm));
+            return CheckReturnedActionResult(await _categoryRepository.CreateCategory(createCategory));
+
+
         }
         //
         //
@@ -78,6 +80,7 @@ namespace API.BLL
             // If all the checks are valid, delete the category from the database,
             // process the returned value, and return it
             return CheckReturnedList(await _categoryRepository.DeleteCategory(category));
+
         }
         //
         //

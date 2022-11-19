@@ -10,17 +10,14 @@ namespace API.Helpers
     /// <summary>
     /// A helper class for creating HTTP responses
     /// </summary>
-    public static class HttpResult
+    public static class HttpResponse
     {
-        //
-        //
-        /// This method generates a result of the invoker's choice.
-        /// pass a number for the, and a string for the message
-
-
         /// <summary>
-        /// This method generates a 
+        /// Generates any HTTP Response with recieved status code and message.
         /// </summary>
+        /// <param name="statusCode"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public static ObjectResult GenerateResponse(int statusCode, string? message)
         {
             ObjectResult result = new ObjectResult(message);
@@ -28,6 +25,11 @@ namespace API.Helpers
             return result;
         }
         // Overload for just GenerateResult with just the status code
+        /// <summary>
+        /// Generates any HTTP Response with recieved status code and no message.
+        /// </summary>
+        /// <param name="statusCode">The HTTP Response status code.</param>
+        /// <returns>The generated HTTP Response.</returns>
         public static ObjectResult GenerateResponse(int statusCode)
         {
             return GenerateResponse(statusCode, null);
@@ -62,6 +64,11 @@ namespace API.Helpers
         public static ObjectResult InternalError()
         {
             return GenerateResponse(500, "Something went wrong.");
+        }
+
+        public static ObjectResult Unauthorized()
+        {
+            return GenerateResponse(401, "No permission to execute this action.");
         }
     }
 }

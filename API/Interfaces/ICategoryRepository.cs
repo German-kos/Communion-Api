@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Interfaces
 {
+    /// <summary>
+    /// The Data Access Layer for the categories.
+    /// </summary>
     public interface ICategoryRepository
     {
         Task<List<ForumCategory>?> GetAllCategories();
