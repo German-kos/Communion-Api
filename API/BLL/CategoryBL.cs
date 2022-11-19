@@ -132,11 +132,15 @@ namespace API.BLL
         // and return the category with an up to date sub-category list.
         public async Task<ActionResult<ForumCategoryDto>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, string username)
         {
+            //********************************************************************************
             // rewrite the "does exist" query logic
-
-            // categoryBL methods shouldnt hold data for testing until it's the final result, rewrite it
-
-
+            //********************************************************************************
+            // categoryBL methods shouldnt hold data for testing until it's the final result,
+            // rewrite it
+            //********************************************************************************
+            // also make a class / service / whatever it should be for the ObjectResults 
+            // and the validations
+            //********************************************************************************
 
             // Check requestor for admin rights
             var rights = await CheckRights(username);
