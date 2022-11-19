@@ -134,7 +134,7 @@ namespace API.BLL
         {
             // rewrite the "does exist" query logic
 
-
+            // categoryBL methods shouldnt hold data for testing until it's the final result, rewrite it
 
 
 
