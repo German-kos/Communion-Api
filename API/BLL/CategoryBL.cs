@@ -84,7 +84,7 @@ namespace API.BLL
         }
         //
         //
-        //
+        // Choose a category by it's name, and update it's fields. return the updated category
         public async Task<ActionResult<ForumCategoryDto>> UpdateCategory(UpdateCategoryDto categoryForm, string username)
         {
             // Check requestor for admin rights

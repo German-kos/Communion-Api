@@ -164,9 +164,8 @@ namespace API.Repositories
             if (await SaveAllAsync() && previousBannerId != null)
                 await _imageService.DeleteImageAsync(previousBannerId);
 
+            // Return the category after the changes made to it
             return targetCategory;
-            // return await GetAllCategories();
-
         }
         //
         //
@@ -182,7 +181,6 @@ namespace API.Repositories
             await SaveAllAsync();
 
             // Return the category with an up to date sub-category list
-
             return await GetCategoryByName(category.Name);
         }
         //
