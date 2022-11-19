@@ -96,12 +96,13 @@ namespace API.Repositories
         //
         //
         // Update the requested category in the database.
-        public async Task<ActionResult<ForumCategory>?> UpdateCategory(ForumCategory targetCategory, UpdateCategoryDto categoryForm)
+        public async Task<ActionResult<ForumCategory>> UpdateCategory(ForumCategory targetCategory, UpdateCategoryDto categoryForm)
         {
             // var targetCategory = await GetCategoryByName(categoryForm.CategoryToChange);
             // if (targetCategory == null)
             //     return new NotFoundObjectResult("not found");
 
+            // Track the entity
             _context.Categories.Attach(targetCategory);
 
             // Initialize a list to update the category in the database, if needed
@@ -199,8 +200,37 @@ namespace API.Repositories
 
             await SaveAllAsync();
 
-            // Return the remaining 
+            // Return the remaining sub-categories
             return category.SubCategories.ToList<ForumSubCategory>();
+        }
+        //
+        //
+        // Update the requested sub-category in the database
+        public async Task<ForumSubCategory> UpdateSub(UpdateSubDto updateSub)
+        {
+            // Deconstructing the recieved form
+            var (categoryName, subName, newSubName) = updateSub;
+
+            // Find the sub category in the database
+            var category = await _context.Categories
+            .Include(c => c.SubCategories)
+            .FirstAsync(c => c.Name.ToLower() == categoryName.ToLower());
+
+            var sub = category.SubCategories.First(s => s.Name.ToLower() == subName);
+
+            // Track the entity
+            _context.Attach(sub);
+
+            // Apply changes
+            sub.Name = newSubName;
+
+            // Note modification
+            _context.Entry(sub).Property(s => s.Name).IsModified = true;
+
+            await SaveAllAsync();
+
+            // return the modified sub-category
+            return sub;
         }
         //
         //

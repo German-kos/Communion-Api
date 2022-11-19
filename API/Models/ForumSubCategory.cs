@@ -10,9 +10,16 @@ namespace API.Models
     {
         [Key]
         public int Id { get; set; }
-        public ForumCategory Category { get; set; }
+        public ForumCategory Category { get; set; } = null!;
         public int CategoryId { get; set; }
-        public string Name { get; set; }
-        public ICollection<ForumThread> Threads { get; set; }
+        public string Name { get; set; } = null!;
+        public ICollection<ForumThread>? Threads { get; set; }
+
+        internal void Deconstruct(out int id, out int categoryId, out string name)
+        {
+            id = Id;
+            categoryId = CategoryId;
+            name = Name;
+        }
     }
 }

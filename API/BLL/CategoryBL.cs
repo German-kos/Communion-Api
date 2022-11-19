@@ -141,7 +141,20 @@ namespace API.BLL
             // also make a class / service / whatever it should be for the ObjectResults 
             // and the validations
             //********************************************************************************
+            // Also rewrite the queries + dtos so the querying itself would be done by ID 
+            // rather than names
+            //********************************************************************************
+            //
+            //
+            //
+            //
+            //
+            //
+            //
+            //
 
+            //
+            //
             // Check requestor for admin rights
             var rights = await CheckRights(username);
             if (!rights.Value && rights.Result != null) return rights.Result;
@@ -187,6 +200,30 @@ namespace API.BLL
             if (deletionResult != null) return RemapSubCategories(deletionResult);
 
             return _noContent;
+        }
+        //
+        //
+        //
+        public async Task<ActionResult<ForumSubCategoryDto>> UpdateSub(UpdateSubDto updateSub, string username)
+        {
+            // Deconstructing the recieved form
+            var (categoryName, subName, newSubName) = updateSub;
+
+            // Check requestor for admin rights
+            var rights = await CheckRights(username);
+            if (!rights.Value && rights.Result != null) return rights.Result;
+
+            // Check if the category exists
+            if (!await CategoryExists(categoryName))
+                return DoesntExistResult(categoryName);
+
+            // Check if the sub-category exists
+            if (!await SubCategoryExists(categoryName, subName))
+                return DoesntExistResult(subName, categoryName);
+
+            // If all validations pass, request an update, remap the the updated sub to a suitable Dto
+            // and return it
+            return RemapSubCategory(await _categoryRepository.UpdateSub(updateSub));
         }
         //
         //
@@ -272,6 +309,20 @@ namespace API.BLL
 
             // return the ready category list, of ForumCategoryDto type
             return listOfCategories;
+        }
+        //
+        //
+        // This method recieves a sub-category from the database, remaps it to a proper Dto,
+        // and returns the result
+        private ForumSubCategoryDto RemapSubCategory(ForumSubCategory sub)
+        {
+            var (id, categoryId, name) = sub;
+            return new ForumSubCategoryDto
+            {
+                Id = id,
+                CategoryId = categoryId,
+                Name = name
+            };
         }
         //
         //

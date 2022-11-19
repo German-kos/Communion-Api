@@ -85,5 +85,12 @@ namespace API.Controllers
             return await _categoryBL.DeleteSubCategory(deleteSubCatForm, User.GetUsername());
         }
         //
+        [Authorize] // Role of an admin is required
+        [HttpPatch("edit-sub-category")] // [PATCH] api/catagory/edit-sub-category
+        public async Task<ActionResult<ForumSubCategoryDto>> UpdateSub([FromForm] UpdateSubDto updateSub)
+        {
+            // Update a category by name, return the updated category.
+            return await _categoryBL.UpdateSub(updateSub, User.GetUsername());
+        }
     }
 }
