@@ -10,6 +10,7 @@ using API.Interfaces;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static API.Helpers.HttpResponse;
 
 namespace API.Repositories
 {
@@ -30,7 +31,6 @@ namespace API.Repositories
         // Methods
         //
         //
-        // Get the categories from the database.
         public async Task<List<ForumCategory>?> GetAllCategories()
         {
             // Return a list of categories, each category includes it's collection of banners and sub-categories
@@ -42,7 +42,7 @@ namespace API.Repositories
         //
         //
         // Create a category and add it to the database.
-        public async Task<ActionResult<List<ForumCategory>?>> CreateCategory(CreateCategoryDto categoryForm)
+        public async Task<ActionResult<ForumCategory>?> CreateCategory(CreateCategoryDto categoryForm)
         {
             // Uploading the image to the cloudinary api
             var bannerUploadResult = await _imageService.UploadImageAsync(categoryForm.ImageFile);
@@ -50,11 +50,7 @@ namespace API.Repositories
             // Check if the upload fails
             // If it does, return the error
             if (bannerUploadResult.Error != null)
-            {
-                var result = new ObjectResult(bannerUploadResult.Error.Message);
-                result.StatusCode = 400;
-                return result;
-            }
+                return GenerateResponse(400, bannerUploadResult.Error.Message);
 
             // Initializing a ForumImage with the upload result
             var banner = new ForumImage
@@ -69,7 +65,7 @@ namespace API.Repositories
             bannerCol.Add(banner);
 
             // Creating a new category, and adding it to the database
-            await _context.Categories.AddAsync(new ForumCategory
+            var creationResult = await _context.Categories.AddAsync(new ForumCategory
             {
                 Name = categoryForm.Name,
                 Info = categoryForm.Info,
@@ -79,7 +75,7 @@ namespace API.Repositories
 
             // Return an up to date category list
             var categoryList = await GetAllCategories();
-            return categoryList;
+            return creationResult.Entity;
         }
         //
         //
@@ -249,7 +245,8 @@ namespace API.Repositories
         // Check if a category exists
         public Task<bool> CategoryExists(string categoryName)
         {
-            return _context.Categories.AnyAsync(c => c.Name.ToLower() == categoryName.ToLower());
+            return _context.Categories
+            .AnyAsync(c => c.Name.ToLower() == categoryName.ToLower());
         }
         //
         //

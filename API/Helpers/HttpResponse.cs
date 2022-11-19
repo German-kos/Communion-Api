@@ -13,62 +13,103 @@ namespace API.Helpers
     public static class HttpResponse
     {
         /// <summary>
-        /// Generates any HTTP Response with recieved status code and message.
+        /// Generates any HTTP Response with recieved status code and message.<br/>-----
         /// </summary>
-        /// <param name="statusCode"></param>
-        /// <param name="message"></param>
-        /// <returns></returns>
+        /// <param name="statusCode">The HTTP Response status code.</param>
+        /// <param name="message">The message that would be attached.</param>
+        /// <returns>The generated [HTTP Response].</returns>
         public static ObjectResult GenerateResponse(int statusCode, string? message)
         {
             ObjectResult result = new ObjectResult(message);
             result.StatusCode = statusCode;
             return result;
         }
-        // Overload for just GenerateResult with just the status code
+
+
         /// <summary>
-        /// Generates any HTTP Response with recieved status code and no message.
+        /// Generates any HTTP Response with recieved status code and no message.<br/>-----
         /// </summary>
         /// <param name="statusCode">The HTTP Response status code.</param>
-        /// <returns>The generated HTTP Response.</returns>
+        /// <returns>The generated [HTTP Response].</returns>
         public static ObjectResult GenerateResponse(int statusCode)
         {
             return GenerateResponse(statusCode, null);
         }
-        //
-        //
-        // Generate result of '<x> does not exist'
-        public static ObjectResult DoesNotExist(string name)
-        {
-            return GenerateResponse(409, $"\"{name}\" does not exist.");
-        }
-        // generate result of '<x> does not exist in <y>'
-        public static ObjectResult DoesNotExist(string name, string insideOf)
-        {
-            return GenerateResponse(409, $"\"{name}\" does not exist in \"{insideOf}\".");
-        }
-        //
-        //
+
+
         /// <summary>
-        /// Generate a status code 204 - no content.
+        /// Generate a  ` 409 - <paramref name="name"/> does not exist.` HTTP Response.<br/>-----
         /// </summary>
-        /// <returns> 204 - No Content. </returns>
+        /// <param name="item">The name of the item to display at the beginning.</param>
+        /// <returns>[HTTP Response] 409 - <paramref name="name"/> does not exist.</returns>
+        public static ObjectResult DoesNotExist(string item)
+        {
+            return GenerateResponse(409, $"\"{item}\" does not exist.");
+        }
+
+
+        /// <summary>
+        /// Generate a ` 409 - <paramref name="name"/> does not exist in <paramref name="insideOf"/>.` HTTP Response.<br/>-----
+        /// </summary>
+        /// <param name="item1">The name of the item to display at the beginning.</param>
+        /// <param name="item2">The name of the item that does not contain the first item.</param>
+        /// <returns>[HTTP Response] 409 - <paramref name="name"/> does not exist in <paramref name="insideOf"/>.</returns>
+        public static ObjectResult DoesNotExist(string item1, string item2)
+        {
+            return GenerateResponse(409, $"\"{item1}\" does not exist in \"{item2}\".");
+        }
+
+
+        /// <summary>
+        /// Generate a ` 204 - No Content.` HTTP Response.<br/>-----
+        /// </summary>
+        /// <returns>[HTTP Response] 204 - No Content.</returns>
         public static ObjectResult NoContent()
         {
             return GenerateResponse(204, null);
         }
 
+
         /// <summary>
-        /// Generate a status code 500 - generic error response.
+        /// Generate ` 500 - generic error response.` HTTP Response.<br/>-----
         /// </summary>
-        /// <returns> 500 - Something went wrong. </returns>
+        /// <returns>[HTTP Response] 500 - Something went wrong. </returns>
         public static ObjectResult InternalError()
         {
             return GenerateResponse(500, "Something went wrong.");
         }
 
+
+        /// <summary>
+        /// Generate ` 401 - No permissions to execute this action.` HTTP Response.<br/>-----
+        /// </summary>
+        /// <returns>[HTTP Response] 401 - No permissions to execute this action.</returns>
         public static ObjectResult Unauthorized()
         {
             return GenerateResponse(401, "No permission to execute this action.");
+        }
+
+
+        /// <summary>
+        /// Generate ` 409 - <paramref name="item"/> already exists.` HTTP Response. <br/>-----
+        /// </summary>
+        /// <param name="item">The name of the item to display at the beginning.</param>
+        /// <returns>[HTTP Response] 409 - <paramref name="item"/> already exists.</returns>
+        public static ObjectResult AlreadyExists(string item)
+        {
+            return GenerateResponse(409, $"\"{item}\" already exists.");
+        }
+
+
+        /// <summary>
+        /// Generate ` 409 - <paramref name="item1"/> already exists in <paramref name="item2"/>.` HTTP Response. <br/>-----
+        /// </summary>
+        /// <param name="item1">The name of the item to display at the beginning.</param>
+        /// <param name="item2">The name of the item that contains the first item.</param>
+        /// <returns>[HTTP Response] 409 - <paramref name="item1"/> already exists in <paramref name="item2"/>.</returns>
+        public static ObjectResult AlreadyExists(string item1, string item2)
+        {
+            return GenerateResponse(409, $"\"{item1}\" already exists in \"{item2}\".");
         }
     }
 }

@@ -12,9 +12,8 @@ namespace API.BLL
 {
     public class CategoryBL : ICategoryBL
     {
-        private readonly Validations _validate;
-
         // Dependency Injections
+        private readonly Validations _validate;
         private readonly IUserRepository _userRepository;
         private readonly ICategoryRepository _categoryRepository;
         public CategoryBL(IUserRepository userRepository, ICategoryRepository categoryRepository, Validations validate)
@@ -24,41 +23,34 @@ namespace API.BLL
             _userRepository = userRepository;
         }
         //
+        // Methods:
         //
-        // Methods
-        //
-        //
+
+
         public async Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories()
         {
-            // check if there are any categories recieved from the database
-            // if none exist, return 204, no categories were found
             var result = await _categoryRepository.GetAllCategories();
-            if (result == null || result.Count == 0)
-                return NoContent();
+            if (result != null && result.Count > 0)
+                return RemapCategories(result);
 
-
-            return RemapCategories(result);
+            return NoContent();
         }
-        //
-        //
-        // Create a new category, add it to the database, and return an up to date category list.
-        public async Task<ActionResult<List<ForumCategoryDto>>> CreateCategory(CreateCategoryDto createCategory, string username)
+
+
+        public async Task<ActionResult<ForumCategoryDto>> CreateCategory(CreateCategoryDto createCategory, string username)
         {
+            string categoryName = createCategory.Name;
 
-            // Check requestor for admin rights
-            var rights = await CheckRights(username);
-            if (!rights.Value && rights.Result != null) return rights.Result;
-
+            // Check authorization
             if (await _validate.NotAdmin(username))
                 return Unauthorized();
 
-            // Check whether or not the category exists, 
-            // if it already exists, return 'already exists'
-            if (await CategoryExists(createCategory.Name))
-                return AlreadyExistsResult(createCategory.Name);
-            // If all the checks are valid, create a new category in the database, 
-            // process the response and return it
-            return CheckReturnedActionResult(await _categoryRepository.CreateCategory(createCategory));
+            // Check if category exists already
+            if (await CategoryExists(categoryName))
+                return AlreadyExists(categoryName);
+
+            var creationResult = await _categoryRepository.CreateCategory(createCategory);
+            return ProcessResult(creationResult);
 
 
         }
@@ -426,9 +418,18 @@ namespace API.BLL
         {
             return GenerateObjectResult(409, $"\"{name}\" already exists in \"{insideOf}\".");
         }
-        //
-        //
-        // This method is just to shorten the 'CategoryExists' query from the category repository
+
+
+        /// <summary>
+        /// Request the category repository to query the database<br/>
+        ///  for the existence of a category named <paramref name="categoryName"/>. <br/>-----
+        /// </summary>
+        /// <param name="categoryName">The name of the category to check for it's existence.</param>
+        /// <returns>
+        /// True - category exists. <br/>
+        /// - or - <br/>
+        /// False - category does not exist.
+        /// </returns>
         private async Task<bool> CategoryExists(string categoryName)
         {
             return await _categoryRepository.CategoryExists(categoryName);
@@ -441,5 +442,82 @@ namespace API.BLL
             return await _categoryRepository.SubCategoryExists(categoryName, subCategoryName);
         }
         //
+
+        //---------------------------------------------------------//
+        //---------------------------------------------------------//
+        //----------------new and improved methods ----------------//
+        //---------------------------------------------------------//
+        //---------------------------------------------------------//
+
+
+        /// <summary>
+        /// This function recieves an <paramref name="ActionResult"/> <paramref name="ForumCategory"/> ,<br/>
+        /// and dermines whether to return a HTTP Response, remapped category, or an internal error.<br/>-----
+        /// </summary>
+        /// <param name="result">The <paramref name="ActionResult"/> <paramref name="ForumCategory"/> to process.</param>
+        /// <returns><paramref name="HTTP Response"/> from the Data Access Layer<br/>
+        /// - or -<br/>
+        /// <paramref name="ForumCategoryDto"/> A remapped category<br/>
+        /// - or -<br/>
+        /// <paramref name="InternalError"/> 500 - Internal Error</returns>
+        private ActionResult<ForumCategoryDto> ProcessResult(ActionResult<ForumCategory> result)
+        {
+            // Check for an HTTP Response
+            if (result.Result != null)
+                return result.Result;
+
+            // Check for content in the returned value
+            if (result.Value != null)
+                return CategoryMapper(result.Value);
+
+            // Return an internal error if both checks fail
+            return InternalError();
+        }
+
+        private ForumCategoryDto CategoryMapper(ForumCategory category)
+        {
+            // Remap the sub-categories to a suitable Dto
+
+            var subCategoriesRemap = RemapSubCategories(category.SubCategories?.ToList<ForumSubCategory>());
+
+            return new ForumCategoryDto
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Info = category.Info,
+                Banner = GetBannerUrl(category),
+                SubCategories = RemapSubCategories(category.SubCategories?.ToList<ForumSubCategory>())
+            };
+        }
+
+        private List<ForumSubCategoryDto> SubCategoryMapper(List<ForumSubCategory> subCategories)
+        {
+            if (subCategories == null || subCategories.Count == 0)
+                return new List<ForumSubCategoryDto>(){
+                new ForumSubCategoryDto{
+                    Name = "No sub categories"
+                }
+            };
+
+            List<ForumSubCategoryDto> subCategoriesRemap = new List<ForumSubCategoryDto>();
+            // If there are no sub categories, add a sub-category named "No sub-categories" 
+            // to display in the client side
+            if (subCategories == null || subCategories.Count == 0)
+                subCategoriesRemap.Add(new ForumSubCategoryDto { Name = "No sub-categories" });
+            else
+            {
+                foreach (var sub in subCategories)
+                    subCategoriesRemap.Add(new ForumSubCategoryDto
+                    {
+                        Id = sub.Id,
+                        CategoryId = sub.CategoryId,
+                        Name = sub.Name,
+                        Threads = sub.Threads
+                    });
+            }
+            return subCategoriesRemap.OrderBy(i => i.Id).ToList<ForumSubCategoryDto>();
+        }
+
     }
 }
+// 466  lines of code...

@@ -37,7 +37,7 @@ namespace API.Controllers
         //
         [Authorize] // Role of an admin is required
         [HttpPost("create-new-category")] // [POST] api/category/create-new-category
-        public async Task<ActionResult<List<ForumCategoryDto>>> CreateCategory([FromForm] CreateCategoryDto categoryForm)
+        public async Task<ActionResult<ForumCategoryDto>> CreateCategory([FromForm] CreateCategoryDto categoryForm)
         {
             // Create a new category, return an updated category list.
             return await _categoryBL.CreateCategory(categoryForm, User.GetUsername());
