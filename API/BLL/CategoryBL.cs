@@ -85,7 +85,7 @@ namespace API.BLL
         //
         //
         //
-        public async Task<ActionResult<List<ForumCategoryDto>>> UpdateCategory(UpdateCategoryDto categoryForm, string username)
+        public async Task<ActionResult<ForumCategoryDto>> UpdateCategory(UpdateCategoryDto categoryForm, string username)
         {
             // Check requestor for admin rights
             var rights = await CheckRights(username);
@@ -109,7 +109,22 @@ namespace API.BLL
 
             // If all checks are valid, update the database, 
             // process the returned value, and return it
-            return CheckReturnedActionResult(await _categoryRepository.UpdateCategory(category, categoryForm));
+
+            // If all checks are valid, update the database, save the result
+            var updateResult = await _categoryRepository.UpdateCategory(category, categoryForm);
+
+            if (updateResult != null)
+            {
+                // If there's a action result, return it
+                if (updateResult.Result != null)
+                    return updateResult.Result;
+
+                // if there's value in the result, remap and return it
+                if (updateResult.Value != null)
+                    return RemapCategory(updateResult.Value);
+            }
+            // if there was a problem with the processing of the result, return no content
+            return _noContent;
         }
         //
         //
@@ -246,7 +261,6 @@ namespace API.BLL
                         Name = sub.Name,
                         Threads = sub.Threads
                     });
-
             }
             return subCategoriesRemap.OrderBy(i => i.Id).ToList<ForumSubCategoryDto>();
         }

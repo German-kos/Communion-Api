@@ -96,7 +96,7 @@ namespace API.Repositories
         //
         //
         // Update the requested category in the database.
-        public async Task<ActionResult<List<ForumCategory>?>> UpdateCategory(ForumCategory targetCategory, UpdateCategoryDto categoryForm)
+        public async Task<ActionResult<ForumCategory>?> UpdateCategory(ForumCategory targetCategory, UpdateCategoryDto categoryForm)
         {
             // var targetCategory = await GetCategoryByName(categoryForm.CategoryToChange);
             // if (targetCategory == null)
@@ -164,7 +164,8 @@ namespace API.Repositories
             if (await SaveAllAsync() && previousBannerId != null)
                 await _imageService.DeleteImageAsync(previousBannerId);
 
-            return await GetAllCategories();
+            return targetCategory;
+            // return await GetAllCategories();
 
         }
         //

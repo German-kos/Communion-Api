@@ -59,8 +59,9 @@ namespace API.Controllers
         //
         [Authorize] // Role of an admin is required
         [HttpPatch("edit-category")] // [PATCH] api/catagory/edit-category
-        public async Task<ActionResult<List<ForumCategoryDto>>> UpdateCategory([FromForm] UpdateCategoryDto categoryForm)
+        public async Task<ActionResult<ForumCategoryDto>> UpdateCategory([FromForm] UpdateCategoryDto categoryForm)
         {
+            // Update a category by name, return the updated category.
             return await _categoryBL.UpdateCategory(categoryForm, User.GetUsername());
         }
         //
@@ -73,5 +74,9 @@ namespace API.Controllers
             // Create a sub category in the requested category, return the category with updated sub-category list
             return await _categoryBL.CreateSubCategory(subCategoryForm, User.GetUsername());
         }
+        //
+        //
+        //
+
     }
 }
