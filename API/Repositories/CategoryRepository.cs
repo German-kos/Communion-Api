@@ -141,10 +141,10 @@ namespace API.Repositories
             }
 
             // If a name was passed, update the category's name
-            if (categoryForm.Name != null)
+            if (categoryForm.NewCategoryName != null)
             {
                 // Changing the name
-                targetCategory.Name = categoryForm.Name;
+                targetCategory.Name = categoryForm.NewCategoryName;
 
                 // Note modification
                 _context.Entry(targetCategory).Property(c => c.Name).IsModified = true;
@@ -185,6 +185,25 @@ namespace API.Repositories
         }
         //
         //
+        // Delete a sub category from an existing category
+        public async Task<List<ForumSubCategory>> DeleteSubCategory(DeleteSubCategoryDto deleteSubCatForm)
+        {
+            // Find the category in the database
+            var category = await _context.Categories
+            .Include(c => c.SubCategories)
+            .FirstAsync(c => c.Name.ToLower() == deleteSubCatForm.CategoryName.ToLower());
+
+            // Remove the requested sub-category from the category
+            category.SubCategories
+            .Remove(category.SubCategories.First(sub => sub.Name.ToLower() == deleteSubCatForm.SubCategoryName.ToLower()));
+
+            await SaveAllAsync();
+
+            // Return the remaining 
+            return category.SubCategories.ToList<ForumSubCategory>();
+        }
+        //
+        //
         // Find a category by name in the database
         public async Task<ForumCategory?> GetCategoryByName(string categoryName)
         {
@@ -197,10 +216,20 @@ namespace API.Repositories
         }
         //
         //
-        // Check if a category exists already
+        // Check if a category exists
         public Task<bool> CategoryExists(string categoryName)
         {
             return _context.Categories.AnyAsync(c => c.Name.ToLower() == categoryName.ToLower());
+        }
+        //
+        //
+        // Check if a sub-category exists
+        public async Task<bool> SubCategoryExists(string categoryName, string subCategoryName)
+        {
+            return await _context.Categories
+            .AnyAsync(c => c.Name.ToLower() == categoryName.ToLower()
+            && c.SubCategories
+            .Any(sub => sub.Name.ToLower() == subCategoryName.ToLower()));
         }
         //
         //

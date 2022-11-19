@@ -40,7 +40,7 @@ namespace API.BLL
             // if none exist, return 204, no categories were found
             var categories = await _categoryRepository.GetAllCategories();
             if (categories == null || categories.Count == 0)
-                return GenerateObjectResult(204, "No categories were found.");
+                return GenerateObjectResult(404, "No categories were found.");
 
             // Remap the category list to a proper Dto and return it
             return RemapCategories(categories);
@@ -55,9 +55,9 @@ namespace API.BLL
             if (!rights.Value && rights.Result != null) return rights.Result;
 
             // Check whether or not the category exists, 
-            // if it already exists, return a status code 409, category already exists
-            if (await _categoryRepository.GetCategoryByName(categoryForm.Name) != null)
-                return GenerateObjectResult(409, "Category already exists.");
+            // if it already exists, return 'already exists'
+            if (await CategoryExists(categoryForm.Name))
+                return AlreadyExistsResult(categoryForm.Name);
 
             // If all the checks are valid, create a new category in the database, 
             // process the response and return it
@@ -73,10 +73,10 @@ namespace API.BLL
             if (!rights.Value && rights.Result != null) return rights.Result;
 
             // Check whether or not the category exists,
-            // if it doesnt, return a status code 204, category does not exist
+            // if it doesnt, return a 'doesnt exist'
             var category = await _categoryRepository.GetCategoryByName(categoryName);
             if (category == null)
-                return GenerateObjectResult(204, $"{categoryName} does not exist");
+                return DoesntExistResult(categoryName);
 
             // If all the checks are valid, delete the category from the database,
             // process the returned value, and return it
@@ -93,18 +93,18 @@ namespace API.BLL
 
             // Check if the modification field are empty, if they are there's nothing to change.
             // return 304, no changes were submitted
-            if (categoryForm.Name == null && categoryForm.Info == null && categoryForm.ImageFile == null)
+            if (categoryForm.NewCategoryName == null && categoryForm.Info == null && categoryForm.ImageFile == null)
                 return GenerateObjectResult(304, "No changes were submitted.");
 
             //  Check whether or not the category that's target to change exists,
-            // if it doesnt, return a status code 404, category does not exist
-            var category = await _categoryRepository.GetCategoryByName(categoryForm.CategoryToChange);
+            // if it doesnt, return a 'no such category'
+            var category = await _categoryRepository.GetCategoryByName(categoryForm.CategoryName);
             if (category == null)
-                return GenerateObjectResult(404, $"{categoryForm.CategoryToChange} does not exist.");
+                return DoesntExistResult(categoryForm.CategoryName);
 
             // Check whether or not the chosen name is already in use. 
             // If it is, return 309
-            if (categoryForm.Name != null && await _categoryRepository.CategoryExists(categoryForm.Name))
+            if (categoryForm.NewCategoryName != null && await CategoryExists(categoryForm.NewCategoryName))
                 return GenerateObjectResult(309, "The chosen category name is already in use.");
 
             // If all checks are valid, update the database, 
@@ -132,20 +132,26 @@ namespace API.BLL
         // and return the category with an up to date sub-category list.
         public async Task<ActionResult<ForumCategoryDto>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, string username)
         {
+            // rewrite the "does exist" query logic
+
+
+
+
+
             // Check requestor for admin rights
             var rights = await CheckRights(username);
             if (!rights.Value && rights.Result != null) return rights.Result;
 
             // Check whether or not the category exists,
-            // if it doesnt, return status code 409, category does not exist
+            // if it doesnt, return 'does not exist'
             var category = await _categoryRepository.GetCategoryByName(subCategoryForm.CategoryName);
             if (category == null)
-                return GenerateObjectResult(409, "Category does not exist.");
+                return DoesntExistResult(subCategoryForm.CategoryName);
 
             // Check if the sub category exists in the current category,
-            // if it does, return status code 409, sub category already exists
-            if (CheckForSubCategory(category, subCategoryForm.Name) != null)
-                return GenerateObjectResult(409, "Sub category already exists.");
+            // if it does, return 'already exists'
+            if (await SubCategoryExists(subCategoryForm.CategoryName, subCategoryForm.Name))
+                return AlreadyExistsResult(subCategoryForm.Name, subCategoryForm.CategoryName);
 
             // Check if the response bears content
             var result = await _categoryRepository.CreateSubCategory(subCategoryForm, category);
@@ -154,6 +160,29 @@ namespace API.BLL
             // If all the checks are valid, create a new sub category, add it to the database,
             // and return the updated category with an up to date sub-category list
             return RemapCategory(result);
+        }
+        //
+        //
+        // Delete an existing sub-category, in an existing category, update the database,
+        // and return an up to date list of the remaining sub-categories (if there are any) of that category
+        public async Task<ActionResult<List<ForumSubCategoryDto>>> DeleteSubCategory(DeleteSubCategoryDto deleteSubCatForm, string username)
+        {
+            // Check requestor for admin rights
+            var rights = await CheckRights(username);
+            if (!rights.Value && rights.Result != null) return rights.Result;
+
+            // Check if the category exists
+            if (!await CategoryExists(deleteSubCatForm.CategoryName))
+                return DoesntExistResult(deleteSubCatForm.CategoryName);
+
+            // Check if the sub category exists
+            if (!await _categoryRepository.SubCategoryExists(deleteSubCatForm.CategoryName, deleteSubCatForm.SubCategoryName))
+                return DoesntExistResult(deleteSubCatForm.SubCategoryName, deleteSubCatForm.CategoryName);
+
+            var deletionResult = await _categoryRepository.DeleteSubCategory(deleteSubCatForm);
+            if (deletionResult != null) return RemapSubCategories(deletionResult);
+
+            return _noContent;
         }
         //
         //
@@ -314,5 +343,48 @@ namespace API.BLL
             //  If both fields are empty return no content status code
             return _noContent;
         }
+        //
+        //
+        // This method returns status code 409, {name} doesnt exist
+        private ObjectResult DoesntExistResult(string name)
+        {
+            return GenerateObjectResult(409, $"\"{name}\" does not exist.");
+        }
+        //
+        //
+        // This method returns status code 409, {name} doesnt exist
+        private ObjectResult DoesntExistResult(string name, string insideOf)
+        {
+            return GenerateObjectResult(409, $"\"{name}\" does not exist in \"{insideOf}\".");
+        }
+        //
+        //
+        // This method returns status code 409, {name} already exists
+        private ObjectResult AlreadyExistsResult(string name)
+        {
+            return GenerateObjectResult(409, $"\"{name}\" already exists.");
+        }
+        //
+        //
+        // This method is an overload to the previous method, in case of adittional information
+        private ObjectResult AlreadyExistsResult(string name, string insideOf)
+        {
+            return GenerateObjectResult(409, $"\"{name}\" already exists in \"{insideOf}\".");
+        }
+        //
+        //
+        // This method is just to shorten the 'CategoryExists' query from the category repository
+        private async Task<bool> CategoryExists(string categoryName)
+        {
+            return await _categoryRepository.CategoryExists(categoryName);
+        }
+        //
+        //
+        // This method is jsut to short the 'SubCategoryExists' query from the category repository
+        private async Task<bool> SubCategoryExists(string categoryName, string subCategoryName)
+        {
+            return await _categoryRepository.SubCategoryExists(categoryName, subCategoryName);
+        }
+        //
     }
 }

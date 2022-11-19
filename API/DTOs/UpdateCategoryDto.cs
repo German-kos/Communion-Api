@@ -8,8 +8,8 @@ namespace API.DTOs
 {
     public class UpdateCategoryDto
     {
-        public string CategoryToChange { get; set; } = null!;
-        public string? Name { get; set; }
+        public string CategoryName { get; set; } = null!;
+        public string? NewCategoryName { get; set; }
         public string? Info { get; set; }
         public IFormFile? ImageFile { get; set; }
     }

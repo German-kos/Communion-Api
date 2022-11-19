@@ -15,8 +15,10 @@ namespace API.Interfaces
         Task<List<ForumCategory>?> DeleteCategory(ForumCategory category);
         Task<ActionResult<ForumCategory>?> UpdateCategory(ForumCategory targetCategory, UpdateCategoryDto categoryForm);
         Task<ForumCategory?> CreateSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category);
+        Task<List<ForumSubCategory>> DeleteSubCategory(DeleteSubCategoryDto deleteSubCatForm);
         Task<ForumCategory?> GetCategoryByName(string categoryName);
         Task<bool> CategoryExists(string categoryName);
+        Task<bool> SubCategoryExists(string categoryName, string subCategoryName);
         Task<bool> SaveAllAsync();
     }
 }

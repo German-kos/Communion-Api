@@ -77,6 +77,13 @@ namespace API.Controllers
         //
         //
         //
-
+        [Authorize] // Role of an admin is required
+        [HttpDelete("delete-sub-category")] // [DELETE] api/category/delete-sub-category
+        public async Task<ActionResult<List<ForumSubCategoryDto>>> DeleteSubCategory([FromForm] DeleteSubCategoryDto deleteSubCatForm)
+        {
+            // Delete a category by name, and return an updated category list.
+            return await _categoryBL.DeleteSubCategory(deleteSubCatForm, User.GetUsername());
+        }
+        //
     }
 }
