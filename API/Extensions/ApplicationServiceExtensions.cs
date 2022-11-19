@@ -25,8 +25,6 @@ namespace api.Extensions
             // Services
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
             services.AddScoped<ITokenService, TokenService>();
-            // Helpers
-            services.AddScoped<IHttpResultHelpers, HttpResult>();
             // Repositories
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();

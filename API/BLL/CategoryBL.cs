@@ -9,6 +9,7 @@ using API.DTOs;
 using API.Interfaces;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
+using static API.Helpers.HttpResult;
 
 
 
@@ -40,7 +41,7 @@ namespace API.BLL
             // if none exist, return 204, no categories were found
             var categories = await _categoryRepository.GetAllCategories();
             if (categories == null || categories.Count == 0)
-                return GenerateObjectResult(404, "No categories were found.");
+                return NoContent();
 
             // Remap the category list to a proper Dto and return it
             return RemapCategories(categories);
@@ -76,7 +77,7 @@ namespace API.BLL
             // if it doesnt, return a 'doesnt exist'
             var category = await _categoryRepository.GetCategoryByName(categoryName);
             if (category == null)
-                return DoesntExistResult(categoryName);
+                return DoesNotExist(categoryName);
 
             // If all the checks are valid, delete the category from the database,
             // process the returned value, and return it
@@ -385,7 +386,7 @@ namespace API.BLL
         {
             // If recieved an unexpected null action result, return status code error
             if (dbResponse == null)
-                return GenerateObjectResult(500, "Something went wrong");
+                return InternalError();
 
             // Check for an action result
             if (dbResponse.Result != null)
@@ -396,7 +397,7 @@ namespace API.BLL
                 return CheckReturnedList(dbResponse.Value);
 
             //  If both fields are empty return no content status code
-            return _noContent;
+            return NoContent();
         }
         //
         //
