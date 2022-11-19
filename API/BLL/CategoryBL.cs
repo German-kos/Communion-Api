@@ -107,11 +107,9 @@ namespace API.BLL
             if (categoryForm.Name != null && await _categoryRepository.CategoryExists(categoryForm.Name))
                 return GenerateObjectResult(309, "The chosen category name is already in use.");
 
-            var cat = await _categoryRepository.UpdateCategory(category, categoryForm);
-            // return RemapCategories(cat.Value);
-
-            // Update the database, process the returned value, and return it
-            return CheckReturnedActionResult(cat);
+            // If all checks are valid, update the database, 
+            // process the returned value, and return it
+            return CheckReturnedActionResult(await _categoryRepository.UpdateCategory(category, categoryForm));
         }
         //
         //
@@ -207,14 +205,12 @@ namespace API.BLL
             // Initializing the list which will be returned
             List<ForumCategoryDto> listOfCategories = new List<ForumCategoryDto>();
 
-
             // Mapping the categories to a suitable category list Dto
             foreach (var category in categories)
             {
                 var subCategoryList = category.SubCategories == null ?
                 new List<ForumSubCategoryDto>() { new ForumSubCategoryDto() { Name = "No sub-categories" } }
                 : RemapSubCategories(category.SubCategories.ToList<ForumSubCategory>());
-
 
                 listOfCategories.Add(new ForumCategoryDto
                 {
@@ -273,14 +269,20 @@ namespace API.BLL
 
             return category.SubCategories.FirstOrDefault(sub => sub.Name.ToLower() == subCategoryName.ToLower());
         }
-
+        //
+        //
+        // This method processes the return of an a category list from the category repository,
+        // check for if it has content in it, and determine what to return
         private ActionResult<List<ForumCategoryDto>> CheckReturnedList(List<ForumCategory>? dbCategoryList)
         {
             if (dbCategoryList == null || dbCategoryList.Count == 0)
                 return _noContent;
             return RemapCategories(dbCategoryList);
         }
-
+        //
+        //
+        // This method processes the return of an ActionResult list of forum categories
+        // and determines what to return from the content returned from the repository
         private ActionResult<List<ForumCategoryDto>> CheckReturnedActionResult(ActionResult<List<ForumCategory>?> dbResponse)
         {
             // If recieved an unexpected null action result, return status code error
