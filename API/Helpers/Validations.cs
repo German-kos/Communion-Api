@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.DTOs;
 using API.Interfaces;
 
 namespace API.Helpers
@@ -46,7 +48,7 @@ namespace API.Helpers
         /// Request the category repository to query the database<br/>
         ///  for the existence of a category named <paramref name="categoryName"/>.<br/>-----
         /// </summary>
-        /// <param name="categoryName">The name of the category to check for it's existence.</param>
+        /// <param name="categoryName">The name of the category to check the existence of.</param>
         /// <returns>
         /// <paramref name="True"/> - category exists. <br/>
         /// - or - <br/>
@@ -55,6 +57,59 @@ namespace API.Helpers
         public async Task<bool> CategoryExists(string categoryName)
         {
             return await _categoryRepository.CategoryExists(categoryName);
+        }
+
+
+        /// <summary>
+        /// Request the category repository to query the database<br/>
+        ///  for the existence of a category with the provided <paramref name="categoryId"/>.<br/>-----
+        /// </summary>
+        /// <param name="categoryId">The id of the category to check the existence of.</param>
+        /// <returns>
+        /// <paramref name="True"/> - category exists. <br/>
+        /// - or - <br/>
+        /// <paramref name="False"/> - category does not exist.
+        /// </returns>
+        public async Task<bool> CategoryExists(int categoryId)
+        {
+            return await _categoryRepository.CategoryExists(categoryId);
+        }
+
+
+        /// <summary>
+        /// Request the category repository to query the database<br/>
+        ///  for the existence of a category with the provided <paramref name="categoryId"/>.<br/>-----
+        /// </summary>
+        /// <param name="categoryId">The id of the category to check the existence of.</param>
+        /// <returns>
+        /// <paramref name="True"/> - category does not exist.
+        /// - or - <br/>
+        /// <paramref name="False"/> - category exists. <br/>
+        /// </returns>
+        public async Task<bool> CategoryDoesNotExist(int categoryId)
+        {
+            return !await CategoryExists(categoryId);
+        }
+
+
+        /// <summary>
+        /// Check for null required fields in an object<br/>-----
+        /// </summary>
+        /// <param name="obj">Any of the predetermined types.</param>
+        /// <returns>
+        /// <paramref name="True"/> - required fields are null.<br/>
+        ///  - or -<br/>
+        /// <paramref name="True"/> - required fields are not null.
+        /// </returns>
+        public bool RequiredFieldsEmpty(dynamic obj)
+        {
+            if (obj.GetType() == typeof(UpdateCategoryDto))
+                return (obj.NewCategoryName == null
+                && obj.Info == null
+                && obj.ImageFile == null);
+
+
+            throw new NotImplementedException();
         }
     }
 }

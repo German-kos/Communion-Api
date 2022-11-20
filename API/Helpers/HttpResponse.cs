@@ -30,7 +30,7 @@ namespace API.Helpers
         /// Generates any HTTP Response with recieved status code and no message.<br/>-----
         /// </summary>
         /// <param name="statusCode">The HTTP Response status code.</param>
-        /// <returns>The generated [HTTP Response].</returns>
+        /// <returns>The generated <paramref name="HTTP"/> <paramref name="Response"/>.</returns>
         public static ObjectResult GenerateResponse(int statusCode)
         {
             return GenerateResponse(statusCode, null);
@@ -38,32 +38,32 @@ namespace API.Helpers
 
 
         /// <summary>
-        /// Generate a  ` 409 - <paramref name="name"/> does not exist.` HTTP Response.<br/>-----
+        /// Generate a  ` 404 - <paramref name="name"/> does not exist.` HTTP Response.<br/>-----
         /// </summary>
         /// <param name="item">The name of the item to display at the beginning.</param>
-        /// <returns>[HTTP Response] 409 - <paramref name="name"/> does not exist.</returns>
+        /// <returns><paramref name="HTTP"/> <paramref name="Response"/> 404 - <paramref name="name"/> does not exist.</returns>
         public static ObjectResult DoesNotExist(string item)
         {
-            return GenerateResponse(409, $"\"{item}\" does not exist.");
+            return GenerateResponse(404, $"\"{item}\" does not exist.");
         }
 
 
         /// <summary>
-        /// Generate a ` 409 - <paramref name="name"/> does not exist in <paramref name="insideOf"/>.` HTTP Response.<br/>-----
+        /// Generate a ` 404 - <paramref name="name"/> does not exist in <paramref name="insideOf"/>.` HTTP Response.<br/>-----
         /// </summary>
         /// <param name="item1">The name of the item to display at the beginning.</param>
         /// <param name="item2">The name of the item that does not contain the first item.</param>
-        /// <returns>[HTTP Response] 409 - <paramref name="name"/> does not exist in <paramref name="insideOf"/>.</returns>
+        /// <returns><paramref name="HTTP"/> <paramref name="Response"/> 404 - <paramref name="name"/> does not exist in <paramref name="insideOf"/>.</returns>
         public static ObjectResult DoesNotExist(string item1, string item2)
         {
-            return GenerateResponse(409, $"\"{item1}\" does not exist in \"{item2}\".");
+            return GenerateResponse(404, $"\"{item1}\" does not exist in \"{item2}\".");
         }
 
 
         /// <summary>
         /// Generate a ` 204 - No Content.` HTTP Response.<br/>-----
         /// </summary>
-        /// <returns>[HTTP Response] 204 - No Content.</returns>
+        /// <returns><paramref name="HTTP"/> <paramref name="Response"/> 204 - No Content.</returns>
         public static ObjectResult NoContent()
         {
             return GenerateResponse(204, null);
@@ -73,7 +73,7 @@ namespace API.Helpers
         /// <summary>
         /// Generate ` 500 - generic error response.` HTTP Response.<br/>-----
         /// </summary>
-        /// <returns>[HTTP Response] 500 - Something went wrong. </returns>
+        /// <returns><paramref name="HTTP"/> <paramref name="Response"/> 500 - Something went wrong. </returns>
         public static ObjectResult InternalError()
         {
             return GenerateResponse(500, "Something went wrong.");
@@ -113,9 +113,24 @@ namespace API.Helpers
         }
 
 
+        /// <summary>
+        /// Generate ` 202 - <paramref name="item"/> has been deleted successfully.` HTTP Response.<br/>-----
+        /// </summary>
+        /// <param name="item">The name of the item to display at the beginning.</param>
+        /// <returns><paramref name="HTTP"/> <paramref name="Response"/> 202 - <paramref name="item"/> has been deleted successfully.</returns>
         public static ObjectResult DeletionSuccessful(string item)
         {
             return GenerateResponse(202, $"{item} has been deleted successfully.");
+        }
+
+
+        /// <summary>
+        ///  Generate ` 304 - Not modified.` HTTP Response.<br/>-----
+        /// </summary>
+        /// <returns><paramref name="HTTP"/> <paramref name="Response"/> 304 - Not modified.` HTTP Response.</returns>
+        public static ObjectResult NotModified()
+        {
+            return GenerateResponse(304, "Not modified.");
         }
     }
 }

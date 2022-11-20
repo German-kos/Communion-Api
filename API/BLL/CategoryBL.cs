@@ -54,7 +54,6 @@ namespace API.BLL
         }
 
 
-
         public async Task<ActionResult> DeleteCategory(DeleteCategoryDto deletionForm, string requestor)
         {
             // Deconstruction
@@ -65,56 +64,51 @@ namespace API.BLL
                 return Unauthorized();
 
             // Check if the category exists
-            if (!await _validate.CategoryExists(name))
+            if (await _validate.CategoryDoesNotExist(id))
                 return DoesNotExist(name);
 
             // Pass request to data access layer, process deletion result
             var deletionResult = await _categoryRepository.DeleteCategory(deletionForm);
             return ProcessDeletion(deletionResult, name);
         }
-        //
-        //
-        // Choose a category by it's name, and update it's fields. return the updated category
-        public async Task<ActionResult<ForumCategoryDto>> UpdateCategory(UpdateCategoryDto categoryForm, string username)
+
+
+        public async Task<ActionResult<ForumCategoryDto>> UpdateCategory(UpdateCategoryDto updateForm, string requestor)
         {
-            // Check requestor for admin rights
-            var rights = await CheckRights(username);
-            if (!rights.Value && rights.Result != null) return rights.Result;
+            // Deconstruction
+            var (id, name, newName, newInfo, newImageFile) = updateForm;
 
-            // Check if the modification field are empty, if they are there's nothing to change.
-            // return 304, no changes were submitted
-            if (categoryForm.NewCategoryName == null && categoryForm.Info == null && categoryForm.ImageFile == null)
-                return GenerateObjectResult(304, "No changes were submitted.");
+            // Check authorization
+            if (await _validate.NotAdmin(requestor))
+                return Unauthorized();
 
-            //  Check whether or not the category that's target to change exists,
-            // if it doesnt, return a 'no such category'
-            var category = await _categoryRepository.GetCategoryByName(categoryForm.CategoryName);
-            if (category == null)
-                return DoesntExistResult(categoryForm.CategoryName);
+            // Check for empty form
+            if (_validate.RequiredFieldsEmpty(updateForm))
+                return NotModified();
 
-            // Check whether or not the chosen name is already in use. 
-            // If it is, return 309
-            if (categoryForm.NewCategoryName != null && await CategoryExists(categoryForm.NewCategoryName))
-                return GenerateObjectResult(309, "The chosen category name is already in use.");
+            // Check if target category exists
+            if (await _validate.CategoryDoesNotExist(id))
+                return DoesNotExist(name);
 
-            // If all checks are valid, update the database, 
-            // process the returned value, and return it
+            // Check if the new name is taken
+            if (newName != null && await _validate.CategoryExists(newName))
+                return AlreadyExists(newName);
 
-            // If all checks are valid, update the database, save the result
-            var updateResult = await _categoryRepository.UpdateCategory(category, categoryForm);
+            // Pass request to data access layer, process update result
+            var updateResult = await _categoryRepository.UpdateCategory(updateForm);
 
-            if (updateResult != null)
-            {
-                // If there's a action result, return it
-                if (updateResult.Result != null)
-                    return updateResult.Result;
+            // Check if unexpected null
+            if (updateResult == null)
+                return InternalError();
 
-                // if there's value in the result, remap and return it
-                if (updateResult.Value != null)
-                    return RemapCategory(updateResult.Value);
-            }
-            // if there was a problem with the processing of the result, return no content
-            return NoContent(); ;
+            // Check for HTTP Response 
+            if (updateResult.Result != null)
+                return updateResult.Result;
+
+            if (updateResult.Value != null)
+                return CategoryMapper(updateResult.Value);
+
+            return InternalError();
         }
         //
         //

@@ -45,27 +45,21 @@ namespace API.Repositories
         {
             var (name, info, imageFile) = creationForm;
 
-            // Uploading the banner image to the cloudinary api
-            var uploadResult = await _imageService.UploadBannerAsync(imageFile);
+            // Upload the banner image
+            var bannerCol = await UploadBanner(imageFile);
 
-            // Check if the upload fails
-            if (uploadResult.Error != null)
-                return GenerateResponse(400, uploadResult.Error.Message);
-
-            // Initializing the collection with the with the upload result
-            List<ForumImage> bannerCol = new List<ForumImage>() {
-                new ForumImage{
-                    Url = uploadResult.SecureUrl.AbsoluteUri,
-                    PublicId = uploadResult.PublicId
-                }
-            };
+            // Null checks
+            if (bannerCol == null || bannerCol.Value == null)
+                return InternalError();
+            if (bannerCol.Result != null)
+                return bannerCol.Result;
 
             // Creating a new category, and adding it to the database
             var creationResult = await _context.Categories.AddAsync(new ForumCategory
             {
                 Name = name,
                 Info = info,
-                Banner = bannerCol
+                Banner = bannerCol.Value
             });
 
             //return created category
@@ -97,86 +91,82 @@ namespace API.Repositories
 
             bool deletionResult = await SaveAllAsync();
 
-            // If category removed, delete it's banner from Cloudinary
-            if (deletionResult)
-                await _imageService.DeleteImageAsync(bannerPublicId);
+            if (!deletionResult)
+                return InternalError();
+
+            // Delete banner from Cloudinary
+            await _imageService.DeleteImageAsync(bannerPublicId);
 
             // Return result
             return deletionResult;
         }
-        //
-        //
-        // Update the requested category in the database.
-        public async Task<ActionResult<ForumCategory>> UpdateCategory(ForumCategory targetCategory, UpdateCategoryDto categoryForm)
+
+
+        public async Task<ActionResult<ForumCategory>> UpdateCategory(UpdateCategoryDto updateForm)
         {
-            // var targetCategory = await GetCategoryByName(categoryForm.CategoryToChange);
-            // if (targetCategory == null)
-            //     return new NotFoundObjectResult("not found");
+            // Deconstruction
+            var (id, name, newName, newInfo, newImageFile) = updateForm;
+
+            // Find the target
+            var targetCategory = await _context.Categories.FindAsync(id);
+
+            // If category does not exist
+            if (targetCategory == null)
+                return DoesNotExist(name);
 
             // Track the entity
             _context.Categories.Attach(targetCategory);
 
-            // Initialize a list to update the category in the database, if needed
-            List<ForumImage> newBanner = new List<ForumImage>();
+            // Save previous banner publicId to later remove from Cloudinary
+            var previousBanner = targetCategory.Banner.Last().PublicId;
 
-            // Save PublicId to delete the previous banner, for storage space porouses
-            // If the data update successfully, delete the previous image
-            var previousBannerId = targetCategory.Banner.LastOrDefault()?.PublicId;
-
-            // If an image file was passed, update the category's banner
-            if (categoryForm.ImageFile != null)
+            // If image file exists, update it
+            if (newImageFile != null)
             {
-                // Initializing a collection for the category's banners
-                var bannerUploadResult = await _imageService.UploadImageAsync(categoryForm.ImageFile);
+                // Upload the banner image
+                var banner = await UploadBanner(newImageFile);
 
-                // Check if the upload fails
-                // If it does, return the error
-                if (bannerUploadResult.Error != null)
-                {
-                    var result = new ObjectResult(bannerUploadResult.Error.Message);
-                    result.StatusCode = 400;
-                    return result;
-                }
-
-                // Then add the banner to the collection
-                newBanner.Add(new ForumImage
-                {
-                    Url = bannerUploadResult.SecureUrl.AbsoluteUri,
-                    PublicId = bannerUploadResult.PublicId
-                });
+                // Null checks
+                if (banner == null || banner.Value == null)
+                    return InternalError();
+                if (banner.Result != null)
+                    return banner.Result;
 
                 // Apply banner change to the target category
-                targetCategory.Banner = newBanner;
+                targetCategory.Banner = banner.Value;
 
                 // Note modification
                 _context.Entry(targetCategory).Collection(c => c.Banner).IsModified = true;
             }
 
-            // If a name was passed, update the category's name
-            if (categoryForm.NewCategoryName != null)
+            // If new name exists, update it
+            if (newName != null)
             {
                 // Changing the name
-                targetCategory.Name = categoryForm.NewCategoryName;
+                targetCategory.Name = newName;
 
                 // Note modification
                 _context.Entry(targetCategory).Property(c => c.Name).IsModified = true;
             }
 
-            // If info was passed, update the category's info
-            if (categoryForm.Info != null)
+            // If new info exists, update it
+            if (newInfo != null)
             {
                 // Changing the info
-                targetCategory.Info = categoryForm.Info;
+                targetCategory.Info = newInfo;
 
                 // Note modification
                 _context.Entry(targetCategory).Property(c => c.Info).IsModified = true;
             }
 
-            // If the save was successful, use the public id saved prior to remove the previous banner from the cloudinary storage
-            if (await SaveAllAsync() && previousBannerId != null)
-                await _imageService.DeleteImageAsync(previousBannerId);
+            // If failed to save,
+            if (!await SaveAllAsync())
+                return InternalError();
 
-            // Return the category after the changes made to it
+            // Delete old banner from Cloudinary
+            await _imageService.DeleteImageAsync(previousBanner);
+
+            // Return the updated category
             return targetCategory;
         }
         //
@@ -255,13 +245,19 @@ namespace API.Repositories
 
             return category;
         }
-        //
-        //
-        // Check if a category exists
+
+
         public Task<bool> CategoryExists(string categoryName)
         {
             return _context.Categories
             .AnyAsync(c => c.Name.ToLower() == categoryName.ToLower());
+        }
+
+
+        public async Task<bool> CategoryExists(int categoryId)
+        {
+            return await _context.Categories
+            .AnyAsync(c => c.Id == categoryId);
         }
         //
         //
@@ -273,16 +269,55 @@ namespace API.Repositories
             && c.SubCategories
             .Any(sub => sub.Name.ToLower() == subCategoryName.ToLower()));
         }
-        //
-        //
-        // Save changes made to the database
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
-        }
+
         //
         //
         //
 
+
+        //---------------------------------------------------------//
+        //---------------------------------------------------------//
+        //----------------new and improved methods ----------------//
+        //-------------------------helpers-------------------------//
+        //---------------------------------------------------------//
+        //---------------------------------------------------------//
+
+
+        /// <summary>
+        /// Commit changes to database.<br/>-----
+        /// </summary>
+        /// <returns>
+        /// <paramref name="True"/> - on success <br/>
+        /// - or -<br/>
+        /// <paramref name="false"/> - on failure
+        /// </returns>
+        public async Task<bool> SaveAllAsync()
+        {
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+
+        /// <summary>
+        /// Uploading a banner image to the Cloudinary api.<br/>-----
+        /// </summary>
+        /// <param name="image">The image file to upload</param>
+        /// <returns><paramref name="List"/> of <paramref name="ForumImage"/></returns>
+        private async Task<ActionResult<List<ForumImage>>> UploadBanner(IFormFile image)
+        {
+            // Uploading the banner image to the cloudinary api
+            var uploadResult = await _imageService.UploadBannerAsync(image);
+
+            // Check if the upload fails
+            if (uploadResult.Error != null)
+                return GenerateResponse(400, uploadResult.Error.Message);
+
+            // Return the collection with the with the upload result
+            return new List<ForumImage>() {
+                new ForumImage{
+                    Url = uploadResult.SecureUrl.AbsoluteUri,
+                    PublicId = uploadResult.PublicId
+                }
+            };
+        }
     }
 }

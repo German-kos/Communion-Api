@@ -38,7 +38,14 @@ namespace API.Interfaces
         ///  <paramref name="False"/> - deletion failed.
         /// </returns>
         Task<ActionResult<bool>> DeleteCategory(DeleteCategoryDto deletionForm);
-        Task<ActionResult<ForumCategory>> UpdateCategory(ForumCategory targetCategory, UpdateCategoryDto categoryForm);
+
+
+        /// <summary>
+        /// Update an existing category in the database.<br/>-----
+        /// </summary>
+        /// <param name="updateForm">The client submitted category update form.</param>
+        /// <returns><paramref name="ForumCategory"/> of the updated category.</returns>
+        Task<ActionResult<ForumCategory>> UpdateCategory(UpdateCategoryDto updateForm);
         Task<ForumCategory?> CreateSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category);
         Task<List<ForumSubCategory>> DeleteSubCategory(DeleteSubCategoryDto deleteSubCatForm);
         Task<ForumSubCategory> UpdateSub(UpdateSubDto updateSub);
@@ -48,13 +55,24 @@ namespace API.Interfaces
         /// <summary>
         /// Query the database if a category named <paramref name="categoryName"/> already exists.<br/>-----
         /// </summary>
-        /// <param name="categoryName">The name of the category to check for it's existence.</param>
+        /// <param name="categoryName">The name of the category to check the existence of.</param>
         /// <returns>
-        /// True - category exists. <br/>
+        /// <paramref name="True"/> - category exists. <br/>
         /// - or - <br/>
-        /// False - category does not exist.
+        /// <paramref name="False"/> - category does not exist.
         /// </returns>
         Task<bool> CategoryExists(string categoryName);
+
+        /// <summary>
+        /// Query the database if a category with the provided <paramref name="categoryId"/> already exists.<br/>-----
+        /// </summary>
+        /// <param name="categoryId">The id of the category to check the existence of.</param>
+        /// <returns>
+        /// <paramref name="True"/> - category exists. <br/>
+        /// - or - <br/>
+        /// <paramref name="False"/> - category does not exist.
+        /// </returns>
+        Task<bool> CategoryExists(int categoryId);
         Task<bool> SubCategoryExists(string categoryName, string subCategoryName);
         Task<bool> SaveAllAsync();
     }
