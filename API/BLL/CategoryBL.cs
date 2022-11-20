@@ -173,15 +173,8 @@ namespace API.BLL
             // and return it
             return RemapSubCategory(await _categoryRepository.UpdateSub(updateSub));
         }
-        //
-        //
-        // Get the threads for the requested sub-category *subject to change. *Not implemented yet.
-        //
-        // consider moving this to a ThreadBL instead
-        public Task<List<ForumThread>> GetThreadsBySubCategoryId(int subCategoryId)
-        {
-            throw new NotImplementedException();
-        }
+
+
         //
         //
         // Private methods

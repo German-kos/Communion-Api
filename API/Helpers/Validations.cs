@@ -105,8 +105,8 @@ namespace API.Helpers
         {
             if (obj.GetType() == typeof(UpdateCategoryDto))
                 return (obj.NewCategoryName == null
-                && obj.Info == null
-                && obj.ImageFile == null);
+                && obj.NewInfo == null
+                && obj.NewImageFile == null);
 
 
             throw new NotImplementedException();
