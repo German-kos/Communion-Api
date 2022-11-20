@@ -75,17 +75,34 @@ namespace API.Repositories
             // if failed to save
             return InternalError();
         }
-        //
-        //
-        // Delete the requested category from the database.
-        public async Task<List<ForumCategory>?> DeleteCategory(ForumCategory targetCategory)
-        {
-            // Remove the targeted row from the database
-            _context.Categories.Remove(targetCategory);
-            await SaveAllAsync();
 
-            // Return an up to date category list
-            return await GetAllCategories();
+
+        public async Task<ActionResult<bool>> DeleteCategory(DeleteCategoryDto deletionForm)
+        {
+            // deconstruction
+            var (id, name) = deletionForm;
+
+            // Find the target
+            var targetCategory = _context.Categories.FindAsync(id);
+
+            // Check if exists
+            if (targetCategory == null || targetCategory.Result == null)
+                return DoesNotExist(name);
+
+            // Banner publicID for deletion
+            var bannerPublicId = targetCategory.Result.Banner.Last().PublicId;
+
+            // Delete the category from the database
+            _context.Categories.Remove(targetCategory.Result);
+
+            bool deletionResult = await SaveAllAsync();
+
+            // If category removed, delete it's banner from Cloudinary
+            if (deletionResult)
+                await _imageService.DeleteImageAsync(bannerPublicId);
+
+            // Return result
+            return deletionResult;
         }
         //
         //

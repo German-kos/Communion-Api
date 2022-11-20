@@ -37,6 +37,7 @@ namespace API.BLL
 
         public async Task<ActionResult<ForumCategoryDto>> CreateCategory(CreateCategoryDto creationForm, string requestor)
         {
+            // Deconstruction
             string categoryName = creationForm.Name;
 
             // Check authorization
@@ -44,34 +45,32 @@ namespace API.BLL
                 return Unauthorized();
 
             // Check if the category exists already
-            if (await CategoryExists(categoryName))
+            if (await _validate.CategoryExists(categoryName))
                 return AlreadyExists(categoryName);
 
             // Pass request to data access layer, process creation result
             var creationResult = await _categoryRepository.CreateCategory(creationForm);
-            return ProcessResult(creationResult);
+            return ProcessCreation(creationResult);
         }
 
 
-        //
-        //
-        // Delete a category from the database by name, and return an up to date category list.
-        public async Task<ActionResult<List<ForumCategoryDto>>> DeleteCategory(string categoryName, string username)
+
+        public async Task<ActionResult> DeleteCategory(DeleteCategoryDto deletionForm, string requestor)
         {
-            // Check requestor for admin rights
-            var rights = await CheckRights(username);
-            if (!rights.Value && rights.Result != null) return rights.Result;
+            // Deconstruction
+            var (id, name) = deletionForm;
 
-            // Check whether or not the category exists,
-            // if it doesnt, return a 'doesnt exist'
-            var category = await _categoryRepository.GetCategoryByName(categoryName);
-            if (category == null)
-                return DoesNotExist(categoryName);
+            // Check authorization
+            if (await _validate.NotAdmin(requestor))
+                return Unauthorized();
 
-            // If all the checks are valid, delete the category from the database,
-            // process the returned value, and return it
-            return CheckReturnedList(await _categoryRepository.DeleteCategory(category));
+            // Check if the category exists
+            if (!await _validate.CategoryExists(name))
+                return DoesNotExist(name);
 
+            // Pass request to data access layer, process deletion result
+            var deletionResult = await _categoryRepository.DeleteCategory(deletionForm);
+            return ProcessDeletion(deletionResult, name);
         }
         //
         //
@@ -454,14 +453,15 @@ namespace API.BLL
         /// This method takes in recieved <paramref name="ActionResult"/> recieved from the data access layer,<br/>
         /// and dermines whether to return a HTTP Response, remapped category, or an internal error.<br/>-----
         /// </summary>
-        /// <param name="result">The <paramref name="ActionResult"/> <paramref name="ForumCategory"/> to process.</param>
+        /// <param name="result">The ActionResult to process.</param>
         /// <returns><paramref name="HTTP"/> <paramref name="Response"/><br/>
         /// - or -<br/>
         /// <paramref name="ForumCategoryDto"/> Remapped category.<br/>
         /// - or -<br/>
         /// <paramref name="InternalError"/></returns>
-        private ActionResult<ForumCategoryDto> ProcessResult(ActionResult<ForumCategory>? result)
+        private ActionResult<ForumCategoryDto> ProcessCreation(ActionResult<ForumCategory>? result)
         {
+            // Check for contents
             if (result != null)
             {
                 // Check for an HTTP Response
@@ -471,6 +471,36 @@ namespace API.BLL
                 // Check for content in the returned value
                 if (result.Value != null)
                     return CategoryMapper(result.Value);
+            }
+
+            // Return an internal error if checks fail
+            return InternalError();
+        }
+
+
+        /// <summary>
+        /// This method takes in recieved <paramref name="ActionResult"/> recieved from the data access layer,<br/>
+        /// and dermines whether to return a HTTP Response, or an internal error.<br/>-----
+        /// </summary>
+        /// <param name="result">The ActionResult to process.</param>
+        /// <param name="item">The name of the deleted item.</param>
+        /// <returns>
+        /// <paramref name="HTTP"/> <paramref name="Response"/><br/>
+        /// - or -<br/>
+        /// <paramref name="InternalError"/>
+        /// </returns>
+        private ActionResult ProcessDeletion(ActionResult<bool> result, string item)
+        {
+            // Check for contents
+            if (result != null)
+            {
+                // Check for an HTTP Response
+                if (result.Result != null)
+                    return result.Result;
+
+                // Check for deletion result
+                if (result.Value)
+                    return DeletionSuccessful(item);
             }
 
             // Return an internal error if checks fail

@@ -94,7 +94,7 @@ namespace API.Helpers
         /// Generate ` 409 - <paramref name="item"/> already exists.` HTTP Response. <br/>-----
         /// </summary>
         /// <param name="item">The name of the item to display at the beginning.</param>
-        /// <returns>[HTTP Response] 409 - <paramref name="item"/> already exists.</returns>
+        /// <returns><paramref name="HTTP"/> <paramref name="Response"/> 409 - <paramref name="item"/> already exists.</returns>
         public static ObjectResult AlreadyExists(string item)
         {
             return GenerateResponse(409, $"\"{item}\" already exists.");
@@ -106,10 +106,16 @@ namespace API.Helpers
         /// </summary>
         /// <param name="item1">The name of the item to display at the beginning.</param>
         /// <param name="item2">The name of the item that contains the first item.</param>
-        /// <returns>[HTTP Response] 409 - <paramref name="item1"/> already exists in <paramref name="item2"/>.</returns>
+        /// <returns><paramref name="HTTP"/> <paramref name="Response"/> 409 - <paramref name="item1"/> already exists in <paramref name="item2"/>.</returns>
         public static ObjectResult AlreadyExists(string item1, string item2)
         {
             return GenerateResponse(409, $"\"{item1}\" already exists in \"{item2}\".");
+        }
+
+
+        public static ObjectResult DeletionSuccessful(string item)
+        {
+            return GenerateResponse(202, $"{item} has been deleted successfully.");
         }
     }
 }
