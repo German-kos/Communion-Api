@@ -19,7 +19,7 @@ namespace API.Interfaces
         /// </summary>
         /// <returns>A <paramref name="List"/> of <paramref name="ForumCategoryDto"/>.<br/>
         /// - or - <br/>
-        /// <paramref name="NoContent"/></returns>
+        /// <paramref name="NoContent"/>.</returns>
         Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories();
 
 
@@ -32,9 +32,9 @@ namespace API.Interfaces
         /// <returns> 
         /// <paramref name="ForumCategoryDto"/> of the created category.<br/>
         /// - or - <br/>
-        /// <paramref name="HTTP"/> <paramref name="Response"/> Cloudinary error.<br/>
+        /// <paramref name="HTTP"/> <paramref name="Response"/>.<br/>
         /// - or -<br/>
-        /// <paramref name="InternalError"/>
+        /// <paramref name="InternalError"/>.
         /// </returns>
         Task<ActionResult<ForumCategoryDto>> CreateCategory(CreateCategoryDto creationForm, string requestor);
 
@@ -46,7 +46,8 @@ namespace API.Interfaces
         /// <param name="requestor">The requestor's username for admin rights validation.</param>
         /// <returns><paramref name="HTTP"/> <paramref name="Response"/> deletion result.<br/>
         /// - or -<br/>
-        ///  <paramref name="InternalError"/></returns>
+        ///  <paramref name="InternalError"/>.
+        /// </returns>
         Task<ActionResult> DeleteCategory(DeleteCategoryDto deletionForm, string requestor);
 
 
@@ -56,7 +57,13 @@ namespace API.Interfaces
         /// </summary>
         /// <param name="updateForm">The client submitted category update form.</param>
         /// <param name="requestor">The requestor's username for admin rights validation.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// <paramref name="ForumCategoryDto"/> of the updated category.<br/>
+        /// - or - <br/>
+        /// <paramref name="HTTP"/> <paramref name="Response"/>.<br/>
+        /// - or -<br/>
+        /// <paramref name="InternalError"/>.
+        /// </returns>
         Task<ActionResult<ForumCategoryDto>> UpdateCategory(UpdateCategoryDto updateForm, string requestor);
         Task<ActionResult<ForumCategoryDto>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, string username);
         Task<ActionResult<List<ForumSubCategoryDto>>> DeleteSubCategory(DeleteSubCategoryDto deleteSubCatForm, string username);

@@ -50,7 +50,7 @@ namespace API.BLL
 
             // Pass request to data access layer, process creation result
             var creationResult = await _categoryRepository.CreateCategory(creationForm);
-            return ProcessCreation(creationResult);
+            return ProcessResult(creationResult);
         }
 
 
@@ -96,49 +96,13 @@ namespace API.BLL
 
             // Pass request to data access layer, process update result
             var updateResult = await _categoryRepository.UpdateCategory(updateForm);
-
-            // Check if unexpected null
-            if (updateResult == null)
-                return InternalError();
-
-            // Check for HTTP Response 
-            if (updateResult.Result != null)
-                return updateResult.Result;
-
-            if (updateResult.Value != null)
-                return CategoryMapper(updateResult.Value);
-
-            return InternalError();
+            return ProcessResult(updateResult);
         }
-        //
-        //
-        // Create a new sub-category in an existing category, add it to the database,
-        // and return the category with an up to date sub-category list.
+
+
         public async Task<ActionResult<ForumCategoryDto>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, string username)
         {
-            //********************************************************************************
-            // rewrite the "does exist" query logic
-            //********************************************************************************
-            // categoryBL methods shouldnt hold data for testing until it's the final result,
-            // rewrite it
-            //********************************************************************************
-            // also make a class / service / whatever it should be for the ObjectResults 
-            // and the validations
-            //********************************************************************************
-            // Also rewrite the queries + dtos so the querying itself would be done by ID 
-            // rather than names
-            //********************************************************************************
-            //
-            //
-            //
-            //
-            //
-            //
-            //
-            //
 
-            //
-            //
             // Check requestor for admin rights
             var rights = await CheckRights(username);
             if (!rights.Value && rights.Result != null) return rights.Result;
@@ -452,8 +416,8 @@ namespace API.BLL
         /// - or -<br/>
         /// <paramref name="ForumCategoryDto"/> Remapped category.<br/>
         /// - or -<br/>
-        /// <paramref name="InternalError"/></returns>
-        private ActionResult<ForumCategoryDto> ProcessCreation(ActionResult<ForumCategory>? result)
+        /// <paramref name="InternalError"/>.</returns>
+        private ActionResult<ForumCategoryDto> ProcessResult(ActionResult<ForumCategory>? result)
         {
             // Check for contents
             if (result != null)
@@ -481,7 +445,7 @@ namespace API.BLL
         /// <returns>
         /// <paramref name="HTTP"/> <paramref name="Response"/><br/>
         /// - or -<br/>
-        /// <paramref name="InternalError"/>
+        /// <paramref name="InternalError"/>.
         /// </returns>
         private ActionResult ProcessDeletion(ActionResult<bool> result, string item)
         {
