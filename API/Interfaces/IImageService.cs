@@ -9,6 +9,7 @@ namespace API.Interfaces
     public interface IImageService
     {
         Task<ImageUploadResult> UploadImageAsync(IFormFile file);
+        Task<ImageUploadResult> UploadBannerAsync(IFormFile file);
         Task<DeletionResult> DeleteImageAsync(string publicId);
     }
 }

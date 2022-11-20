@@ -61,8 +61,7 @@ namespace API.Repositories
 
             // Initializing a collection for the category's banners
             // Then add the banner to the collection
-            List<ForumImage> bannerCol = new List<ForumImage>();
-            bannerCol.Add(banner);
+            List<ForumImage> bannerCol = new List<ForumImage>() { banner };
 
             // Creating a new category, and adding it to the database
             var creationResult = await _context.Categories.AddAsync(new ForumCategory
@@ -76,6 +75,7 @@ namespace API.Repositories
             if (await SaveAllAsync())
                 return creationResult.Entity;
 
+            // if failed to save
             return InternalError();
         }
         //
