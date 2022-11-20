@@ -26,11 +26,11 @@ namespace API.Repositories
             _imageService = imageService;
             _context = context;
         }
-        //
-        //
+
+
         // Methods
-        //
-        //
+
+
         public async Task<List<ForumCategory>?> GetAllCategories()
         {
             // Return a list of categories, each category includes it's collection of banners and sub-categories
@@ -71,11 +71,12 @@ namespace API.Repositories
                 Info = categoryForm.Info,
                 Banner = bannerCol
             });
-            await SaveAllAsync();
 
-            // Return an up to date category list
-            var categoryList = await GetAllCategories();
-            return creationResult.Entity;
+            //return created 
+            if (await SaveAllAsync())
+                return creationResult.Entity;
+
+            return InternalError();
         }
         //
         //

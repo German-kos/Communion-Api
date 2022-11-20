@@ -15,6 +15,7 @@ namespace API.Models
         public string Name { get; set; } = null!;
         public ICollection<ForumThread>? Threads { get; set; }
 
+        // Deconstructor for SubCategoryMapper
         internal void Deconstruct(out int id, out int categoryId, out string name)
         {
             id = Id;

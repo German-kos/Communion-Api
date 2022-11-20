@@ -16,7 +16,7 @@ namespace API.Interfaces
         /// <summary>
         /// Retrieve a list of categories and their sub-categories from the database.<br/>-----
         /// </summary>
-        /// <returns>A list of categories and their sub-categories.</returns>
+        /// <returns>A <paramref name="List"/> of <paramref name="ForumCategory"/>.</returns>
         Task<List<ForumCategory>?> GetAllCategories();
 
 

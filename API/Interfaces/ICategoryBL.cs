@@ -17,9 +17,9 @@ namespace API.Interfaces
         /// Retrieve an up to date list of categories with their corresponding sub-categories.<br/>
         /// ------
         /// </summary>
-        /// <returns>A list of categories (ForumCategoryDto).<br/>
+        /// <returns>A <paramref name="List"/> of <paramref name="ForumCategoryDto"/>.<br/>
         /// - or - <br/>
-        /// 204 - No Content</returns>
+        /// <paramref name="NoContent"/></returns>
         Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories();
 
 
