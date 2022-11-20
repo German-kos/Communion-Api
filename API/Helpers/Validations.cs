@@ -9,7 +9,7 @@ namespace API.Helpers
     /// <summary>
     /// A helper singleton for various validations
     /// </summary>
-    public sealed class Validations
+    public class Validations
     {
         /// <summary>
         /// Dependency Injections

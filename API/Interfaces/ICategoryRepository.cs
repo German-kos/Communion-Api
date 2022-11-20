@@ -20,7 +20,7 @@ namespace API.Interfaces
         Task<List<ForumCategory>?> GetAllCategories();
 
 
-        Task<ActionResult<ForumCategory>?> CreateCategory(CreateCategoryDto categoryForm);
+        Task<ActionResult<ForumCategory>?> CreateCategory(CreateCategoryDto creationForm);
         Task<List<ForumCategory>?> DeleteCategory(ForumCategory category);
         Task<ActionResult<ForumCategory>> UpdateCategory(ForumCategory targetCategory, UpdateCategoryDto categoryForm);
         Task<ForumCategory?> CreateSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category);

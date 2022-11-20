@@ -35,20 +35,20 @@ namespace API.BLL
         }
 
 
-        public async Task<ActionResult<ForumCategoryDto>> CreateCategory(CreateCategoryDto createCategory, string username)
+        public async Task<ActionResult<ForumCategoryDto>> CreateCategory(CreateCategoryDto creationForm, string username)
         {
-            string categoryName = createCategory.Name;
+            string categoryName = creationForm.Name;
 
             // Check authorization
             if (await _validate.NotAdmin(username))
                 return Unauthorized();
 
-            // Check if category exists already
+            // Check if the category exists already
             if (await CategoryExists(categoryName))
                 return AlreadyExists(categoryName);
 
             // Pass request to data access layer, process creation result
-            var creationResult = await _categoryRepository.CreateCategory(createCategory);
+            var creationResult = await _categoryRepository.CreateCategory(creationForm);
             return ProcessResult(creationResult);
         }
 

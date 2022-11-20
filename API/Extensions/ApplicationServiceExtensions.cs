@@ -23,7 +23,7 @@ namespace api.Extensions
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
             // Singletons
-            services.AddSingleton<Validations>();
+            services.AddScoped<Validations>();
             // Services
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
             services.AddScoped<ITokenService, TokenService>();

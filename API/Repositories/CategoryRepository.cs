@@ -42,36 +42,34 @@ namespace API.Repositories
         //
         //
         // Create a category and add it to the database.
-        public async Task<ActionResult<ForumCategory>?> CreateCategory(CreateCategoryDto categoryForm)
+        public async Task<ActionResult<ForumCategory>?> CreateCategory(CreateCategoryDto creationForm)
         {
-            // Uploading the image to the cloudinary api
-            var bannerUploadResult = await _imageService.UploadImageAsync(categoryForm.ImageFile);
+            var (name, info, imageFile) = creationForm;
+
+            // Uploading the banner image to the cloudinary api
+            var uploadResult = await _imageService.UploadBannerAsync(imageFile);
 
             // Check if the upload fails
-            // If it does, return the error
-            if (bannerUploadResult.Error != null)
-                return GenerateResponse(400, bannerUploadResult.Error.Message);
+            if (uploadResult.Error != null)
+                return GenerateResponse(400, uploadResult.Error.Message);
 
-            // Initializing a ForumImage with the upload result
-            var banner = new ForumImage
-            {
-                Url = bannerUploadResult.SecureUrl.AbsoluteUri,
-                PublicId = bannerUploadResult.PublicId
+            // Initializing the collection with the with the upload result
+            List<ForumImage> bannerCol = new List<ForumImage>() {
+                new ForumImage{
+                    Url = uploadResult.SecureUrl.AbsoluteUri,
+                    PublicId = uploadResult.PublicId
+                }
             };
-
-            // Initializing a collection for the category's banners
-            // Then add the banner to the collection
-            List<ForumImage> bannerCol = new List<ForumImage>() { banner };
 
             // Creating a new category, and adding it to the database
             var creationResult = await _context.Categories.AddAsync(new ForumCategory
             {
-                Name = categoryForm.Name,
-                Info = categoryForm.Info,
+                Name = name,
+                Info = info,
                 Banner = bannerCol
             });
 
-            //return created 
+            //return created category
             if (await SaveAllAsync())
                 return creationResult.Entity;
 
