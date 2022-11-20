@@ -25,17 +25,18 @@ namespace API.Interfaces
 
         /// <summary>
         /// Request the category repository to create and add a new category to the database.<br/>
-        /// -----<br/>
-        /// The method recieves the client submitted category creation form,<br/>
-        /// and the requestor's username for admin rights validation.<br/>
         /// -----
         /// </summary>
         /// <param name="createCategory">The client submitted category creation form.</param>
         /// <param name="username">The requestor's username for admin rights validation</param>
-        /// <returns>The category that has been created and added.
-        /// <para> - or - </para>
-        /// The HTTP Response of an error that occurred to the database.</returns>
-        Task<ActionResult<ForumCategoryDto>> CreateCategory(CreateCategoryDto createCategory, string username);
+        /// <returns> <paramref name="ForumCategoryDto"/> of the created category.<br/>
+        /// - or - <br/>
+        /// <paramref name="HTTP"/> <paramref name="Response"/> Cloudinary error.<br/>
+        /// - or -<br/>
+        ///  <paramref name="InternalError"/></returns>
+        Task<ActionResult<ForumCategoryDto>> CreateCategory(CreateCategoryDto creationForm, string requestor);
+
+
         Task<ActionResult<List<ForumCategoryDto>>> DeleteCategory(string categoryName, string username);
         Task<ActionResult<ForumCategoryDto>> UpdateCategory(UpdateCategoryDto categoryForm, string username);
         Task<ActionResult<ForumCategoryDto>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, string username);

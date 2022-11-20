@@ -39,9 +39,8 @@ namespace API.Repositories
             .Include(c => c.SubCategories)
             .ToListAsync<ForumCategory>();
         }
-        //
-        //
-        // Create a category and add it to the database.
+
+
         public async Task<ActionResult<ForumCategory>?> CreateCategory(CreateCategoryDto creationForm)
         {
             var (name, info, imageFile) = creationForm;

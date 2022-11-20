@@ -81,9 +81,9 @@ namespace API.Helpers
 
 
         /// <summary>
-        /// Generate ` 401 - No permissions to execute this action.` HTTP Response.<br/>-----
+        /// Generate ` 401 - No permissions to execute this action.`<paramref name="HTTP"/> <paramref name="Response"/>.<br/>-----
         /// </summary>
-        /// <returns>[HTTP Response] 401 - No permissions to execute this action.</returns>
+        /// <returns><paramref name="HTTP"/> <paramref name="Response"/> 401 - No permissions to execute this action.</returns>
         public static ObjectResult Unauthorized()
         {
             return GenerateResponse(401, "No permission to execute this action.");

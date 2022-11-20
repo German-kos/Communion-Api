@@ -35,12 +35,12 @@ namespace API.BLL
         }
 
 
-        public async Task<ActionResult<ForumCategoryDto>> CreateCategory(CreateCategoryDto creationForm, string username)
+        public async Task<ActionResult<ForumCategoryDto>> CreateCategory(CreateCategoryDto creationForm, string requestor)
         {
             string categoryName = creationForm.Name;
 
             // Check authorization
-            if (await _validate.NotAdmin(username))
+            if (await _validate.NotAdmin(requestor))
                 return Unauthorized();
 
             // Check if the category exists already
@@ -421,13 +421,14 @@ namespace API.BLL
 
         /// <summary>
         /// Request the category repository to query the database<br/>
-        ///  for the existence of a category named <paramref name="categoryName"/>. <br/>-----
+        ///  for the existence of a category named <paramref name="categoryName"/>.<br/>
         /// </summary>
         /// <param name="categoryName">The name of the category to check for it's existence.</param>
         /// <returns>
-        /// True - category exists. <br/>
+        /// <paramref name="True"/> - category exists. <br/>
         /// - or - <br/>
-        /// False - category does not exist.
+        /// <paramref name="False"/> - category does not exist.
+        /// 
         /// </returns>
         private async Task<bool> CategoryExists(string categoryName)
         {
@@ -450,13 +451,13 @@ namespace API.BLL
 
 
         /// <summary>
-        /// This function recieves an <paramref name="ActionResult"/> <paramref name="ForumCategory"/> ,<br/>
+        /// This method takes in recieved <paramref name="ActionResult"/> recieved from the data access layer,<br/>
         /// and dermines whether to return a HTTP Response, remapped category, or an internal error.<br/>-----
         /// </summary>
         /// <param name="result">The <paramref name="ActionResult"/> <paramref name="ForumCategory"/> to process.</param>
         /// <returns><paramref name="HTTP"/> <paramref name="Response"/><br/>
         /// - or -<br/>
-        /// <paramref name="ForumCategoryDto"/><br/>
+        /// <paramref name="ForumCategoryDto"/> Remapped category.<br/>
         /// - or -<br/>
         /// <paramref name="InternalError"/></returns>
         private ActionResult<ForumCategoryDto> ProcessResult(ActionResult<ForumCategory>? result)
@@ -485,7 +486,7 @@ namespace API.BLL
         /// <paramref name="ForumCategoryDto"/> <br/>-----
         /// </summary>
         /// <param name="category">The <paramref name="ForumCategory"/> to remap.</param>
-        /// <returns><paramref name="ForumCategoryDto"/> Remapped Category.</returns>
+        /// <returns><paramref name="ForumCategoryDto"/> Remapped category.</returns>
         private ForumCategoryDto CategoryMapper(ForumCategory category)
         {
             // Deconstruction
@@ -504,34 +505,44 @@ namespace API.BLL
 
 
         /// <summary>
-        /// 
+        /// A <paramref name="List"/> type overload for the <paramref name="CategoryMapper"/> method. Take in data recieved from the data access layer,
+        /// and convert it to a Dto suitable for the client. <br/>-----<br/>
+        /// - converts - <br/>
+        /// <paramref name="List"/> of <paramref name="ForumCategory"/><br/>
+        /// - to -<br/>
+        /// <paramref name="List"/> of <paramref name="ForumCategoryDto"/> <br/>-----
         /// </summary>
-        /// <param name="categories"></param>
-        /// <returns></returns>
+        /// <param name="categories">The <paramref name="List"/> of <paramref name="ForumSubCategory"/> to remap.</param>
+        /// <returns>A <paramref name="List"/> of remapped <paramref name="ForumSubCategoryDto"/><br/>
+        /// - or -<br/>
+        /// <paramref name="NoContent"/></returns>
         private ActionResult<List<ForumCategoryDto>> CategoryMapper(List<ForumCategory>? categories)
         {
+            // Check for contents
             if (categories == null || categories.Count == 0)
                 return NoContent();
-            // Initializing the list which will be returned
+
+            // Initializing the list
             List<ForumCategoryDto> listOfCategories = new List<ForumCategoryDto>();
 
-            // Mapping the categories to a suitable category list Dto
+            // Populating the list with remapped categories
             foreach (var category in categories)
-                listOfCategories.Add(CategoryMapper(category));
+                listOfCategories.Add(CategoryMapper(category)); // The singlular version of this mapper
 
-            // return the ready category list, of ForumCategoryDto type
+            // Returning the list
             return listOfCategories;
         }
+
 
         /// <summary>
         /// This method takes the data recieved from the data access layer and converts it to a DTO suitable for the client.<br/>-----
         /// <br/>- converts -<br/>
-        /// <paramref name="ForumSubCategory"/><br/>
+        /// <paramref name="ForumCategory"/><br/>
         /// - to -<br/>
-        /// <paramref name="ForumSubCategoryDto"/> <br/>-----
+        /// <paramref name="ForumCategoryDto"/> <br/>-----
         /// </summary>
         /// <param name="subCategory">The <paramref name="ForumSubCategory"/> to remap.</param>
-        /// <returns><paramref name="ForumSubCategoryDto"/> Remapped Sub-Category.</returns>
+        /// <returns><paramref name="ForumSubCategoryDto"/> Remapped sub-category.</returns>
         private ForumSubCategoryDto SubCategoryMapper(ForumSubCategory subCategory)
         {
             // Deconstruction
@@ -548,18 +559,18 @@ namespace API.BLL
 
 
         /// <summary>
-        /// A <paramref name="List"/> type overload for the SubCategoryMapper. Take in data recieved from the data access layer,
-        /// and convert it to a Dto suitable for the client. <br/>-----
+        /// A <paramref name="List"/> type overload for the <paramref name="SubCategoryMapper"/> method. Take in data recieved from the data access layer,
+        /// and convert it to a Dto suitable for the client. <br/>-----<br/>
         /// - converts - <br/>
-        /// <paramref name="ForumSubCategory"/><br/>
+        /// <paramref name="List"/> of <paramref name="ForumSubCategory"/><br/>
         /// - to -<br/>
-        /// <paramref name="ForumSubCategoryDto"/> <br/>-----
+        /// <paramref name="List"/> of <paramref name="ForumSubCategoryDto"/> <br/>-----
         /// </summary>
         /// <param name="subCategories">The <paramref name="List"/> of <paramref name="ForumSubCategory"/> to remap.</param>
-        /// <returns>A <paramref name="List"/> of <paramref name="ForumSubCategory"/>.</returns>
+        /// <returns>A <paramref name="List"/> of remapped <paramref name="ForumSubCategoryDto"/>.</returns>
         private List<ForumSubCategoryDto> SubCategoryMapper(List<ForumSubCategory> subCategories)
         {
-            // If there's no content, 
+            // Check for contents 
             if (subCategories == null || subCategories.Count == 0)
                 return new List<ForumSubCategoryDto>(){
                 new ForumSubCategoryDto{
@@ -567,12 +578,14 @@ namespace API.BLL
                 }
             };
 
-            // Initialization of list
+            // Initializing the list
             List<ForumSubCategoryDto> subCategoriesRemap = new List<ForumSubCategoryDto>();
 
+            // Populating the list with remapped sub-categories
             foreach (var sub in subCategories)
                 subCategoriesRemap.Add(SubCategoryMapper(sub)); // The singlular version of this mapper
 
+            // Returning the list
             return subCategoriesRemap.OrderBy(i => i.Id).ToList();
         }
 

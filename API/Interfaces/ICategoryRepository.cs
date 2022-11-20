@@ -20,7 +20,16 @@ namespace API.Interfaces
         Task<List<ForumCategory>?> GetAllCategories();
 
 
+        /// <summary>
+        /// Create a new category and add it to the database.<br/>-----
+        /// 
+        /// 
+        /// </summary>
+        /// <param name="creationForm"></param>
+        /// <returns></returns>
         Task<ActionResult<ForumCategory>?> CreateCategory(CreateCategoryDto creationForm);
+
+
         Task<List<ForumCategory>?> DeleteCategory(ForumCategory category);
         Task<ActionResult<ForumCategory>> UpdateCategory(ForumCategory targetCategory, UpdateCategoryDto categoryForm);
         Task<ForumCategory?> CreateSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category);
