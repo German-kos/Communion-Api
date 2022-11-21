@@ -112,7 +112,6 @@ namespace API.Helpers
             return GenerateResponse(409, $"\"{item1}\" already exists in \"{item2}\".");
         }
 
-
         /// <summary>
         /// Generate ` 202 - <paramref name="item"/> has been deleted successfully.` HTTP Response.<br/>-----
         /// </summary>

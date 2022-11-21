@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using API.DTOs;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using static Microsoft.AspNetCore.Mvc.ControllerBase;
+using API.Models;
 
 namespace API.BLL.Account
 {
@@ -25,6 +28,15 @@ namespace API.BLL.Account
 
         public async Task<ActionResult<UserDto>> SignUp(SignUpFormDto signUpForm)
         {
+            // Deconstruction
+            var (username, password, name, email) = signUpForm;
+
+            List<Error> badFormResult = new List<Error>();
+
+
+
+
+
 
         }
     }

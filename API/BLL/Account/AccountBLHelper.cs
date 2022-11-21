@@ -7,10 +7,8 @@ using API.Repositories.Account;
 
 namespace API.BLL.Account
 {
-    /// <summary>
-    /// Helper class for Account Business Logic Layer.
-    /// </summary>
-    public class AccountBLHelper
+
+    public class AccountBLHelper : IAccountBLHelper
     {
         // Dependency Injections
         private readonly AccountRepositoryHelper _repositoryHelper;
@@ -23,7 +21,7 @@ namespace API.BLL.Account
         // Methods
 
 
-        public async Task<bool> DoesUserExist(string username)
+        public async Task<bool> UserExists(string username)
         {
             return await _repositoryHelper.DoesUserExist(username);
         }

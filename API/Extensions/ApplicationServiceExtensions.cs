@@ -40,8 +40,8 @@ namespace API.Extensions
 
             // Helpers
             services.AddScoped<Validations>(); // *** maybe add an interface to this 
-            services.AddScoped<AccountBLHelper>();
-            services.AddScoped<AccountRepositoryHelper>();
+            services.AddScoped<IAccountBLHelper, AccountBLHelper>();
+            services.AddScoped<IAccountRepositoryHelper, AccountRepositoryHelper>();
 
             // Database & Cloudinary
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));

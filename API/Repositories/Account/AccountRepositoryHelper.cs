@@ -4,19 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
 using API.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories.Account
 {
-    /// <summary>
-    /// Helper class for Account Data Access Layer.
-    /// </summary>
-    public class AccountRepositoryHelper
+    public class AccountRepositoryHelper : IAccountRepositoryHelper
     {
+        // Dependency Injections
         private readonly DataContext _context;
         public AccountRepositoryHelper(DataContext context)
         {
             _context = context;
+        }
 
+
+        // Methods
+
+
+        public async Task<bool> DoesUserExist(string username)
+        {
+            return await _context.Users.AnyAsync(u => u.Username.ToLower() == username.ToLower());
         }
     }
 }
