@@ -5,9 +5,9 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using api.Data;
-using api.DTOs;
-using api.Models;
+using API.Data;
+using API.DTOs;
+using API.Models;
 using API.DTOs;
 using API.Extensions;
 using API.Interfaces;
@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace api.Controllers
+namespace API.Controllers
 {
     public class AccountController : BaseApiController
     {
@@ -35,7 +35,7 @@ namespace api.Controllers
 
 
         [HttpPost("signup")]
-        public async Task<ActionResult<UserDto>> SignUp(RegisterDto registerDto)
+        public async Task<ActionResult<UserDto>> SignUp(SignUpFormDto registerDto)
         {
             // checking if the given username already exists in the database
             if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");

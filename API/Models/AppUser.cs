@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using API.Helpers;
 using API.Models;
 
-namespace api.Models
+namespace API.Models
 {
     public class AppUser
     {

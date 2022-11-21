@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.DTOs;
 using API.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.BLL.Account
 {
@@ -15,6 +17,15 @@ namespace API.BLL.Account
         {
             _accountRepository = accountRepository;
             _helper = helper;
+        }
+
+
+        // Methods
+
+
+        public async Task<ActionResult<UserDto>> SignUp(SignUpFormDto signUpForm)
+        {
+
         }
     }
 }

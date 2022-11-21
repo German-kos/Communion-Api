@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using api.Data;
+using API.Data;
 using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +14,7 @@ using API.BLL;
 using API.BLL.Account;
 using API.Repositories.Account;
 
-namespace api.Extensions
+namespace API.Extensions
 {
     public static class ApplicationServiceExtensions
     {

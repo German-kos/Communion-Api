@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using api.Data;
+using API.Data;
 using API.DTOs;
 using API.Interfaces;
 using API.Models;
