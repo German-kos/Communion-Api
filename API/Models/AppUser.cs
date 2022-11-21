@@ -17,10 +17,10 @@ namespace API.Models
         public byte[] PasswordSalt { get; set; } = null!;
         public string Name { get; set; } = null!;
         public string Email { get; set; } = null!;
-        public string Bio { get; set; } = Constants.ns;
-        public string Interests { get; set; } = Constants.ns;
-        public string? Country { get; set; } = Constants.ns;
-        public string? Gender { get; set; } = Constants.ns;
+        public string Bio { get; set; } = Const.ns;
+        public string Interests { get; set; } = Const.ns;
+        public string? Country { get; set; } = Const.ns;
+        public string? Gender { get; set; } = Const.ns;
         public bool IsAdmin { get; set; } = false;
         public List<Comment> Comments { get; set; } = new List<Comment>();
         public List<Post> Posts { get; set; } = new List<Post>();

@@ -19,6 +19,6 @@ namespace API.Interfaces
         /// - or -<br/>
         /// <paramref name="False"/> - if user does not exist.<br/>
         /// </returns>
-        Task<bool> DoesUserExist(string username);
+        Task<bool> UserExists(string username);
     }
 }

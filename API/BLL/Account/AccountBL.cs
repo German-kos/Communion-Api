@@ -15,8 +15,8 @@ namespace API.BLL.Account
     {
         // Dependency Injections
         private readonly IAccountRepository _accountRepository;
-        private readonly AccountBLHelper _helper;
-        public AccountBL(AccountBLHelper helper, IAccountRepository accountRepository)
+        private readonly IAccountBLHelper _helper;
+        public AccountBL(IAccountBLHelper helper, IAccountRepository accountRepository)
         {
             _accountRepository = accountRepository;
             _helper = helper;
@@ -31,9 +31,10 @@ namespace API.BLL.Account
             // Deconstruction
             var (username, password, name, email) = signUpForm;
 
-            List<Error> badFormResult = new List<Error>();
+            // Error list for bad forms
+            List<Error> errors = new List<Error>();
 
-
+            await _helper.ProcessSignUp(signUpForm, errors);
 
 
 

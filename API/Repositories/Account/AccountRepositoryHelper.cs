@@ -21,7 +21,7 @@ namespace API.Repositories.Account
         // Methods
 
 
-        public async Task<bool> DoesUserExist(string username)
+        public async Task<bool> UserExists(string username)
         {
             return await _context.Users.AnyAsync(u => u.Username.ToLower() == username.ToLower());
         }

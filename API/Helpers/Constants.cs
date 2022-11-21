@@ -8,11 +8,14 @@ namespace API.Helpers
     /// <summary>
     /// A collection of constants.
     /// </summary>
-    public static class Constants
+    public static class Const
     {
         /// <summary>
         /// "Not specified."
         /// </summary>
         public const string ns = "Not specified.";
+
+
+        public const string takenUsername = "This username is already taken.";
     }
 }
