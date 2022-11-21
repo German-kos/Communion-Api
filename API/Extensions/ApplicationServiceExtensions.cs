@@ -11,6 +11,7 @@ using API.Services;
 using API.Helpers;
 using API.Repositories;
 using API.BLL;
+using API.BLL.Account;
 
 namespace api.Extensions
 {
@@ -22,19 +23,25 @@ namespace api.Extensions
                 .AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
+
             // Singletons
             services.AddScoped<Validations>();
+
             // Services
-            services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IImageService, ImageService>();
+
             // Repositories
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+
             // BLLs
+            services.AddScoped<IAccountBL, AccountBL>();
             services.AddScoped<ICategoryBL, CategoryBL>();
-            services.AddScoped<IImageService, ImageService>();
-            // Database
+
+            // Database & Cloudinary
+            services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
             services.AddDbContext<DataContext>(options =>
             {
                 options.UseSqlite(config.GetConnectionString("DefaultConnection"));
