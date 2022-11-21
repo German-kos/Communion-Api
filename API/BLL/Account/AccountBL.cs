@@ -10,10 +10,11 @@ namespace API.BLL.Account
     {
         // Dependency Injections
         private readonly IAccountRepository _accountRepository;
-        public AccountBL(IAccountRepository accountRepository)
+        private readonly AccountBLHelper _helper;
+        public AccountBL(AccountBLHelper helper, IAccountRepository accountRepository)
         {
             _accountRepository = accountRepository;
-
+            _helper = helper;
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using api.Data;
 using api.Models;
 using API.Interfaces;
+using API.Repositories.Account;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories
@@ -12,8 +13,12 @@ namespace API.Repositories
     public class AccountRepository : IAccountRepository
     {
         private readonly DataContext _context;
-        public AccountRepository(DataContext context)
+        private readonly IImageService _imageService;
+        private readonly AccountRepositoryHelper _helper;
+        public AccountRepository(AccountRepositoryHelper helper, DataContext context, IImageService imageService)
         {
+            _helper = helper;
+            _imageService = imageService;
             _context = context;
         }
 
