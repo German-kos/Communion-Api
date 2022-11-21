@@ -7,7 +7,7 @@ using api.Models;
 
 namespace API.Models
 {
-    public class ForumThread
+    public class Post
     {
         [Key]
         public int Id { get; set; }

@@ -11,6 +11,6 @@ namespace API.DTOs
         public int? Id { get; set; }
         public int? CategoryId { get; set; }
         public string Name { get; set; } = null!;
-        public ICollection<ForumThread>? Threads { get; set; }
+        public ICollection<Post>? Threads { get; set; }
     }
 }

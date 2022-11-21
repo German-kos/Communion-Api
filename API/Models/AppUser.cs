@@ -22,7 +22,8 @@ namespace api.Models
         public string? Country { get; set; } = Constants.ns;
         public string? Gender { get; set; } = Constants.ns;
         public bool IsAdmin { get; set; } = false;
-        public List<Comment>? Comments { get; set; }
+        public List<Comment> Comments { get; set; } = new List<Comment>();
+        public List<Post> Posts { get; set; } = new List<Post>();
         public ProfilePicture? ProfilePicture { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public DateTime RegistrationDate { get; set; }

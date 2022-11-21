@@ -284,7 +284,7 @@ namespace API.BLL
                         Id = sub.Id,
                         CategoryId = sub.CategoryId,
                         Name = sub.Name,
-                        Threads = sub.Threads
+                        Threads = sub.Posts
                     });
             }
             return subCategoriesRemap.OrderBy(i => i.Id).ToList<ForumSubCategoryDto>();

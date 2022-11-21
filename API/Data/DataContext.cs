@@ -11,7 +11,9 @@ namespace api.Data
     public class DataContext : DbContext
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
-        public DbSet<AppUser> Users { get; set; }
-        public DbSet<Category> Categories { get; set; }
+        public DbSet<AppUser> Users { get; set; } = null!;
+        public DbSet<Category> Categories { get; set; } = null!;
+        public DbSet<Post> Posts { get; set; } = null!;
+        public DbSet<Comment> Comments { get; set; } = null!;
     }
 }

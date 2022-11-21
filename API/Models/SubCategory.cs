@@ -13,7 +13,7 @@ namespace API.Models
         public Category Category { get; set; } = null!;
         public int CategoryId { get; set; }
         public string Name { get; set; } = null!;
-        public ICollection<ForumThread>? Threads { get; set; }
+        public List<Post> Posts { get; set; } = new List<Post>();
 
         // Deconstructor for SubCategoryMapper
         internal void Deconstruct(out int id, out int categoryId, out string name)

@@ -88,8 +88,8 @@ namespace api.Controllers
             // if the comparing loop passes, return the user found in the database in an appropriate format
 
             string pfpUrl = "";
-            if (user.ProfilePicture.Count() > 0)
-                pfpUrl = user.ProfilePicture.LastOrDefault().Url;
+            // if (user.ProfilePicture.Count() > 0)
+            pfpUrl = user.ProfilePicture.Url;
 
             return new SignedInUserDto
             {
@@ -109,8 +109,8 @@ namespace api.Controllers
             if (user == null) return StatusCode(500);
 
             string pfpUrl = "";
-            if (user.ProfilePicture.Count() > 0)
-                pfpUrl = user.ProfilePicture.LastOrDefault().Url;
+            // if (user.ProfilePicture.Count() > 0)
+            pfpUrl = user.ProfilePicture.Url;
 
             return new SignedInUserDto
             {
@@ -141,8 +141,8 @@ namespace api.Controllers
                 PublicId = result.PublicId
             };
 
-            user.ProfilePicture.Add(image);
-            // user.ProfilePicture = image;
+            // user.ProfilePicture.Add(image);
+            user.ProfilePicture = image;
             // user.ProfilePicture = 
 
             // _context.ProfilePictures.AddAsync(image);
@@ -157,7 +157,7 @@ namespace api.Controllers
                 //     Id = _context.Users..SingleOrDefault(x => x.PublicId == image.PublicId).Id,
                 //     Url = image.Url
                 // };
-                return user.ProfilePicture.LastOrDefault(x => x.PublicId == image.PublicId);
+                return user.ProfilePicture;
             }
             return BadRequest("Failed to upload image");
         }

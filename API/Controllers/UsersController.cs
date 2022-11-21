@@ -35,8 +35,8 @@ namespace API.Controllers
             var user = await _accountRepository.GetUserByUsernameAsync(data.Username);
 
             string pfpUrl = "";
-            if (user.ProfilePicture.Count() > 0)
-                pfpUrl = user.ProfilePicture.LastOrDefault().Url;
+            // if (user.ProfilePicture.Count() > 0)
+            pfpUrl = user.ProfilePicture.Url;
 
             return new UserDetailsDto
             {

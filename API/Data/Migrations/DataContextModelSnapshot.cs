@@ -24,6 +24,7 @@ namespace API.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Bio")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Country")
@@ -40,6 +41,7 @@ namespace API.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Interests")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsAdmin")
@@ -69,7 +71,32 @@ namespace API.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("API.Models.ForumCategory", b =>
+            modelBuilder.Entity("API.Models.Banner", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PublicId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId")
+                        .IsUnique();
+
+                    b.ToTable("Banner");
+                });
+
+            modelBuilder.Entity("API.Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -88,7 +115,7 @@ namespace API.Data.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("API.Models.ForumComment", b =>
+            modelBuilder.Entity("API.Models.Comment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -101,13 +128,13 @@ namespace API.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Edited")
+                    b.Property<bool>("Modified")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ThreadId")
+                    b.Property<int>("PostId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("TimeEdited")
+                    b.Property<DateTime?>("TimeModified")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("TimePosted")
@@ -117,56 +144,12 @@ namespace API.Data.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("ThreadId");
+                    b.HasIndex("PostId");
 
-                    b.ToTable("ForumComment");
+                    b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("API.Models.ForumImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("PublicId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("ForumImage");
-                });
-
-            modelBuilder.Entity("API.Models.ForumSubCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("ForumSubCategory");
-                });
-
-            modelBuilder.Entity("API.Models.ForumThread", b =>
+            modelBuilder.Entity("API.Models.Post", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -182,11 +165,11 @@ namespace API.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Edited")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Modified")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -195,7 +178,7 @@ namespace API.Data.Migrations
                     b.Property<int>("SubCategoryId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("TimeEdited")
+                    b.Property<DateTime?>("TimeModified")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("TimePosted")
@@ -210,10 +193,10 @@ namespace API.Data.Migrations
 
                     b.HasIndex("SubCategoryId");
 
-                    b.ToTable("ForumThread");
+                    b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("API.Models.UserImage", b =>
+            modelBuilder.Entity("API.Models.ProfilePicture", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -232,62 +215,72 @@ namespace API.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
-                    b.ToTable("UserImage");
+                    b.ToTable("ProfilePicture");
                 });
 
-            modelBuilder.Entity("API.Models.ForumComment", b =>
+            modelBuilder.Entity("API.Models.SubCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("SubCategory");
+                });
+
+            modelBuilder.Entity("API.Models.Banner", b =>
+                {
+                    b.HasOne("API.Models.Category", "Category")
+                        .WithOne("Banner")
+                        .HasForeignKey("API.Models.Banner", "CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("API.Models.Comment", b =>
                 {
                     b.HasOne("api.Models.AppUser", "Author")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Models.ForumThread", "Thread")
+                    b.HasOne("API.Models.Post", "Post")
                         .WithMany("Comments")
-                        .HasForeignKey("ThreadId")
+                        .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Author");
 
-                    b.Navigation("Thread");
+                    b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("API.Models.ForumImage", b =>
-                {
-                    b.HasOne("API.Models.ForumCategory", "Category")
-                        .WithMany("Banner")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("API.Models.ForumSubCategory", b =>
-                {
-                    b.HasOne("API.Models.ForumCategory", "Category")
-                        .WithMany("SubCategories")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("API.Models.ForumThread", b =>
+            modelBuilder.Entity("API.Models.Post", b =>
                 {
                     b.HasOne("api.Models.AppUser", "Author")
-                        .WithMany()
+                        .WithMany("Posts")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Models.ForumSubCategory", "SubCategory")
-                        .WithMany("Threads")
+                    b.HasOne("API.Models.SubCategory", "SubCategory")
+                        .WithMany("Posts")
                         .HasForeignKey("SubCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -297,37 +290,53 @@ namespace API.Data.Migrations
                     b.Navigation("SubCategory");
                 });
 
-            modelBuilder.Entity("API.Models.UserImage", b =>
+            modelBuilder.Entity("API.Models.ProfilePicture", b =>
                 {
                     b.HasOne("api.Models.AppUser", "User")
-                        .WithMany("ProfilePicture")
-                        .HasForeignKey("UserId")
+                        .WithOne("ProfilePicture")
+                        .HasForeignKey("API.Models.ProfilePicture", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("API.Models.SubCategory", b =>
+                {
+                    b.HasOne("API.Models.Category", "Category")
+                        .WithMany("SubCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
             modelBuilder.Entity("api.Models.AppUser", b =>
                 {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Posts");
+
                     b.Navigation("ProfilePicture");
                 });
 
-            modelBuilder.Entity("API.Models.ForumCategory", b =>
+            modelBuilder.Entity("API.Models.Category", b =>
                 {
-                    b.Navigation("Banner");
+                    b.Navigation("Banner")
+                        .IsRequired();
 
                     b.Navigation("SubCategories");
                 });
 
-            modelBuilder.Entity("API.Models.ForumSubCategory", b =>
-                {
-                    b.Navigation("Threads");
-                });
-
-            modelBuilder.Entity("API.Models.ForumThread", b =>
+            modelBuilder.Entity("API.Models.Post", b =>
                 {
                     b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("API.Models.SubCategory", b =>
+                {
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }

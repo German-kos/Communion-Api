@@ -11,8 +11,8 @@ namespace API.Models
     {
         [Key]
         public int Id { get; set; }
-        public ForumThread Thread { get; set; } = null!;
-        public int ThreadId { get; set; }
+        public Post Post { get; set; } = null!;
+        public int PostId { get; set; }
         public AppUser Author { get; set; } = null!;
         public int AuthorId { get; set; }
         public string Content { get; set; } = null!;
