@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 namespace API.Interfaces
 {
     /// <summary>
-    /// Account Business Logic Layer.
+    /// Helper class for Account Business Logic Layer.
     /// </summary>
-    public interface IAccountBL
+    public class IAccountBLHelper
     {
 
     }

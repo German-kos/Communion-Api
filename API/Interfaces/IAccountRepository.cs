@@ -6,6 +6,9 @@ using api.Models;
 
 namespace API.Interfaces
 {
+    /// <summary>
+    /// Account Data Access Layer.
+    /// </summary>
     public interface IAccountRepository
     {
         void Update(AppUser user);
