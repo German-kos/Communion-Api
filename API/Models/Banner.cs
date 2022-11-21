@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace API.Models
 {
-    public class ForumImage
+    public class Banner
     {
         [Key]
         public int Id { get; set; }
-        public string Url { get; set; }
-        public string PublicId { get; set; }
-
-        public ForumCategory Category { get; set; }
+        public string Url { get; set; } = null!;
+        public string PublicId { get; set; } = null!;
+        public Category Category { get; set; } = null!;
         public int CategoryId { get; set; }
     }
 }

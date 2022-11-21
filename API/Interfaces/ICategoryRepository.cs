@@ -17,7 +17,7 @@ namespace API.Interfaces
         /// Retrieve a list of categories and their sub-categories from the database.<br/>-----
         /// </summary>
         /// <returns>A <paramref name="List"/> of <paramref name="ForumCategory"/>.</returns>
-        Task<List<ForumCategory>?> GetAllCategories();
+        Task<List<Category>?> GetAllCategories();
 
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace API.Interfaces
         /// </summary>
         /// <param name="creationForm">The client submitted category creation form.</param>
         /// <returns><paramref name="ForumCategory"/> of the created category.</returns>
-        Task<ActionResult<ForumCategory>?> CreateCategory(CreateCategoryDto creationForm);
+        Task<ActionResult<Category>?> CreateCategory(CreateCategoryDto creationForm);
 
 
         /// <summary>
@@ -45,11 +45,11 @@ namespace API.Interfaces
         /// </summary>
         /// <param name="updateForm">The client submitted category update form.</param>
         /// <returns><paramref name="ForumCategory"/> of the updated category.</returns>
-        Task<ActionResult<ForumCategory>> UpdateCategory(UpdateCategoryDto updateForm);
-        Task<ForumCategory?> CreateSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category);
-        Task<List<ForumSubCategory>> DeleteSubCategory(DeleteSubCategoryDto deleteSubCatForm);
-        Task<ForumSubCategory> UpdateSub(UpdateSubDto updateSub);
-        Task<ForumCategory?> GetCategoryByName(string categoryName);
+        Task<ActionResult<Category>> UpdateCategory(UpdateCategoryDto updateForm);
+        Task<Category?> CreateSubCategory(CreateSubCategoryDto subCategoryForm, Category category);
+        Task<List<SubCategory>> DeleteSubCategory(DeleteSubCategoryDto deleteSubCatForm);
+        Task<SubCategory> UpdateSub(UpdateSubDto updateSub);
+        Task<Category?> GetCategoryByName(string categoryName);
 
 
         /// <summary>

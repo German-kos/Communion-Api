@@ -12,11 +12,6 @@ namespace api.Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         public DbSet<AppUser> Users { get; set; }
-        public DbSet<ForumCategory> Categories { get; set; }
-        // public DbSet<ForumSubCategory> SubCategories { get; set; }
-        // public DbSet<ForumThread> Threads { get; set; }
-        // public DbSet<ForumComment> Comments { get; set; }
-        // public DbSet<ForumImage> Banners { get; set; }
-        // public DbSet<UserImage> ProfilePictures { get; set; }
+        public DbSet<Category> Categories { get; set; }
     }
 }

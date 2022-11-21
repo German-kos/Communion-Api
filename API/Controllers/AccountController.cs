@@ -125,7 +125,7 @@ namespace api.Controllers
 
         [Authorize]
         [HttpPost("upload-pfp")]
-        public async Task<ActionResult<API.Models.UserImage>> UploadPfp(IFormFile file)
+        public async Task<ActionResult<API.Models.ProfilePicture>> UploadPfp(IFormFile file)
         {
             var username = User.GetUsername();
 
@@ -135,7 +135,7 @@ namespace api.Controllers
 
             if (result.Error != null) return BadRequest(result.Error.Message);
 
-            var image = new UserImage
+            var image = new ProfilePicture
             {
                 Url = result.SecureUrl.AbsoluteUri,
                 PublicId = result.PublicId

@@ -31,17 +31,17 @@ namespace API.Repositories
         // Methods
 
 
-        public async Task<List<ForumCategory>?> GetAllCategories()
+        public async Task<List<Category>?> GetAllCategories()
         {
             // Return a list of categories, each category includes it's collection of banners and sub-categories
             return await _context.Categories
             .Include(c => c.Banner)
             .Include(c => c.SubCategories)
-            .ToListAsync<ForumCategory>();
+            .ToListAsync<Category>();
         }
 
 
-        public async Task<ActionResult<ForumCategory>?> CreateCategory(CreateCategoryDto creationForm)
+        public async Task<ActionResult<Category>?> CreateCategory(CreateCategoryDto creationForm)
         {
             // Deconstruction
             var (name, info, imageFile) = creationForm;
@@ -56,7 +56,7 @@ namespace API.Repositories
                 return bannerCol.Result;
 
             // Creating a new category, and adding it to the database
-            var creationResult = await _context.Categories.AddAsync(new ForumCategory
+            var creationResult = await _context.Categories.AddAsync(new Category
             {
                 Name = name,
                 Info = info,
@@ -85,7 +85,7 @@ namespace API.Repositories
                 return DoesNotExist(name);
 
             // Banner publicID for deletion
-            var bannerPublicId = targetCategory.Banner.Last().PublicId;
+            var bannerPublicId = targetCategory.Banner.PublicId;
 
             // Delete the category from the database
             _context.Categories.Remove(targetCategory);
@@ -104,7 +104,7 @@ namespace API.Repositories
         }
 
 
-        public async Task<ActionResult<ForumCategory>> UpdateCategory(UpdateCategoryDto updateForm)
+        public async Task<ActionResult<Category>> UpdateCategory(UpdateCategoryDto updateForm)
         {
             // Deconstruction
             var (id, name, newName, newInfo, newImageFile) = updateForm;
@@ -124,7 +124,7 @@ namespace API.Repositories
             if (newImageFile != null)
             {
                 // Save previous banner publicId to later remove from Cloudinary
-                var previousBanner = targetCategory.Banner.Last().PublicId;
+                var previousBanner = targetCategory.Banner.PublicId;
 
                 // Upload the banner image
                 var banner = await UploadBanner(newImageFile);
@@ -139,7 +139,7 @@ namespace API.Repositories
                 targetCategory.Banner = banner.Value;
 
                 // Note modification
-                _context.Entry(targetCategory).Collection(c => c.Banner).IsModified = true;
+                _context.Entry(targetCategory).Property(c => c.Banner).IsModified = true;
 
                 // Delete old banner from Cloudinary
                 await _imageService.DeleteImageAsync(previousBanner);
@@ -177,11 +177,11 @@ namespace API.Repositories
         //
         //
         // Create a sub-category in an existing category, and add it to the database
-        public async Task<ForumCategory?> CreateSubCategory(CreateSubCategoryDto subCategoryForm, ForumCategory category)
+        public async Task<Category?> CreateSubCategory(CreateSubCategoryDto subCategoryForm, Category category)
         {
             // Initializing a new sub-category, add it to the sub-category collection in the requested category,
             // and add it to the database
-            category.SubCategories.Add(new ForumSubCategory
+            category.SubCategories.Add(new SubCategory
             {
                 Name = subCategoryForm.Name
             });
@@ -193,7 +193,7 @@ namespace API.Repositories
         //
         //
         // Delete a sub category from an existing category
-        public async Task<List<ForumSubCategory>> DeleteSubCategory(DeleteSubCategoryDto deleteSubCatForm)
+        public async Task<List<SubCategory>> DeleteSubCategory(DeleteSubCategoryDto deleteSubCatForm)
         {
             // Find the category in the database
             var category = await _context.Categories
@@ -207,12 +207,12 @@ namespace API.Repositories
             await SaveAllAsync();
 
             // Return the remaining sub-categories
-            return category.SubCategories.ToList<ForumSubCategory>();
+            return category.SubCategories.ToList<SubCategory>();
         }
         //
         //
         // Update the requested sub-category in the database
-        public async Task<ForumSubCategory> UpdateSub(UpdateSubDto updateSub)
+        public async Task<SubCategory> UpdateSub(UpdateSubDto updateSub)
         {
             // Deconstructing the recieved form
             var (categoryName, subName, newSubName) = updateSub;
@@ -241,7 +241,7 @@ namespace API.Repositories
         //
         //
         // Find a category by name in the database
-        public async Task<ForumCategory?> GetCategoryByName(string categoryName)
+        public async Task<Category?> GetCategoryByName(string categoryName)
         {
             var category = await _context.Categories
             .Include(c => c.SubCategories)
@@ -307,7 +307,7 @@ namespace API.Repositories
         /// </summary>
         /// <param name="id">The id of the category.</param>
         /// <returns><paramref name="ForumCategory"/></returns>
-        private async Task<ForumCategory?> GetCategoryById(int id)
+        private async Task<Category?> GetCategoryById(int id)
         {
             return await _context.Categories
             .Include(c => c.Banner)
@@ -321,7 +321,7 @@ namespace API.Repositories
         /// </summary>
         /// <param name="image">The image file to upload</param>
         /// <returns><paramref name="List"/> of <paramref name="ForumImage"/></returns>
-        private async Task<ActionResult<List<ForumImage>>> UploadBanner(IFormFile image)
+        private async Task<ActionResult<Banner>> UploadBanner(IFormFile image)
         {
             // Uploading the banner image to the cloudinary api
             var uploadResult = await _imageService.UploadBannerAsync(image);
@@ -331,11 +331,10 @@ namespace API.Repositories
                 return GenerateResponse(400, uploadResult.Error.Message);
 
             // Return the collection with the with the upload result
-            return new List<ForumImage>() {
-                new ForumImage{
-                    Url = uploadResult.SecureUrl.AbsoluteUri,
-                    PublicId = uploadResult.PublicId
-                }
+            return new Banner
+            {
+                Url = uploadResult.SecureUrl.AbsoluteUri,
+                PublicId = uploadResult.PublicId
             };
         }
     }

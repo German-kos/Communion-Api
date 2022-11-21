@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace API.Models
 {
-    public class ForumSubCategory
+    public class SubCategory
     {
         [Key]
         public int Id { get; set; }
-        public ForumCategory Category { get; set; } = null!;
+        public Category Category { get; set; } = null!;
         public int CategoryId { get; set; }
         public string Name { get; set; } = null!;
         public ICollection<ForumThread>? Threads { get; set; }

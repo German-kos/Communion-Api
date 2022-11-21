@@ -206,11 +206,11 @@ namespace API.BLL
         //
         // This method recieves a ForumCategory object, and maps it to a ForumCategoryDto,
         // more suitable for use in the client side
-        private ForumCategoryDto RemapCategory(ForumCategory category)
+        private ForumCategoryDto RemapCategory(Category category)
         {
             // Remap the sub-categories to a suitable Dto
 
-            var subCategoriesRemap = RemapSubCategories(category.SubCategories?.ToList<ForumSubCategory>());
+            var subCategoriesRemap = RemapSubCategories(category.SubCategories?.ToList<SubCategory>());
 
             // Mapping the category to a suitable Dto
             return new ForumCategoryDto
@@ -219,14 +219,14 @@ namespace API.BLL
                 Name = category.Name,
                 Info = category.Info,
                 Banner = GetBannerUrl(category),
-                SubCategories = RemapSubCategories(category.SubCategories?.ToList<ForumSubCategory>())
+                SubCategories = RemapSubCategories(category.SubCategories?.ToList<SubCategory>())
             };
         }
         //
         //
         // This method recieves a list of ForumCategory, and maps it to a list of ForumCategoryDto,
         // more suitable for use in the client side
-        private List<ForumCategoryDto> RemapCategories(List<ForumCategory> categories)
+        private List<ForumCategoryDto> RemapCategories(List<Category> categories)
         {
             // Initializing the list which will be returned
             List<ForumCategoryDto> listOfCategories = new List<ForumCategoryDto>();
@@ -236,7 +236,7 @@ namespace API.BLL
             {
                 var subCategoryList = category.SubCategories == null ?
                 new List<ForumSubCategoryDto>() { new ForumSubCategoryDto() { Name = "No sub-categories" } }
-                : RemapSubCategories(category.SubCategories.ToList<ForumSubCategory>());
+                : RemapSubCategories(category.SubCategories.ToList<SubCategory>());
 
                 listOfCategories.Add(new ForumCategoryDto
                 {
@@ -255,7 +255,7 @@ namespace API.BLL
         //
         // This method recieves a sub-category from the database, remaps it to a proper Dto,
         // and returns the result
-        private ForumSubCategoryDto RemapSubCategory(ForumSubCategory sub)
+        private ForumSubCategoryDto RemapSubCategory(SubCategory sub)
         {
             var (id, categoryId, name) = sub;
             return new ForumSubCategoryDto
@@ -269,7 +269,7 @@ namespace API.BLL
         //
         // This method recieves a list of ForumSubCategory, and maps it to a list of ForumSubCategoryDto,
         // more suitable for use in the client side
-        private List<ForumSubCategoryDto> RemapSubCategories(List<ForumSubCategory>? subCategories)
+        private List<ForumSubCategoryDto> RemapSubCategories(List<SubCategory>? subCategories)
         {
             List<ForumSubCategoryDto> subCategoriesRemap = new List<ForumSubCategoryDto>();
             // If there are no sub categories, add a sub-category named "No sub-categories" 
@@ -292,17 +292,17 @@ namespace API.BLL
         //
         //
         // This method extracts the banner url, and if it doesnt exist, it returns an empty string.
-        private string GetBannerUrl(ForumCategory category)
+        private string GetBannerUrl(Category category)
         {
-            var banner = category.Banner.LastOrDefault()?.Url;
-            if (category.Banner.Count() > 0 && banner != null) return banner;
+            var banner = category.Banner.Url;
+            if (category.Banner != null && banner != null) return banner;
             return "";
         }
         //
         // 
         // This method recieves a category, and a sub-category name, and attempts to find the 
         // sub-category in the category
-        private ForumSubCategory? CheckForSubCategory(ForumCategory category, string subCategoryName)
+        private SubCategory? CheckForSubCategory(Category category, string subCategoryName)
         {
             if (category.SubCategories == null) return null;
 
@@ -312,7 +312,7 @@ namespace API.BLL
         //
         // This method processes the return of an a category list from the category repository,
         // check for if it has content in it, and determine what to return
-        private ActionResult<List<ForumCategoryDto>> CheckReturnedList(List<ForumCategory>? dbCategoryList)
+        private ActionResult<List<ForumCategoryDto>> CheckReturnedList(List<Category>? dbCategoryList)
         {
             if (dbCategoryList == null || dbCategoryList.Count == 0)
                 return NoContent(); ;
@@ -322,7 +322,7 @@ namespace API.BLL
         //
         // This method processes the return of an ActionResult list of forum categories
         // and determines what to return from the content returned from the repository
-        private ActionResult<List<ForumCategoryDto>> CheckReturnedActionResult(ActionResult<List<ForumCategory>?> dbResponse)
+        private ActionResult<List<ForumCategoryDto>> CheckReturnedActionResult(ActionResult<List<Category>?> dbResponse)
         {
             // If recieved an unexpected null action result, return status code error
             if (dbResponse == null)
@@ -410,7 +410,7 @@ namespace API.BLL
         /// <paramref name="ForumCategoryDto"/> Remapped category.<br/>
         /// - or -<br/>
         /// <paramref name="InternalError"/>.</returns>
-        private ActionResult<ForumCategoryDto> ProcessResult(ActionResult<ForumCategory>? result)
+        private ActionResult<ForumCategoryDto> ProcessResult(ActionResult<Category>? result)
         {
             // Check for contents
             if (result != null)
@@ -468,7 +468,7 @@ namespace API.BLL
         /// </summary>
         /// <param name="category">The <paramref name="ForumCategory"/> to remap.</param>
         /// <returns><paramref name="ForumCategoryDto"/> Remapped category.</returns>
-        private ForumCategoryDto CategoryMapper(ForumCategory category)
+        private ForumCategoryDto CategoryMapper(Category category)
         {
             // Deconstruction
             var (id, name, info, banner, subCategories) = category;
@@ -497,7 +497,7 @@ namespace API.BLL
         /// <returns>A <paramref name="List"/> of remapped <paramref name="ForumSubCategoryDto"/><br/>
         /// - or -<br/>
         /// <paramref name="NoContent"/></returns>
-        private ActionResult<List<ForumCategoryDto>> CategoryMapper(List<ForumCategory>? categories)
+        private ActionResult<List<ForumCategoryDto>> CategoryMapper(List<Category>? categories)
         {
             // Check for contents
             if (categories == null || categories.Count == 0)
@@ -524,7 +524,7 @@ namespace API.BLL
         /// </summary>
         /// <param name="subCategory">The <paramref name="ForumSubCategory"/> to remap.</param>
         /// <returns><paramref name="ForumSubCategoryDto"/> Remapped sub-category.</returns>
-        private ForumSubCategoryDto SubCategoryMapper(ForumSubCategory subCategory)
+        private ForumSubCategoryDto SubCategoryMapper(SubCategory subCategory)
         {
             // Deconstruction
             var (id, categoryId, name) = subCategory;
@@ -549,7 +549,7 @@ namespace API.BLL
         /// </summary>
         /// <param name="subCategories">The <paramref name="List"/> of <paramref name="ForumSubCategory"/> to remap.</param>
         /// <returns>A <paramref name="List"/> of remapped <paramref name="ForumSubCategoryDto"/>.</returns>
-        private List<ForumSubCategoryDto> SubCategoryMapper(List<ForumSubCategory> subCategories)
+        private List<ForumSubCategoryDto> SubCategoryMapper(List<SubCategory> subCategories)
         {
             // Check for contents 
             if (subCategories == null || subCategories.Count == 0)

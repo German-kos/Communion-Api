@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Helpers;
 using API.Models;
 
 namespace api.Models
@@ -11,17 +12,18 @@ namespace api.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Username { get; set; }
-        public byte[] PasswordHash { get; set; }
-        public byte[] PasswordSalt { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string? Bio { get; set; }
-        public string? Interests { get; set; }
-        public string? Country { get; set; }
-        public string? Gender { get; set; }
+        public string Username { get; set; } = null!;
+        public byte[] PasswordHash { get; set; } = null!;
+        public byte[] PasswordSalt { get; set; } = null!;
+        public string Name { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string Bio { get; set; } = Constants.ns;
+        public string Interests { get; set; } = Constants.ns;
+        public string? Country { get; set; } = Constants.ns;
+        public string? Gender { get; set; } = Constants.ns;
         public bool IsAdmin { get; set; } = false;
-        public ICollection<UserImage> ProfilePicture { get; set; }
+        public List<Comment>? Comments { get; set; }
+        public ProfilePicture? ProfilePicture { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public DateTime RegistrationDate { get; set; }
     }
