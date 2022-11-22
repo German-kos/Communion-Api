@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Interfaces;
+using API.Models;
 
 namespace API.Helpers
 {
@@ -110,6 +111,15 @@ namespace API.Helpers
 
 
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> IsPasswordValid(string password)
+        {
+            string pw = "Password";
+            if (password.Trim().Length != password.Length)
+                yield return new Error(pw, $"{pw} shouldn't start or end with spaces.");
+
+            if (password.)
         }
     }
 }

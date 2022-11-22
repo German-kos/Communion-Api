@@ -26,11 +26,14 @@ namespace API.BLL.Account
 
         public async Task ProcessSignUp(SignUpFormDto signUpForm, List<Error> errors)
         {
-            Thread.Sleep
             // Deconstruction
             var (username, password, name, email) = signUpForm;
-            _repo.UserExists(username);
-            if (_repo.UserExists(username))
+
+            var userExists = _repo.UserExists(username);
+
+
+
+            if (await userExists)
                 errors.Add(new Error("Username", Const.takenUsername));
         }
 
