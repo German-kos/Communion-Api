@@ -16,6 +16,7 @@ namespace API.Interfaces
         Task<AppUser> GetUserByUsernameAsync(string username);
         Task<bool> SaveAllAsync();
         Task<bool> DoesUserExist(string username);
+        Task<bool> DoesEmailExist(string email);
 
     }
 }

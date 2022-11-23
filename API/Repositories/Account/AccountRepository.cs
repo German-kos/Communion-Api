@@ -46,5 +46,11 @@ namespace API.Repositories
             return await _context.Users
             .AnyAsync(u => u.Username.ToLower() == username.ToLower());
         }
+
+        public async Task<bool> DoesEmailExist(string email)
+        {
+            return await _context.Users
+            .AnyAsync(u => u.Email.ToLower() == email.ToLower());
+        }
     }
 }

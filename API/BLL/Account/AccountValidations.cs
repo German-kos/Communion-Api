@@ -32,13 +32,16 @@ namespace API.BLL.Account
 
             var userValidation = UsernameValidations(username, errors);
 
+            var emailValidation = EmailValidation(email, errors);
+
             PasswordValidations(password, errors);
 
             NameValidation(name, errors);
 
 
-
             await userValidation;
+
+            await emailValidation;
 
             return errors;
         }
@@ -124,6 +127,8 @@ namespace API.BLL.Account
         {
             string n = "Name";
 
+            // If a name is too long it may be malicious 
+            // and should not be processed by regex
             if (!IsLengthValid(name, 1, 12))
             {
                 errors.Add(new Error(n, $"{n}s should be 1 - 12 characters long."));
@@ -133,6 +138,30 @@ namespace API.BLL.Account
             string rgxNamePattern = @"^[a-zA-Z@]*$";
             if (!Regex.IsMatch(name, rgxNamePattern))
                 errors.Add(new Error(n, $"{n}s must only contain english letters."));
+        }
+
+
+        private async Task EmailValidation(string email, List<Error> errors)
+        {
+            string em = "Email";
+
+            // If a email is too long it may be malicious
+            // and should not be processed by regex or be looked up in the database
+            var err = new Error(em, "Invalid email.");
+            if (!IsLengthValid(email, 5, 64))
+            {
+                errors.Add(err);
+                return;
+            }
+
+            var emailExists = _repo.DoesEmailExist(email);
+
+            string rgxEmailPatten = @"^([a-z0-9_\.-]+\@[\da-z\.-]+\.[a-z\.]{2,6})$";
+            if (!Regex.IsMatch(email, rgxEmailPatten))
+                errors.Add(err);
+
+            if (await emailExists)
+                errors.Add(new Error(em, $"{em} is already in use."));
         }
 
 
