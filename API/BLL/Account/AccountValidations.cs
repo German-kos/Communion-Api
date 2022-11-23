@@ -34,6 +34,10 @@ namespace API.BLL.Account
 
             PasswordValidations(password, errors);
 
+            NameValidation(name, errors);
+
+
+
             await userValidation;
 
             return errors;
