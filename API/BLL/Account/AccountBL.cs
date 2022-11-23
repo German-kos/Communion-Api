@@ -32,9 +32,7 @@ namespace API.BLL.Account
             var (username, password, name, email) = signUpForm;
 
             // Error list for bad forms
-            List<Error> errors = new List<Error>();
-
-            await _validate.ProcessSignUp(signUpForm);
+            List<Error> errors = new List<Error>(await _validate.ProcessSignUp(signUpForm));
 
 
 

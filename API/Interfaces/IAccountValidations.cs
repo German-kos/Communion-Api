@@ -19,6 +19,6 @@ namespace API.Interfaces
         /// <returns>A list of <paramref name="Error"/><br/>
         /// - or -<br/>
         /// An empty list if the form was valid.</returns>
-        Task ProcessSignUp(SignUpFormDto signUpForm);
+        Task<List<Error>> ProcessSignUp(SignUpFormDto signUpForm);
     }
 }
