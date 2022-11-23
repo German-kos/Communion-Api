@@ -10,11 +10,7 @@ namespace API.Helpers
     /// </summary>
     public static class Const
     {
-        /// <summary>
-        /// "Not specified."
-        /// </summary>
         public const string ns = "Not specified.";
-
 
         public const string takenUsername = "This username is already taken.";
     }

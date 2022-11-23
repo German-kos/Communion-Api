@@ -12,7 +12,6 @@ using API.Helpers;
 using API.Repositories;
 using API.BLL;
 using API.BLL.Account;
-using API.Repositories.Account;
 
 namespace API.Extensions
 {
@@ -25,25 +24,24 @@ namespace API.Extensions
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
-            // Services
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IImageService, ImageService>();
-
-            // BLLs
+            // Account
             services.AddScoped<IAccountBL, AccountBL>();
-            services.AddScoped<ICategoryBL, CategoryBL>();
-
-            // Repositories
+            services.AddScoped<IAccountValidations, AccountValidations>();
             services.AddScoped<IAccountRepository, AccountRepository>();
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+            // User
             services.AddScoped<IUserRepository, UserRepository>();
 
-            // Helpers
-            services.AddScoped<Validations>(); // *** maybe add an interface to this 
-            services.AddScoped<IAccountBLHelper, AccountBLHelper>();
-            services.AddScoped<IAccountRepositoryHelper, AccountRepositoryHelper>();
+            // Category
+            services.AddScoped<ICategoryBL, CategoryBL>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
-            // Database & Cloudinary
+            // ***May be redundent***
+            services.AddScoped<Validations>(); // *** maybe add an interface to this 
+
+            // Database, Cloudinary, Token
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IImageService, ImageService>();
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
             services.AddDbContext<DataContext>(options =>
             {

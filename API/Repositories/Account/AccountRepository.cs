@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using API.Data;
 using API.Models;
 using API.Interfaces;
-using API.Repositories.Account;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories
@@ -14,10 +13,8 @@ namespace API.Repositories
     {
         private readonly DataContext _context;
         private readonly IImageService _imageService;
-        private readonly AccountRepositoryHelper _helper;
-        public AccountRepository(AccountRepositoryHelper helper, DataContext context, IImageService imageService)
+        public AccountRepository(DataContext context, IImageService imageService)
         {
-            _helper = helper;
             _imageService = imageService;
             _context = context;
         }
@@ -42,6 +39,12 @@ namespace API.Repositories
         public void Update(AppUser user)
         {
             _context.Entry(user).State = EntityState.Modified;
+        }
+
+        public async Task<bool> DoesUserExist(string username)
+        {
+            return await _context.Users
+            .AnyAsync(u => u.Username.ToLower() == username.ToLower());
         }
     }
 }

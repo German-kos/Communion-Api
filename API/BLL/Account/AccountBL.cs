@@ -15,11 +15,11 @@ namespace API.BLL.Account
     {
         // Dependency Injections
         private readonly IAccountRepository _accountRepository;
-        private readonly IAccountBLHelper _helper;
-        public AccountBL(IAccountBLHelper helper, IAccountRepository accountRepository)
+        private readonly IAccountValidations _validate;
+        public AccountBL(IAccountValidations validate, IAccountRepository accountRepository)
         {
+            _validate = validate;
             _accountRepository = accountRepository;
-            _helper = helper;
         }
 
 
@@ -34,11 +34,11 @@ namespace API.BLL.Account
             // Error list for bad forms
             List<Error> errors = new List<Error>();
 
-            await _helper.ProcessSignUp(signUpForm, errors);
+            await _validate.ProcessSignUp(signUpForm);
 
 
 
-
+            throw new NotImplementedException();
         }
     }
 }
