@@ -28,14 +28,13 @@ namespace API.BLL.Account
             // Deconstruction
             var (username, password, name, email) = signUpForm;
 
-            var userExists = _repo.DoesUserExist(username);
-
             List<Error> errors = new List<Error>();
+
+            var userValidation = UsernameValidations(username, errors);
 
             PasswordValidations(password, errors);
 
-            if (await userExists)
-                errors.Add(new Error("Username", Const.takenUsername));
+            await userValidation;
 
             return errors;
         }
@@ -49,14 +48,21 @@ namespace API.BLL.Account
             string un = "Username";
 
             // If a username is too long it may be malicious
-            // and should not be processed by regex
+            // and should not be processed by regex or be looked up in the database
             if (!IsLengthValid(username, 4, 12))
             {
                 errors.Add(new Error(un, $"{un}s should be 4 - 12 characters long."));
                 return;
             }
 
+            var userExists = _repo.DoesUserExist(username);
 
+            string rgxUsernamePattern = @"^[a-zA-Z0-9@\-\.]*$";
+            if (!Regex.IsMatch(username, rgxUsernamePattern))
+                errors.Add(new Error(un, $"{un}s must be alphanumerical."));
+
+            if (await userExists)
+                errors.Add(new Error("Username", Const.takenUsername));
         }
 
 
@@ -107,6 +113,18 @@ namespace API.BLL.Account
 
             if (pwNoSpacesLenght != password.Length)
                 errors.Add(new Error(pw, $"{pw}s must not contain any spaces"));
+        }
+
+
+        private void NameValidation(string name, List<Error> errors)
+        {
+            string n = "Name";
+
+            if (!IsLengthValid(name, 1, 12))
+            {
+                errors.Add(new Error())
+                return
+            }
         }
 
 
