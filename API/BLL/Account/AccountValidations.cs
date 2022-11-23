@@ -122,9 +122,13 @@ namespace API.BLL.Account
 
             if (!IsLengthValid(name, 1, 12))
             {
-                errors.Add(new Error())
-                return
+                errors.Add(new Error(n, $"{n}s should be 1 - 12 characters long."));
+                return;
             }
+
+            string rgxNamePattern = @"^[a-zA-Z@]*$";
+            if (!Regex.IsMatch(name, rgxNamePattern))
+                errors.Add(new Error(n, $"{n}s must only contain english letters."));
         }
 
 
