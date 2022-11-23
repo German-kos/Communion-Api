@@ -25,8 +25,10 @@ namespace API.Controllers
         private readonly ITokenService _tokenService;
         private readonly IImageService _imageService;
         private readonly IAccountRepository _accountRepository;
-        public AccountController(DataContext context, ITokenService tokenSerivce, IImageService imageService, IAccountRepository accountRepository)
+        private readonly IAccountBL _accountBL;
+        public AccountController(DataContext context, ITokenService tokenSerivce, IImageService imageService, IAccountRepository accountRepository, IAccountBL accountBL)
         {
+            _accountBL = accountBL;
             _accountRepository = accountRepository;
             _imageService = imageService;
             _tokenService = tokenSerivce;
@@ -35,34 +37,9 @@ namespace API.Controllers
 
 
         [HttpPost("signup")]
-        public async Task<ActionResult<UserDto>> SignUp(SignUpFormDto registerDto)
+        public async Task<ActionResult<UserDto>> SignUp([FromForm] SignUpFormDto signUpForm)
         {
-            // checking if the given username already exists in the database
-            if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");
-
-            using var hmac = new HMACSHA512();
-            var user = new AppUser
-            {
-                Username = registerDto.Username,
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-                PasswordSalt = hmac.Key,
-                Name = registerDto.Name,
-                Email = registerDto.Email,
-                Bio = null,
-                Interests = null,
-                Country = null,
-                Gender = null,
-                ProfilePicture = null,
-                DateOfBirth = null,
-                RegistrationDate = DateTime.Now
-            };
-            _context.Add(user);
-            await _context.SaveChangesAsync();
-            return new UserDto
-            {
-                Username = user.Username,
-                Token = _tokenService.CreateToken(user, false)
-            };
+            return await _accountBL.SignUp(signUpForm);
         }
 
         [HttpPost("signin")]
@@ -212,3 +189,35 @@ namespace API.Controllers
         }
     }
 }
+
+
+// old code
+
+// sign up request
+
+// checking if the given username already exists in the database
+// if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");
+
+// using var hmac = new HMACSHA512();
+// var user = new AppUser
+// {
+//     Username = registerDto.Username,
+//     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
+//     PasswordSalt = hmac.Key,
+//     Name = registerDto.Name,
+//     Email = registerDto.Email,
+//     Bio = null,
+//     Interests = null,
+//     Country = null,
+//     Gender = null,
+//     ProfilePicture = null,
+//     DateOfBirth = null,
+//     RegistrationDate = DateTime.Now
+// };
+// _context.Add(user);
+// await _context.SaveChangesAsync();
+// return new UserDto
+// {
+//     Username = user.Username,
+//     Token = _tokenService.CreateToken(user, false)
+// };

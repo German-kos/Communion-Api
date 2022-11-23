@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,9 +17,9 @@ namespace API.Interfaces
         /// Process the sign up form acquired from the client's request.
         /// </summary>
         /// <param name="signUpForm">The sign up form submitted by the client.</param>
-        /// <returns>A list of <paramref name="Error"/><br/>
+        /// <returns>A bag of <paramref name="Error"/><br/>
         /// - or -<br/>
-        /// An empty list if the form was valid.</returns>
-        Task<List<Error>> ProcessSignUp(SignUpFormDto signUpForm);
+        /// An empty bag if the form was valid.</returns>
+        Task<ConcurrentBag<Error>> ProcessSignUp(SignUpFormDto signUpForm);
     }
 }

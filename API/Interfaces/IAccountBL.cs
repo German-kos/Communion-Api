@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs;
+using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Interfaces
@@ -13,7 +14,7 @@ namespace API.Interfaces
     public interface IAccountBL
     {
         /// <summary>
-        /// Process a sign up request, if the request is valid, pass the a request to the repository to add the user to the database. <br/>-----
+        /// Process a sign up request, if the request is valid, pass the a request to the repository to add the user to the database.
         /// </summary>
         /// <param name="signUpForm">The client submitted sign up form.</param>
         /// <returns>

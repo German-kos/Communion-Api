@@ -6,6 +6,7 @@ using API.Data;
 using API.Models;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using API.DTOs;
 
 namespace API.Repositories
 {
@@ -31,15 +32,21 @@ namespace API.Repositories
             .SingleOrDefaultAsync(user => user.Username.ToLower() == username.ToLower());
         }
 
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
-        }
+
 
         public void Update(AppUser user)
         {
             _context.Entry(user).State = EntityState.Modified;
         }
+
+        // new methods
+
+        public async Task<bool> SignUp(AppUser newUser)
+        {
+            await _context.Users.AddAsync(newUser);
+            return await SaveAllAsync();
+        }
+
 
         public async Task<bool> DoesUserExist(string username)
         {
@@ -47,10 +54,17 @@ namespace API.Repositories
             .AnyAsync(u => u.Username.ToLower() == username.ToLower());
         }
 
+
         public async Task<bool> DoesEmailExist(string email)
         {
             return await _context.Users
             .AnyAsync(u => u.Email.ToLower() == email.ToLower());
+        }
+
+
+        public async Task<bool> SaveAllAsync()
+        {
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

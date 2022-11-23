@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using static Microsoft.AspNetCore.Mvc.ControllerBase;
 using API.Models;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace API.BLL.Account
 {
@@ -16,8 +18,10 @@ namespace API.BLL.Account
         // Dependency Injections
         private readonly IAccountRepository _accountRepository;
         private readonly IAccountValidations _validate;
-        public AccountBL(IAccountValidations validate, IAccountRepository accountRepository)
+        private readonly ITokenService _jwt;
+        public AccountBL(IAccountValidations validate, IAccountRepository accountRepository, ITokenService jwt)
         {
+            _jwt = jwt;
             _validate = validate;
             _accountRepository = accountRepository;
         }
@@ -34,9 +38,33 @@ namespace API.BLL.Account
             // Error list for bad forms
             List<Error> errors = new List<Error>(await _validate.ProcessSignUp(signUpForm));
 
+            if (errors.Count() > 0)
+                return new BadRequestObjectResult(errors);
+
+            // Create a new user to add to the database
+            using var hmac = new HMACSHA512();
+            var newUser = new AppUser
+            {
+                Username = username,
+                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password)),
+                PasswordSalt = hmac.Key,
+                Name = name,
+                Email = email,
+                RegistrationDate = DateTime.Now
+            };
+
+            bool added = await _accountRepository.SignUp(newUser);
+
+            if (added)
+                return new UserDto
+                {
+                    Username = username,
+                    Token = _jwt.CreateToken(newUser, false)
+                };
 
 
-            throw new NotImplementedException();
+            return new StatusCodeResult(500);
         }
+
     }
 }

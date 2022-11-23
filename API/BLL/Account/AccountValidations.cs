@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -23,25 +24,25 @@ namespace API.BLL.Account
         // Methods:
 
 
-        public async Task<List<Error>> ProcessSignUp(SignUpFormDto signUpForm)
+        public async Task<ConcurrentBag<Error>> ProcessSignUp(SignUpFormDto signUpForm)
         {
             // Deconstruction
             var (username, password, name, email) = signUpForm;
 
-            List<Error> errors = new List<Error>();
+            // Threadsafe collection of errors
+            ConcurrentBag<Error> errors = new ConcurrentBag<Error>();
 
-            var userValidation = UsernameValidations(username, errors);
+            // Running the validations asynchronously on different threads
+            List<Task> validations = new List<Task>()
+            {
+                {UsernameValidations(username, errors)},
+                {EmailValidation(email, errors)},
+                {Task.Run(() => PasswordValidations(password, errors))},
+                {Task.Run(() => NameValidation(name, errors))}
+            };
 
-            var emailValidation = EmailValidation(email, errors);
-
-            PasswordValidations(password, errors);
-
-            NameValidation(name, errors);
-
-
-            await userValidation;
-
-            await emailValidation;
+            // Wait for all the tasks to finish before returning the list
+            await Task.WhenAll(validations);
 
             return errors;
         }
@@ -50,7 +51,12 @@ namespace API.BLL.Account
         // Private Methods:
 
 
-        private async Task UsernameValidations(string username, List<Error> errors)
+        /// <summary>
+        /// A set of validations for the username, adds an error to the bag for each failed validation.
+        /// </summary>
+        /// <param name="username">The provided username.</param>
+        /// <param name="errors">A bag of errors to populate if requirements aren't met.</param>
+        private async Task UsernameValidations(string username, ConcurrentBag<Error> errors)
         {
             string un = "Username";
 
@@ -74,11 +80,11 @@ namespace API.BLL.Account
 
 
         /// <summary>
-        /// Check if password meets requirements. If a requirement is not met, add an error to the list.
+        /// A set of validations for the password, adds an error to the bag for each failed validation.
         /// </summary>
         /// <param name="password">The provided password.</param>
-        /// <param name="errors">A list of errors to populate if a requirement isn't met</param>
-        private void PasswordValidations(string password, List<Error> errors)
+        /// <param name="errors">A bag of errors to populate if requirements aren't met.</param>
+        private void PasswordValidations(string password, ConcurrentBag<Error> errors)
         {
             string pw = "Password";
 
@@ -92,9 +98,14 @@ namespace API.BLL.Account
 
             string pws = "Passwords must contain at least one";
 
-            var rgxPwChecks = RgxPasswordPatterns();
-
-            int pwNoSpacesLenght = Regex.Replace(password, @"\s+", "").Length;
+            // A collection of regex patterns to check passwords.
+            var rgxPwChecks = new Dictionary<string, string>()
+            {
+                {"hasDigit", "^(?=.*[0-9])"},
+                {"hasLowerCase", "(?=.*[a-z])"},
+                {"hasUpperCase", "(?=.*[A-Z])"},
+                {"hasSpecialChar", "(?=.*[!@#$%^&-+=()])"}
+            };
 
             foreach (var check in rgxPwChecks)
             {
@@ -118,12 +129,19 @@ namespace API.BLL.Account
                     }
             }
 
+            int pwNoSpacesLenght = Regex.Replace(password, @"\s+", "").Length;
+
             if (pwNoSpacesLenght != password.Length)
                 errors.Add(new Error(pw, $"{pw}s must not contain any spaces"));
         }
 
 
-        private void NameValidation(string name, List<Error> errors)
+        /// <summary>
+        /// A set of validations for the password, adds an error to the bag when a validation fails.
+        /// </summary>
+        /// <param name="name">The provided name.</param>
+        /// <param name="errors">A bag of errors to populate if requirements aren't met.</param>
+        private void NameValidation(string name, ConcurrentBag<Error> errors)
         {
             string n = "Name";
 
@@ -141,7 +159,12 @@ namespace API.BLL.Account
         }
 
 
-        private async Task EmailValidation(string email, List<Error> errors)
+        /// <summary>
+        /// A set of validations for the password, adds an error to the bag when a validation fails.
+        /// </summary>
+        /// <param name="email">The provided email.</param>
+        /// <param name="errors">A bag of errors to populate if requirements aren't met.</param>
+        private async Task EmailValidation(string email, ConcurrentBag<Error> errors)
         {
             string em = "Email";
 
@@ -166,20 +189,16 @@ namespace API.BLL.Account
 
 
         /// <summary>
-        /// A collection of regex patterns, and what they check. 
+        /// String length validation for form fields.
         /// </summary>
-        /// <returns>Initialization of new Dictionary with the regex patterns.</returns>
-        private Dictionary<string, string> RgxPasswordPatterns()
-        {
-            return new Dictionary<string, string>()
-            {
-                {"hasDigit", "^(?=.*[0-9])"},
-                {"hasLowerCase", "(?=.*[a-z])"},
-                {"hasUpperCase", "(?=.*[A-Z])"},
-                {"hasSpecialChar", "(?=.*[@#$%^&-+=()])"}
-            };
-        }
-
+        /// <param name="str">The provided string.</param>
+        /// <param name="minLength">The required minimum length.</param>
+        /// <param name="maxLength">The required maximum length.</param>
+        /// <returns>
+        /// <paramref name="True"/> - if the length is between the given range. <br/>
+        /// - or - <br/>
+        /// <paramref name="False"/> - if the length isn't between the given range.
+        /// </returns>
         private bool IsLengthValid(string str, int minLength, int maxLength)
         {
             return str.Length <= maxLength && str.Length >= minLength;
