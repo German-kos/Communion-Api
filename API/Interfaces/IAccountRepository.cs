@@ -57,6 +57,13 @@ namespace API.Interfaces
         Task<AppUser?> GetUserByUsername(string username);
 
         /// <summary>
+        /// Query the database for a user by username, include the profile picture.
+        /// </summary>
+        /// <param name="username">The username of the user.</param>
+        /// <returns>The user corresponding to the username, including the profile picture.</returns>
+        Task<AppUser?> GetUserIncludePfp(string username);
+
+        /// <summary>
         /// Query the database for a user by id.
         /// </summary>
         /// <param name="id">The id of the user.</param>

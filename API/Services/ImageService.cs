@@ -42,7 +42,7 @@ namespace API.Services
                 var uploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(file.FileName, stream),
-                    Transformation = new Transformation().Height(100).Width(300).Crop("fill")
+                    Transformation = new Transformation().Height(200).Width(600).Crop("fill")
                 };
 
                 uploadResult = await _cloudinary.UploadAsync(uploadParams);
@@ -60,7 +60,7 @@ namespace API.Services
                 var uploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(file.FileName, stream),
-                    Transformation = new Transformation().Height(100).Width(100).Crop("fill").Gravity("face")
+                    Transformation = new Transformation().Height(200).Width(200).Crop("fill").Gravity("face")
                 };
 
                 uploadResult = await _cloudinary.UploadAsync(uploadParams);

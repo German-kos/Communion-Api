@@ -15,6 +15,18 @@ namespace API.Interfaces
     public interface IAccountValidations
     {
         /// <summary>
+        /// Validate that the requestor username extracted from the JWT match the username provided in the form. 
+        /// </summary>
+        /// <param name="username">The username to match.</param>
+        /// <param name="requestor">The requestor's username to match</param>
+        /// <returns>
+        /// <paramref name="True"/> - If the username and requestor match.<br/>
+        /// - or - <br/>
+        /// <paramref name="False"/> - If the username and requestor don't match.
+        /// </returns>
+        bool UsernameRequestorMatch(string username, string? requestor);
+
+        /// <summary>
         /// Process the sign up form acquired from the client's request.
         /// </summary>
         /// <param name="signUpForm">The sign up form submitted by the client.</param>
@@ -67,6 +79,6 @@ namespace API.Interfaces
         /// - or - <br/>
         /// <paramref name="Unauthorized"/> - if the auto sign in form is not valid.
         /// </returns>
-        Task<ActionResult<SignedInUserDto>> ProcessAutoSignIn(AutoSignInDto autoSignInForm, string? requestor);
+        Task<ActionResult<SignedInUserDto>> ProcessAutoSignIn(AutoSignInFormDto autoSignInForm, string? requestor);
     }
 }

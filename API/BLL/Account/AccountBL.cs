@@ -20,8 +20,10 @@ namespace API.BLL.Account
         private readonly IAccountRepository _accountRepository;
         private readonly IAccountValidations _validate;
         private readonly ITokenService _jwt;
-        public AccountBL(IAccountValidations validate, IAccountRepository accountRepository, ITokenService jwt)
+        private readonly IAccountImageService _img;
+        public AccountBL(IAccountValidations validate, IAccountRepository accountRepository, ITokenService jwt, IAccountImageService img)
         {
+            _img = img;
             _jwt = jwt;
             _validate = validate;
             _accountRepository = accountRepository;
@@ -77,9 +79,19 @@ namespace API.BLL.Account
         }
 
 
-        public async Task<ActionResult<SignedInUserDto>> AutoSignIn(AutoSignInDto autoSignInForm, string? requestor)
+        public async Task<ActionResult<SignedInUserDto>> AutoSignIn(AutoSignInFormDto autoSignInForm, string? requestor)
         {
             return await _validate.ProcessAutoSignIn(autoSignInForm, requestor);
+        }
+
+
+        public async Task<ActionResult<ProfilePictureDto>> UploadPfp(UploadPfpFormDto uploadPfpForm, string? requestor)
+        {
+            bool validUserRequest = _validate.UsernameRequestorMatch(uploadPfpForm.Username, requestor);
+            if (!validUserRequest)
+                return new UnauthorizedResult();
+
+            return await _img.UploadPfp(uploadPfpForm);
         }
     }
 }

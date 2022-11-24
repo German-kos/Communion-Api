@@ -73,6 +73,12 @@ namespace API.Repositories
         }
 
 
+        public async Task<AppUser?> GetUserIncludePfp(string username)
+        {
+            return await _context.Users.Include(u => u.ProfilePicture).FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
+        }
+
+
         public async Task<AppUser?> GetUserById(int id)
         {
             return await _context.Users.FindAsync(id);

@@ -49,65 +49,23 @@ namespace API.Controllers
         }
 
 
-        [Authorize] // A bearer JWT token is needed to auto sign-in
+        [Authorize] // A bearer JWT is needed to auto sign-in
         [HttpPost("autosignin")] // [POST] api/account/autosignin
-        public async Task<ActionResult<SignedInUserDto>> AutoSignIn([FromForm] AutoSignInDto autoSignInForm)
+        public async Task<ActionResult<SignedInUserDto>> AutoSignIn([FromForm] AutoSignInFormDto autoSignInForm)
         {
             return await _accountBL.AutoSignIn(autoSignInForm, User.GetUsername());
         }
 
 
-        [Authorize]
-        [HttpPost("upload-pfp")]
-        public async Task<ActionResult<API.Models.ProfilePicture>> UploadPfp(IFormFile file)
+        [Authorize] // A bearer JWT is needed to upload a profile picture.
+        [HttpPost("upload-pfp")] // [POST] api/account/upload-pfp
+        public async Task<ActionResult<ProfilePictureDto>> UploadPfp([FromForm] UploadPfpFormDto uploadPfpForm)
         {
-            var username = User.GetUsername();
+            return await _accountBL.UploadPfp(uploadPfpForm, User.GetUsername());
 
-            var user = await _accountRepository.GetUserByUsernameAsync(username);
-
-            var result = await _imageService.UploadImageAsync(file);
-
-            if (result.Error != null) return BadRequest(result.Error.Message);
-
-            var image = new ProfilePicture
-            {
-                Url = result.SecureUrl.AbsoluteUri,
-                PublicId = result.PublicId
-            };
-
-            // user.ProfilePicture.Add(image);
-            user.ProfilePicture = image;
-            // user.ProfilePicture = 
-
-            // _context.ProfilePictures.AddAsync(image);
-
-            // user.ProfilePicture = image.Url; // check if works
-
-            if (await _accountRepository.SaveAllAsync())
-            {
-                // return _context.ProfilePictures.SingleOrDefault(x => x.UserId == user.Id);
-                // return new ImageDto
-                // {
-                //     Id = _context.Users..SingleOrDefault(x => x.PublicId == image.PublicId).Id,
-                //     Url = image.Url
-                // };
-                return user.ProfilePicture;
-            }
-            return BadRequest("Failed to upload image");
         }
 
-        // [Authorize]
-        // [HttpPost("upload-pfp-test")]
-        // public IFormFile UploadPfpTest(IFormFile file)
-        // {
-        //     return file;
-        // }
-
-        private async Task<bool> UserExists(string username)
-        {
-            return await _context.Users.AnyAsync(user => user.Username.ToLower() == username.ToLower());
-        }
-
+        // left to rewrite VVV
         [Authorize]
         [HttpPatch("edit-profile")]
         public async Task<ActionResult<AppUser>> EditProfile(EditProfileDto editProfileDto)
@@ -237,3 +195,41 @@ namespace API.Controllers
 //     ProfilePicture = pfpUrl,
 //     Remember = autoSignInUser.Remember
 // };
+
+
+
+// upload pfp request
+
+// var username = User.GetUsername();
+
+// var user = await _accountRepository.GetUserByUsernameAsync(username);
+
+// var result = await _imageService.UploadImageAsync(file);
+
+// if (result.Error != null) return BadRequest(result.Error.Message);
+
+// var image = new ProfilePicture
+// {
+//     Url = result.SecureUrl.AbsoluteUri,
+//     PublicId = result.PublicId
+// };
+
+// // user.ProfilePicture.Add(image);
+// user.ProfilePicture = image;
+// // user.ProfilePicture = 
+
+// // _context.ProfilePictures.AddAsync(image);
+
+// // user.ProfilePicture = image.Url; // check if works
+
+// if (await _accountRepository.SaveAllAsync())
+// {
+//     // return _context.ProfilePictures.SingleOrDefault(x => x.UserId == user.Id);
+//     // return new ImageDto
+//     // {
+//     //     Id = _context.Users..SingleOrDefault(x => x.PublicId == image.PublicId).Id,
+//     //     Url = image.Url
+//     // };
+//     return user.ProfilePicture;
+// }
+// return BadRequest("Failed to upload image");

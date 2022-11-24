@@ -51,5 +51,19 @@ namespace API.BLL.Account
             };
         }
 
+        public ProfilePictureDto ProfilePictureMapper(ProfilePicture pfp)
+        {
+            // Deconstruction
+            var (id, userId, publicId, url) = pfp;
+
+            return new ProfilePictureDto
+            {
+                Id = id,
+                UserId = userId,
+                PublicId = publicId,
+                Url = url
+            };
+        }
+
     }
 }

@@ -15,5 +15,13 @@ namespace API.Models
         public string PublicId { get; set; } = null!;
         public AppUser User { get; set; } = null!;
         public int UserId { get; set; }
+
+        internal void Deconstruct(out int id, out int userId, out string publicId, out string url)
+        {
+            id = Id;
+            userId = UserId;
+            publicId = PublicId;
+            url = Url;
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace API.DTOs
 {
-    public class AutoSignInDto
+    public class AutoSignInFormDto
     {
         public string Username { get; set; } = null!;
         public bool Remember { get; set; } = false;

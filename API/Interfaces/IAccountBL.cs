@@ -45,6 +45,16 @@ namespace API.Interfaces
         /// - or - <br/>
         /// <paramref name="Unauthorized"/> - if the auto sign in form is not valid.
         /// </returns>
-        Task<ActionResult<SignedInUserDto>> AutoSignIn(AutoSignInDto autoSignInForm, string? requestor);
+        Task<ActionResult<SignedInUserDto>> AutoSignIn(AutoSignInFormDto autoSignInForm, string? requestor);
+
+        /// <summary>
+        /// Process the upload pfp request, if the request is valid upload the picture to the database, add it to the corresponding requestor.
+        /// </summary>
+        /// <param name="uploadPfpForm">The client submitted upload pfp form.</param>
+        /// <param name="requestor">The username of the requestor, extracted from the JWT.</param>
+        /// <returns>
+        /// <paramref name="ProfilePicture"/> of the added profile picture.
+        /// </returns>
+        Task<ActionResult<ProfilePictureDto>> UploadPfp(UploadPfpFormDto uploadPfpForm, string? requestor);
     }
 }

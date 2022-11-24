@@ -31,6 +31,10 @@ namespace API.BLL.Account
         // Methods:
 
 
+        public bool UsernameRequestorMatch(string username, string? requestor)
+        {
+            return username.ToLower() == requestor?.ToLower();
+        }
         public async Task<ConcurrentBag<Error>> ProcessSignUp(SignUpFormDto signUpForm)
         {
             // Deconstruction
@@ -126,7 +130,7 @@ namespace API.BLL.Account
         }
 
 
-        public async Task<ActionResult<SignedInUserDto>> ProcessAutoSignIn(AutoSignInDto autoSignInForm, string? requestor)
+        public async Task<ActionResult<SignedInUserDto>> ProcessAutoSignIn(AutoSignInFormDto autoSignInForm, string? requestor)
         {
             // Deconstruction
             var (username, remember) = autoSignInForm;

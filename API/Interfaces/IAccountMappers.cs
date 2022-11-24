@@ -26,5 +26,12 @@ namespace API.Interfaces
         /// <param name="remember">Whether to remember the signed in user or not</param>
         /// <returns><paramref name="SignedInUserDto"/> remapped user. </returns>
         SignedInUserDto AccountMapper(AppUser user, bool remember);
+
+        /// <summary>
+        /// Remap <paramref name="ProfilePicture"/> to <paramref name="ProfilePictureDto"/>.
+        /// </summary>
+        /// <param name="pfp">The <paramref name="ProfilePicture"/> to remap.</param>
+        /// <returns><paramref name="ProfilePictureDto"/> remapped profile picture.</returns>
+        ProfilePictureDto ProfilePictureMapper(ProfilePicture pfp);
     }
 }
