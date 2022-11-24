@@ -27,6 +27,7 @@ namespace API.Extensions
             // Account
             services.AddScoped<IAccountBL, AccountBL>();
             services.AddScoped<IAccountValidations, AccountValidations>();
+            services.AddScoped<IAccountMappers, AccountMappers>();
             services.AddScoped<IAccountRepository, AccountRepository>();
 
             // User

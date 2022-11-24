@@ -19,8 +19,10 @@ namespace API.BLL.Account
         // Dependency Injections
         private readonly IAccountRepository _repo;
         private readonly ITokenService _jwt;
-        public AccountValidations(IAccountRepository repo, ITokenService jwt)
+        private readonly IAccountMappers _map;
+        public AccountValidations(IAccountRepository repo, ITokenService jwt, IAccountMappers map)
         {
+            _map = map;
             _jwt = jwt;
             _repo = repo;
         }
@@ -62,7 +64,7 @@ namespace API.BLL.Account
                 return result;
 
             if (value != null)
-                return AccountMapper(value);
+                return _map.AccountMapper(value);
 
             return new StatusCodeResult(500);
         }
@@ -117,7 +119,7 @@ namespace API.BLL.Account
 
             bool passwordsMatch = PasswordsMatch(password, user.PasswordHash, user.PasswordSalt);
             if (passwordsMatch)
-                return AccountMapper(user, remember);
+                return _map.AccountMapper(user, remember);
 
             errors.Add(new Error("Password", "Password and username do not match."));
             return null;
@@ -134,7 +136,7 @@ namespace API.BLL.Account
 
             var user = await _repo.GetUserByUsername(username);
             if (user != null)
-                return AccountMapper(user, remember);
+                return _map.AccountMapper(user, remember);
 
             return new StatusCodeResult(500);
         }
@@ -294,45 +296,7 @@ namespace API.BLL.Account
         }
 
 
-        /// <summary>
-        /// Remap <paramref name="AppUser"/> to <paramref name="SignedInUserDto"/>.
-        /// </summary>
-        /// <param name="user">The <paramref name="AppUser"/> to remap.</param>
-        /// <returns><paramref name="SignedInUserDto"/> remapped user. </returns>
-        private SignedInUserDto AccountMapper(AppUser user)
-        {
-            var (id, username, name, profilePicture) = user;
 
-            return new SignedInUserDto()
-            {
-                Id = id,
-                Username = username,
-                Name = name,
-                ProfilePicture = profilePicture,
-                Token = _jwt.CreateToken(user, false)
-            };
-        }
-
-        /// <summary>
-        /// Remap <paramref name="AppUser"/> to <paramref name="SignedInUserDto"/>.
-        /// </summary>
-        /// <param name="user">The <paramref name="AppUser"/> to remap.</param>
-        /// <param name="remember">Whether to remember the signed in user or not</param>
-        /// <returns><paramref name="SignedInUserDto"/> remapped user. </returns>
-        private SignedInUserDto AccountMapper(AppUser user, bool remember)
-        {
-            var (id, username, name, profilePicture) = user;
-
-            return new SignedInUserDto()
-            {
-                Id = id,
-                Username = username,
-                Name = name,
-                ProfilePicture = profilePicture,
-                Token = _jwt.CreateToken(user, remember),
-                Remember = remember
-            };
-        }
 
         /// <summary>
         /// Encrypt and check submitted password to the encrypted password.
