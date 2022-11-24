@@ -8,7 +8,7 @@ using API.Models;
 namespace API.Interfaces
 {
     /// <summary>
-    /// Account Mappers.
+    /// This class handles account remapping for account requests.
     /// </summary>
     public interface IAccountMappers
     {
