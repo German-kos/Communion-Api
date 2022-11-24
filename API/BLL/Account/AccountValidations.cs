@@ -2,6 +2,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using API.DTOs;
@@ -66,6 +68,62 @@ namespace API.BLL.Account
         }
 
 
+        public async Task<ConcurrentBag<Error>> ProcessSignIn(SignInFormDto signInForm)
+        {
+            var (username, password) = signInForm;
+
+            ConcurrentBag<Error> errors = new ConcurrentBag<Error>();
+
+            bool usernameLengthValid = IsLengthValid(username, 4, 12);
+            bool passwordLengthValid = IsLengthValid(password, 8, 20);
+
+            // In case lengths don't match and they might be too short or long,
+            // don't bother running the rest of the validations
+            if (!usernameLengthValid)
+                errors.Add(new Error("Username", "Invalid username."));
+            if (!passwordLengthValid)
+                errors.Add(new Error("Password", "Invalid password."));
+
+            // If username is within expected range then it shouldn't be too long to process,
+            // and might exist in the database
+            if (usernameLengthValid)
+            {
+                bool userExists = await _repo.DoesUserExist(username);
+
+                if (!userExists)
+                    errors.Add(new Error("Username", $"{username} does not exist."));
+            }
+
+            return errors;
+        }
+
+
+        public async Task<SignedInUserDto?> ValidatePassword(SignInFormDto signInForm, ConcurrentBag<Error> errors)
+        {
+            // Deconstruction
+            var (username, password, remember) = signInForm;
+
+            // If the bag is already populated with errors, this method should not have been invoked.
+            if (errors.Count() > 0)
+                return null;
+
+            var user = await _repo.GetUserByUsername(username);
+
+            if (user == null)
+            {
+                errors.Add(new Error("Username", $"{username} does not exist."));
+                return null;
+            }
+
+            bool passwordsMatch = PasswordsMatch(password, user.PasswordHash, user.PasswordSalt);
+            if (passwordsMatch)
+                return AccountMapper(user, remember);
+
+            errors.Add(new Error("Password", "Password and username do not match."));
+            return null;
+        }
+
+
         // Private Methods:
 
 
@@ -88,8 +146,7 @@ namespace API.BLL.Account
 
             var userExists = _repo.DoesUserExist(username);
 
-            string rgxUsernamePattern = @"^[a-zA-Z0-9@\-\.]*$";
-            if (!Regex.IsMatch(username, rgxUsernamePattern))
+            if (!Regex.IsMatch(username, Rgx.usernamePattern))
                 errors.Add(new Error(un, $"{un}s must be alphanumerical."));
 
             if (await userExists)
@@ -119,10 +176,10 @@ namespace API.BLL.Account
             // A collection of regex patterns to check passwords.
             var rgxPwChecks = new Dictionary<string, string>()
             {
-                {"hasDigit", "^(?=.*[0-9])"},
-                {"hasLowerCase", "(?=.*[a-z])"},
-                {"hasUpperCase", "(?=.*[A-Z])"},
-                {"hasSpecialChar", "(?=.*[!@#$%^&-+=()])"}
+                {"hasDigit", Rgx.pwHasDigit},
+                {"hasLowerCase", Rgx.pwHasLowerCase},
+                {"hasUpperCase", Rgx.pwHasUpperCase},
+                {"hasSpecialChar", Rgx.pwHasSpecialChar}
             };
 
             foreach (var check in rgxPwChecks)
@@ -147,7 +204,7 @@ namespace API.BLL.Account
                     }
             }
 
-            int pwNoSpacesLenght = Regex.Replace(password, @"\s+", "").Length;
+            int pwNoSpacesLenght = Regex.Replace(password, Rgx.removeSpaces, "").Length;
 
             if (pwNoSpacesLenght != password.Length)
                 errors.Add(new Error(pw, $"{pw}s must not contain any spaces"));
@@ -171,8 +228,7 @@ namespace API.BLL.Account
                 return;
             }
 
-            string rgxNamePattern = @"^[a-zA-Z@]*$";
-            if (!Regex.IsMatch(name, rgxNamePattern))
+            if (!Regex.IsMatch(name, Rgx.namePattern))
                 errors.Add(new Error(n, $"{n}s must only contain english letters."));
         }
 
@@ -197,8 +253,7 @@ namespace API.BLL.Account
 
             var emailExists = _repo.DoesEmailExist(email);
 
-            string rgxEmailPatten = @"^([a-z0-9_\.-]+\@[\da-z\.-]+\.[a-z\.]{2,6})$";
-            if (!Regex.IsMatch(email, rgxEmailPatten))
+            if (!Regex.IsMatch(email, Rgx.emailPattern))
                 errors.Add(err);
 
             if (await emailExists)
@@ -240,6 +295,49 @@ namespace API.BLL.Account
                 ProfilePicture = profilePicture,
                 Token = _jwt.CreateToken(user, false)
             };
+        }
+
+        /// <summary>
+        /// Remap <paramref name="AppUser"/> to <paramref name="SignedInUserDto"/>.
+        /// </summary>
+        /// <param name="user">The <paramref name="AppUser"/> to remap.</param>
+        /// <param name="remember">Whether to remember the signed in user or not</param>
+        /// <returns><paramref name="SignedInUserDto"/> remapped user. </returns>
+        private SignedInUserDto AccountMapper(AppUser user, bool remember)
+        {
+            var (id, username, name, profilePicture) = user;
+
+            return new SignedInUserDto()
+            {
+                Id = id,
+                Username = username,
+                Name = name,
+                ProfilePicture = profilePicture,
+                Token = _jwt.CreateToken(user, remember)
+            };
+        }
+
+        /// <summary>
+        /// Encrypt and check submitted password to the encrypted password.
+        /// </summary>
+        /// <param name="password">The client submitted password.</param>
+        /// <param name="passwordHash">The encrypted password to compare to.</param>
+        /// <param name="passwordSalt">The encryption key of the encrypted password.</param>
+        /// <returns>
+        /// <paramref name="True"/> - passwords match. <br/>
+        /// - or - <br/> 
+        /// <paramref name="False"/> - passwords don't match. 
+        /// </returns>
+        private bool PasswordsMatch(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using var hmac = new HMACSHA512(passwordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+            for (int i = 0; i < computedHash.Length; i++)
+                if (computedHash[i] != passwordHash[i])
+                    return false;
+
+            return true;
         }
     }
 }

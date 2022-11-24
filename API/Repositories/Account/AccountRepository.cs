@@ -13,6 +13,7 @@ namespace API.Repositories
 {
     public class AccountRepository : IAccountRepository
     {
+        // Dependency Injections
         private readonly DataContext _context;
         private readonly IImageService _imageService;
         public AccountRepository(DataContext context, IImageService imageService)
@@ -64,6 +65,14 @@ namespace API.Repositories
             .AnyAsync(u => u.Email.ToLower() == email.ToLower());
         }
 
+
+        public async Task<AppUser?> GetUserByUsername(string username)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
+
+        }
+
+
         public async Task<ActionResult<AppUser>> GetUserById(int id)
         {
             var queryResult = await _context.Users.FindAsync(id);
@@ -71,6 +80,7 @@ namespace API.Repositories
                 return queryResult;
             return new NotFoundResult();
         }
+
 
         public async Task<bool> SaveAllAsync()
         {

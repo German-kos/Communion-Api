@@ -23,5 +23,16 @@ namespace API.Interfaces
         /// <paramref name="HTTP"/> <paramref name="Response"/> what went wrong.
         /// </returns>
         Task<ActionResult<SignedInUserDto>> SignUp(SignUpFormDto signUpForm);
+
+        /// <summary>
+        /// Process a sign in request, if the request is valid, pass the a request to the repository to find the user from the database.
+        /// </summary>
+        /// <param name="signInForm">The client submitted sign in form.</param>
+        /// <returns>
+        /// <paramref name="UserDto"/> remapped user. <br/>
+        /// - or - <br/>
+        /// <paramref name="HTTP"/> <paramref name="Response"/> what went wrong.
+        /// </returns>
+        Task<ActionResult<SignedInUserDto>> SignIn(SignInFormDto signInForm);
     }
 }

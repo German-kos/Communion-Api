@@ -33,5 +33,28 @@ namespace API.Interfaces
         /// <paramref name="HTTP"/> <paramref name="Response"/> of error that occured.
         /// </returns>
         ActionResult<SignedInUserDto> ProcessSignUpResult(ActionResult<AppUser>? signUpResult);
+
+        /// <summary>
+        /// Process the sign in form acquired from the client's request.
+        /// </summary>
+        /// <param name="signInForm">The sign in form submitted by the client.</param>
+        /// <returns>
+        /// <returns>A bag of <paramref name="Error"/><br/>
+        /// - or -<br/>
+        /// An empty bag if the form was valid.</returns>
+        /// </returns>
+        Task<ConcurrentBag<Error>> ProcessSignIn(SignInFormDto signInForm);
+
+        /// <summary>
+        /// Find the user in the database, encrypt the password from the submitted sign in form, compare the database's result user encrypted password to the client provided password
+        /// </summary>
+        /// <param name="signInForm">The sign in form submitted by the client.</param>
+        /// <param name="errors">The error bag to populate if there are any bad validations.</param>
+        /// <returns>
+        /// <paramref name="SignedInUserDto"/> of the user if the passwords match <br/>
+        /// - or - <br/>
+        /// <paramref name="null"/> if the password was incorrect, but an error was added to the error bag.
+        /// </returns>
+        Task<SignedInUserDto?> ValidatePassword(SignInFormDto signInForm, ConcurrentBag<Error> errors);
     }
 }

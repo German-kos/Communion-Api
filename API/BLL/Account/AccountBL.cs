@@ -10,6 +10,7 @@ using static Microsoft.AspNetCore.Mvc.ControllerBase;
 using API.Models;
 using System.Security.Cryptography;
 using System.Text;
+using System.Collections.Concurrent;
 
 namespace API.BLL.Account
 {
@@ -56,6 +57,23 @@ namespace API.BLL.Account
             var signUpResult = await _accountRepository.SignUp(newUser);
 
             return _validate.ProcessSignUpResult(signUpResult);
+        }
+
+
+        public async Task<ActionResult<SignedInUserDto>> SignIn(SignInFormDto signInForm)
+        {
+            var (username, password, remember) = signInForm;
+            ConcurrentBag<Error> errors = new ConcurrentBag<Error>(await _validate.ProcessSignIn(signInForm));
+
+            if (errors.Count() > 0)
+                return new BadRequestObjectResult(errors);
+
+            var validationResult = await _validate.ValidatePassword(signInForm, errors);
+
+            if (errors.Count() > 0 || validationResult == null)
+                return new BadRequestObjectResult(errors);
+
+            return validationResult;
         }
 
     }
