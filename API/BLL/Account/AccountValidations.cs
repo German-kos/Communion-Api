@@ -313,7 +313,8 @@ namespace API.BLL.Account
                 Username = username,
                 Name = name,
                 ProfilePicture = profilePicture,
-                Token = _jwt.CreateToken(user, remember)
+                Token = _jwt.CreateToken(user, remember),
+                Remember = remember
             };
         }
 

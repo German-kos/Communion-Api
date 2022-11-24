@@ -44,7 +44,7 @@ namespace API.Controllers
         }
 
         [HttpPost("signin")] // [POST] api/account/signin
-        public async Task<ActionResult<SignedInUserDto>> SignIn(SignInFormDto signInForm)
+        public async Task<ActionResult<SignedInUserDto>> SignIn([FromForm] SignInFormDto signInForm)
         {
             return await _accountBL.SignIn(signInForm);
         }
