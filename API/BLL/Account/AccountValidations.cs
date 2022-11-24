@@ -124,6 +124,22 @@ namespace API.BLL.Account
         }
 
 
+        public async Task<ActionResult<SignedInUserDto>> ProcessAutoSignIn(AutoSignInDto autoSignInForm, string? requestor)
+        {
+            // Deconstruction
+            var (username, remember) = autoSignInForm;
+
+            if (username.ToLower() != requestor?.ToLower())
+                return new UnauthorizedResult();
+
+            var user = await _repo.GetUserByUsername(username);
+            if (user != null)
+                return AccountMapper(user, remember);
+
+            return new StatusCodeResult(500);
+        }
+
+
         // Private Methods:
 
 

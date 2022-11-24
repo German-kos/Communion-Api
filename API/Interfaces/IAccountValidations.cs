@@ -56,5 +56,17 @@ namespace API.Interfaces
         /// <paramref name="null"/> if the password was incorrect, but an error was added to the error bag.
         /// </returns>
         Task<SignedInUserDto?> ValidatePassword(SignInFormDto signInForm, ConcurrentBag<Error> errors);
+
+        /// <summary>
+        /// Process the auto sign in form request from the client and determine whether to return a signed in user, or an unauthorized error.
+        /// </summary>
+        /// <param name="autoSignInForm">The client submitted auto sign in form.</param>
+        /// <param name="requestor">The username of the requestor, extracted from the JWT.</param>
+        /// <returns>
+        /// <paramref name="SignedInUserDto"/> of the user from the request.<br/>
+        /// - or - <br/>
+        /// <paramref name="Unauthorized"/> - if the auto sign in form is not valid.
+        /// </returns>
+        Task<ActionResult<SignedInUserDto>> ProcessAutoSignIn(AutoSignInDto autoSignInForm, string? requestor);
     }
 }

@@ -61,7 +61,7 @@ namespace API.Interfaces
         /// </summary>
         /// <param name="id">The id of the user.</param>
         /// <returns>The user corresponding to the id.</returns>
-        Task<ActionResult<AppUser>> GetUserById(int id);
+        Task<AppUser?> GetUserById(int id);
 
         /// <summary>
         /// Save changes made to the database.

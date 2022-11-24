@@ -73,12 +73,9 @@ namespace API.Repositories
         }
 
 
-        public async Task<ActionResult<AppUser>> GetUserById(int id)
+        public async Task<AppUser?> GetUserById(int id)
         {
-            var queryResult = await _context.Users.FindAsync(id);
-            if (queryResult != null)
-                return queryResult;
-            return new NotFoundResult();
+            return await _context.Users.FindAsync(id);
         }
 
 

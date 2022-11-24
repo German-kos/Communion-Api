@@ -35,7 +35,7 @@ namespace API.BLL
         }
 
 
-        public async Task<ActionResult<ForumCategoryDto>> CreateCategory(CreateCategoryDto creationForm, string requestor)
+        public async Task<ActionResult<ForumCategoryDto>> CreateCategory(CreateCategoryDto creationForm, string? requestor)
         {
             // Deconstruction
             string categoryName = creationForm.Name;
@@ -54,7 +54,7 @@ namespace API.BLL
         }
 
 
-        public async Task<ActionResult> DeleteCategory(DeleteCategoryDto deletionForm, string requestor)
+        public async Task<ActionResult> DeleteCategory(DeleteCategoryDto deletionForm, string? requestor)
         {
             // Deconstruction
             var (id, name) = deletionForm;
@@ -73,7 +73,7 @@ namespace API.BLL
         }
 
 
-        public async Task<ActionResult<ForumCategoryDto>> UpdateCategory(UpdateCategoryDto updateForm, string requestor)
+        public async Task<ActionResult<ForumCategoryDto>> UpdateCategory(UpdateCategoryDto updateForm, string? requestor)
         {
             // Deconstruction
             var (id, name, newName, newInfo, newImageFile) = updateForm;
@@ -100,7 +100,7 @@ namespace API.BLL
         }
 
 
-        public async Task<ActionResult<ForumCategoryDto>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, string username)
+        public async Task<ActionResult<ForumCategoryDto>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, string? username)
         {
 
             // Check requestor for admin rights
@@ -130,7 +130,7 @@ namespace API.BLL
         //
         // Delete an existing sub-category, in an existing category, update the database,
         // and return an up to date list of the remaining sub-categories (if there are any) of that category
-        public async Task<ActionResult<List<ForumSubCategoryDto>>> DeleteSubCategory(DeleteSubCategoryDto deleteSubCatForm, string username)
+        public async Task<ActionResult<List<ForumSubCategoryDto>>> DeleteSubCategory(DeleteSubCategoryDto deleteSubCatForm, string? username)
         {
             // Check requestor for admin rights
             var rights = await CheckRights(username);
@@ -152,7 +152,7 @@ namespace API.BLL
         //
         //
         //
-        public async Task<ActionResult<ForumSubCategoryDto>> UpdateSub(UpdateSubDto updateSub, string username)
+        public async Task<ActionResult<ForumSubCategoryDto>> UpdateSub(UpdateSubDto updateSub, string? username)
         {
             // Deconstruction
             var (categoryName, subName, newSubName) = updateSub;

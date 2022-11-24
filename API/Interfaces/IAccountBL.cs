@@ -34,5 +34,17 @@ namespace API.Interfaces
         /// <paramref name="HTTP"/> <paramref name="Response"/> what went wrong.
         /// </returns>
         Task<ActionResult<SignedInUserDto>> SignIn(SignInFormDto signInForm);
+
+        /// <summary>
+        /// Process the auto sign in request, if the request is valid, return the user from the database corresponding to the reqestor.
+        /// </summary>
+        /// <param name="autoSignInForm">The client subtmitted auto sign in form.</param>
+        /// <param name="requestor">The username of the requestor, extracted from the JWT.</param>
+        /// <returns>
+        /// <paramref name="SignedInUserDto"/> of the user from the request.<br/>
+        /// - or - <br/>
+        /// <paramref name="Unauthorized"/> - if the auto sign in form is not valid.
+        /// </returns>
+        Task<ActionResult<SignedInUserDto>> AutoSignIn(AutoSignInDto autoSignInForm, string? requestor);
     }
 }

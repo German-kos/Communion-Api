@@ -36,7 +36,7 @@ namespace API.Interfaces
         /// - or -<br/>
         /// <paramref name="InternalError"/>.
         /// </returns>
-        Task<ActionResult<ForumCategoryDto>> CreateCategory(CreateCategoryDto creationForm, string requestor);
+        Task<ActionResult<ForumCategoryDto>> CreateCategory(CreateCategoryDto creationForm, string? requestor);
 
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace API.Interfaces
         /// - or -<br/>
         ///  <paramref name="InternalError"/>.
         /// </returns>
-        Task<ActionResult> DeleteCategory(DeleteCategoryDto deletionForm, string requestor);
+        Task<ActionResult> DeleteCategory(DeleteCategoryDto deletionForm, string? requestor);
 
 
         /// <summary>
@@ -64,9 +64,9 @@ namespace API.Interfaces
         /// - or -<br/>
         /// <paramref name="InternalError"/>.
         /// </returns>
-        Task<ActionResult<ForumCategoryDto>> UpdateCategory(UpdateCategoryDto updateForm, string requestor);
-        Task<ActionResult<ForumCategoryDto>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, string username);
-        Task<ActionResult<List<ForumSubCategoryDto>>> DeleteSubCategory(DeleteSubCategoryDto deleteSubCatForm, string username);
-        Task<ActionResult<ForumSubCategoryDto>> UpdateSub(UpdateSubDto updateSub, string username);
+        Task<ActionResult<ForumCategoryDto>> UpdateCategory(UpdateCategoryDto updateForm, string? requestor);
+        Task<ActionResult<ForumCategoryDto>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, string? username);
+        Task<ActionResult<List<ForumSubCategoryDto>>> DeleteSubCategory(DeleteSubCategoryDto deleteSubCatForm, string? username);
+        Task<ActionResult<ForumSubCategoryDto>> UpdateSub(UpdateSubDto updateSub, string? username);
     }
 }

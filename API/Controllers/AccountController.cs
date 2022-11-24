@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
 using API.Models;
-using API.DTOs;
 using API.Extensions;
 using API.Interfaces;
-using API.Models;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,32 +41,21 @@ namespace API.Controllers
             return await _accountBL.SignUp(signUpForm);
         }
 
+
         [HttpPost("signin")] // [POST] api/account/signin
         public async Task<ActionResult<SignedInUserDto>> SignIn([FromForm] SignInFormDto signInForm)
         {
             return await _accountBL.SignIn(signInForm);
         }
-        [Authorize]
-        [HttpPost("autosignin")]
-        public async Task<ActionResult<SignedInUserDto>> AutoSignIn(AutoSignInDto autoSignInUser)
+
+
+        [Authorize] // A bearer JWT token is needed to auto sign-in
+        [HttpPost("autosignin")] // [POST] api/account/autosignin
+        public async Task<ActionResult<SignedInUserDto>> AutoSignIn([FromForm] AutoSignInDto autoSignInForm)
         {
-            var user = _accountRepository.GetUserByUsernameAsync(autoSignInUser.Username).Result;
-            if (user == null) return StatusCode(500);
-
-            string pfpUrl = "";
-            // if (user.ProfilePicture.Count() > 0)
-            pfpUrl = user.ProfilePicture.Url;
-
-            return new SignedInUserDto
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Name = user.Name,
-                Token = _tokenService.CreateToken(user, autoSignInUser.Remember),
-                ProfilePicture = pfpUrl,
-                Remember = autoSignInUser.Remember
-            };
+            return await _accountBL.AutoSignIn(autoSignInForm, User.GetUsername());
         }
+
 
         [Authorize]
         [HttpPost("upload-pfp")]
@@ -228,3 +215,25 @@ namespace API.Controllers
 //                 ProfilePicture = pfpUrl,
 //                 Remember = signInDto.Remember
 //             };
+
+
+
+// auto sign in request
+
+
+// var user = _accountRepository.GetUserByUsernameAsync(autoSignInUser.Username).Result;
+// if (user == null) return StatusCode(500);
+
+// string pfpUrl = "";
+// // if (user.ProfilePicture.Count() > 0)
+// pfpUrl = user.ProfilePicture.Url;
+
+// return new SignedInUserDto
+// {
+//     Id = user.Id,
+//     Username = user.Username,
+//     Name = user.Name,
+//     Token = _tokenService.CreateToken(user, autoSignInUser.Remember),
+//     ProfilePicture = pfpUrl,
+//     Remember = autoSignInUser.Remember
+// };

@@ -39,7 +39,7 @@ namespace API.Helpers
         /// - or - <br/>
         /// <paramref name="False"/> - user has admin rights.
         /// </returns>
-        public async Task<bool> NotAdmin(string requestor)
+        public async Task<bool> NotAdmin(string? requestor)
         {
             if (requestor == null || requestor == "") return true;
             return !await _userRepository.IsUserAdmin(requestor);

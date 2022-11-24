@@ -76,5 +76,10 @@ namespace API.BLL.Account
             return validationResult;
         }
 
+
+        public async Task<ActionResult<SignedInUserDto>> AutoSignIn(AutoSignInDto autoSignInForm, string? requestor)
+        {
+            return await _validate.ProcessAutoSignIn(autoSignInForm, requestor);
+        }
     }
 }
