@@ -8,10 +8,10 @@ namespace API.DTOs
     public class SignedInUserDto
     {
         public int Id { get; set; }
-        public string Username { get; set; }
-        public string Name { get; set; }
-        public string Token { get; set; }
-        public string ProfilePicture { get; set; }
-        public bool Remember { get; set; }
+        public string Username { get; set; } = null!;
+        public string Name { get; set; } = null!;
+        public string Token { get; set; } = null!;
+        public string? ProfilePicture { get; set; }
+        public bool Remember { get; set; } = false;
     }
 }

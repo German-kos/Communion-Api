@@ -8,6 +8,7 @@ using API.DTOs;
 using API.Helpers;
 using API.Interfaces;
 using API.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.BLL.Account
 {
@@ -15,8 +16,10 @@ namespace API.BLL.Account
     {
         // Dependency Injections
         private readonly IAccountRepository _repo;
-        public AccountValidations(IAccountRepository repo)
+        private readonly ITokenService _jwt;
+        public AccountValidations(IAccountRepository repo, ITokenService jwt)
         {
+            _jwt = jwt;
             _repo = repo;
         }
 
@@ -45,6 +48,21 @@ namespace API.BLL.Account
             await Task.WhenAll(validations);
 
             return errors;
+        }
+
+
+        public ActionResult<SignedInUserDto> ProcessSignUpResult(ActionResult<AppUser>? signUpResult)
+        {
+            // Deconstruction
+            var (result, value) = (signUpResult?.Result, signUpResult?.Value);
+
+            if (result != null)
+                return result;
+
+            if (value != null)
+                return AccountMapper(value);
+
+            return new StatusCodeResult(500);
         }
 
 
@@ -202,6 +220,26 @@ namespace API.BLL.Account
         private bool IsLengthValid(string str, int minLength, int maxLength)
         {
             return str.Length <= maxLength && str.Length >= minLength;
+        }
+
+
+        /// <summary>
+        /// Remap <paramref name="AppUser"/> to <paramref name="SignedInUserDto"/>.
+        /// </summary>
+        /// <param name="user">The <paramref name="AppUser"/> to remap.</param>
+        /// <returns><paramref name="SignedInUserDto"/> remapped user. </returns>
+        private SignedInUserDto AccountMapper(AppUser user)
+        {
+            var (id, username, name, profilePicture) = user;
+
+            return new SignedInUserDto()
+            {
+                Id = id,
+                Username = username,
+                Name = name,
+                ProfilePicture = profilePicture,
+                Token = _jwt.CreateToken(user, false)
+            };
         }
     }
 }

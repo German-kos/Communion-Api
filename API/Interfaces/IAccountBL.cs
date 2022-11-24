@@ -22,6 +22,6 @@ namespace API.Interfaces
         /// - or - <br/>
         /// <paramref name="HTTP"/> <paramref name="Response"/> what went wrong.
         /// </returns>
-        Task<ActionResult<UserDto>> SignUp(SignUpFormDto signUpForm);
+        Task<ActionResult<SignedInUserDto>> SignUp(SignUpFormDto signUpForm);
     }
 }

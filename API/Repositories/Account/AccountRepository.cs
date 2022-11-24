@@ -7,6 +7,7 @@ using API.Models;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using API.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Repositories
 {
@@ -41,10 +42,12 @@ namespace API.Repositories
 
         // new methods
 
-        public async Task<bool> SignUp(AppUser newUser)
+        public async Task<ActionResult<AppUser>> SignUp(AppUser newUser)
         {
-            await _context.Users.AddAsync(newUser);
-            return await SaveAllAsync();
+            var addedUser = await _context.Users.AddAsync(newUser);
+            if (!await SaveAllAsync())
+                return new StatusCodeResult(500);
+            return addedUser.Entity;
         }
 
 
@@ -61,6 +64,13 @@ namespace API.Repositories
             .AnyAsync(u => u.Email.ToLower() == email.ToLower());
         }
 
+        public async Task<ActionResult<AppUser>> GetUserById(int id)
+        {
+            var queryResult = await _context.Users.FindAsync(id);
+            if (queryResult != null)
+                return queryResult;
+            return new NotFoundResult();
+        }
 
         public async Task<bool> SaveAllAsync()
         {

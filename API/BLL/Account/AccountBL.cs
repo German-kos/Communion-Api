@@ -30,7 +30,7 @@ namespace API.BLL.Account
         // Methods
 
 
-        public async Task<ActionResult<UserDto>> SignUp(SignUpFormDto signUpForm)
+        public async Task<ActionResult<SignedInUserDto>> SignUp(SignUpFormDto signUpForm)
         {
             // Deconstruction
             var (username, password, name, email) = signUpForm;
@@ -53,17 +53,9 @@ namespace API.BLL.Account
                 RegistrationDate = DateTime.Now
             };
 
-            bool added = await _accountRepository.SignUp(newUser);
+            var signUpResult = await _accountRepository.SignUp(newUser);
 
-            if (added)
-                return new UserDto
-                {
-                    Username = username,
-                    Token = _jwt.CreateToken(newUser, false)
-                };
-
-
-            return new StatusCodeResult(500);
+            return _validate.ProcessSignUpResult(signUpResult);
         }
 
     }

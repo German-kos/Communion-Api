@@ -27,5 +27,13 @@ namespace API.Models
         public ProfilePicture? ProfilePicture { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public DateTime RegistrationDate { get; set; }
+
+        internal void Deconstruct(out int id, out string username, out string name, out string? profilePicture)
+        {
+            id = Id;
+            username = Username;
+            name = Name;
+            profilePicture = ProfilePicture?.Url;
+        }
     }
 }

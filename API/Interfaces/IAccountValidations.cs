@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Interfaces
 {
@@ -21,5 +22,16 @@ namespace API.Interfaces
         /// - or -<br/>
         /// An empty bag if the form was valid.</returns>
         Task<ConcurrentBag<Error>> ProcessSignUp(SignUpFormDto signUpForm);
+
+        /// <summary>
+        /// Process the sign up result, determine what to return.
+        /// </summary>
+        /// <param name="signUpResult">The sign up action result from the data access layer.</param>
+        /// <returns>
+        /// <paramref name="SignedInUserDto"/> of remapped user. <br/>
+        /// - or - <br/>
+        /// <paramref name="HTTP"/> <paramref name="Response"/> of error that occured.
+        /// </returns>
+        ActionResult<SignedInUserDto> ProcessSignUpResult(ActionResult<AppUser>? signUpResult);
     }
 }

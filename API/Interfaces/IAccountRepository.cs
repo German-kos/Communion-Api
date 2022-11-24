@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Interfaces
 {
@@ -22,11 +23,9 @@ namespace API.Interfaces
         /// </summary>
         /// <param name="newUser">The user to add to the database.</param>
         /// <returns>
-        ///  <paramref name="True"/> - if the user was added successfully. <br/>
-        /// - or - <br/>
-        /// <paramref name="False"/> - if there's been a problem with adding the user.
+        ///  <paramref name="SignedInUserDto"/> of the newly added user.
         /// </returns>
-        Task<bool> SignUp(AppUser newUser);
+        Task<ActionResult<AppUser>> SignUp(AppUser newUser);
 
         /// <summary>
         /// Query the database for if a user exists.
@@ -49,6 +48,14 @@ namespace API.Interfaces
         /// <paramref name="False"/> - if the email doesn't exist.
         /// </returns>
         Task<bool> DoesEmailExist(string email);
+
+        /// <summary>
+        /// Query the database for a user by id.
+        /// </summary>
+        /// <param name="id">The id of the user.</param>
+        /// <returns>The user corresponding to the id.</returns>
+        Task<ActionResult<AppUser>> GetUserById(int id);
+
         /// <summary>
         /// Save changes made to the database.
         /// </summary>

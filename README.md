@@ -9,4 +9,5 @@ current users
 ```
 JerryS  Password123!
 GeorgeC Password123!
+CosmoK  Password123!
 ```

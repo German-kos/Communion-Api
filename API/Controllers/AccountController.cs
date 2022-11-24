@@ -36,8 +36,8 @@ namespace API.Controllers
         }
 
 
-        [HttpPost("signup")]
-        public async Task<ActionResult<UserDto>> SignUp([FromForm] SignUpFormDto signUpForm)
+        [HttpPost("signup")] // [POST] api/account/signup
+        public async Task<ActionResult<SignedInUserDto>> SignUp([FromForm] SignUpFormDto signUpForm)
         {
             return await _accountBL.SignUp(signUpForm);
         }
