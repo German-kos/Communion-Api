@@ -21,8 +21,10 @@ namespace API.BLL.Account
         private readonly IAccountValidations _validate;
         private readonly ITokenService _jwt;
         private readonly IAccountImageService _img;
-        public AccountBL(IAccountValidations validate, IAccountRepository accountRepository, ITokenService jwt, IAccountImageService img)
+        private readonly IAccountUpdates _update;
+        public AccountBL(IAccountValidations validate, IAccountRepository accountRepository, ITokenService jwt, IAccountImageService img, IAccountUpdates update)
         {
+            _update = update;
             _img = img;
             _jwt = jwt;
             _validate = validate;
@@ -92,6 +94,16 @@ namespace API.BLL.Account
                 return new UnauthorizedResult();
 
             return await _img.UploadPfp(uploadPfpForm);
+        }
+
+        public async Task<ActionResult<ProfileInformationDto>> UpdateProfile(UpdateProfileFormDto updateProfileForm, string requestor)
+        {
+            bool validUserRequest = _validate.UsernameRequestorMatch(updateProfileForm.username, requestor);
+            if (!validUserRequest)
+                return new UnauthorizedResult();
+
+            _update.ProcessUpdateProfile(updateProfileForm);
+            throw new NotImplementedException();
         }
     }
 }

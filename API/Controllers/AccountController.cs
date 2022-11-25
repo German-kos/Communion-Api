@@ -68,7 +68,7 @@ namespace API.Controllers
         // left to rewrite VVV
         [Authorize]
         [HttpPatch("edit-profile")]
-        public async Task<ActionResult<AppUser>> EditProfile(EditProfileDto editProfileDto)
+        public async Task<ActionResult<AppUser>> UpdateProfile(UpdateProfileFormDto editProfileDto)
         {
             var username = User.GetUsername();
 

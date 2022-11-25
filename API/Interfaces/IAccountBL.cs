@@ -56,5 +56,13 @@ namespace API.Interfaces
         /// <paramref name="ProfilePicture"/> of the added profile picture.
         /// </returns>
         Task<ActionResult<ProfilePictureDto>> UploadPfp(UploadPfpFormDto uploadPfpForm, string? requestor);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="editProfileForm"></param>
+        /// <param name="requestor"></param>
+        /// <returns></returns>
+        Task<ActionResult<ProfileInformationDto>> UpdateProfile(UpdateProfileFormDto editProfileForm, string requestor);
     }
 }
