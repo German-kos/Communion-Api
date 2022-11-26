@@ -32,7 +32,9 @@ namespace API.Controllers
             // return user;
             // return await _context.Users.Include(user => user.ProfilePicture).FirstOrDefaultAsync(user => user.Username.ToLower() == data.Username.ToLower());
             // return "nothing yet";
-            var user = await _accountRepository.GetUserByUsernameAsync(data.Username);
+
+
+            var user = await _accountRepository.GetUserIncludePfp(data.Username);
 
             string pfpUrl = "";
             // if (user.ProfilePicture.Count() > 0)

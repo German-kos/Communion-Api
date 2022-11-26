@@ -35,5 +35,15 @@ namespace API.Models
             name = Name;
             profilePicture = ProfilePicture?.Url;
         }
+
+        internal void Deconstruct(out string username, out string name, out DateTime? dateOfBirth, out string bio, out string? gender, out string? country)
+        {
+            username = Username;
+            name = Name;
+            dateOfBirth = DateOfBirth;
+            bio = Bio;
+            gender = Gender;
+            country = Country;
+        }
     }
 }

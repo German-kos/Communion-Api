@@ -15,23 +15,37 @@ namespace API.BLL.Account
     {
         // Dependency Injections
         private readonly IAccountRepository _repo;
-        public AccountUpdates(IAccountRepository repo)
+        private readonly IAccountMappers _map;
+        public AccountUpdates(IAccountRepository repo, IAccountMappers map)
         {
+            _map = map;
             _repo = repo;
-
         }
-        public async Task<ActionResult<AppUser>> ProcessUpdateProfile(UpdateProfileFormDto updateProfileForm)
+
+
+        // Methods:
+
+
+        public async Task<ActionResult<ProfileInformationDto>> ProcessUpdateProfile(UpdateProfileFormDto updateProfileForm)
         {
             var (username, dateOfBirth, country, gender, bio) = updateProfileForm;
 
             bool allFieldsEmpty = AreAllFieldsEmpty(updateProfileForm);
+
             if (allFieldsEmpty)
                 return new StatusCodeResult(304);
 
             var fieldsToUpdate = FieldsToUpdate(updateProfileForm);
-            return await _repo.UpdateProfile(updateProfileForm, fieldsToUpdate);
 
+            var updateResult = await _repo.UpdateProfile(updateProfileForm, fieldsToUpdate);
 
+            if (updateResult.Result != null)
+                return updateResult.Result;
+
+            if (updateResult.Value != null)
+                return _map.ProfileInfoMapper(updateResult.Value);
+
+            return new StatusCodeResult(500);
         }
 
 

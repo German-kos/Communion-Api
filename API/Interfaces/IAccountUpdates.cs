@@ -14,10 +14,10 @@ namespace API.Interfaces
     public interface IAccountUpdates
     {
         /// <summary>
-        /// 
+        /// Process the client submitted profile update form.
         /// </summary>
-        /// <param name="editProfileForm"></param>
-        /// <returns></returns>
-        Task<ActionResult<AppUser>> ProcessUpdateProfile(UpdateProfileFormDto updateProfileForm);
+        /// <param name="editProfileForm">The client submitted updated profile form.</param>
+        /// <returns>A remapped user with the new information.</returns>
+        Task<ActionResult<ProfileInformationDto>> ProcessUpdateProfile(UpdateProfileFormDto updateProfileForm);
     }
 }

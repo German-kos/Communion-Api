@@ -12,6 +12,6 @@ namespace API.DTOs
         public DateTime? DateOfBirth { get; set; }
         public string? Bio { get; set; }
         public string? Gender { get; set; }
-        public string? country { get; set; }
+        public string? Country { get; set; }
     }
 }

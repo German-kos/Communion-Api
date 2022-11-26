@@ -33,5 +33,12 @@ namespace API.Interfaces
         /// <param name="pfp">The <paramref name="ProfilePicture"/> to remap.</param>
         /// <returns><paramref name="ProfilePictureDto"/> remapped profile picture.</returns>
         ProfilePictureDto ProfilePictureMapper(ProfilePicture pfp);
+
+        /// <summary>
+        /// Remap <paramref name="AppUser"/> to <paramref name="ProfileInformationDto"/>.
+        /// </summary>
+        /// <param name="user">The <paramref name="AppUser"/> to remap.</param>
+        /// <returns><paramref name="ProfileInformationDto"/> remapped profile information.</returns>
+        ProfileInformationDto ProfileInfoMapper(AppUser user);
     }
 }

@@ -96,7 +96,7 @@ namespace API.BLL.Account
             return await _img.UploadPfp(uploadPfpForm);
         }
 
-        public async Task<ActionResult<AppUser>> UpdateProfile(UpdateProfileFormDto updateProfileForm, string? requestor)
+        public async Task<ActionResult<ProfileInformationDto>> UpdateProfile(UpdateProfileFormDto updateProfileForm, string? requestor)
         {
             bool validUserRequest = _validate.UsernameRequestorMatch(updateProfileForm.Username, requestor);
             if (!validUserRequest)

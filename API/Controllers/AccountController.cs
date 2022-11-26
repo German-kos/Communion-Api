@@ -65,44 +65,12 @@ namespace API.Controllers
 
         }
 
-        // left to rewrite VVV
-        [Authorize]
-        [HttpPatch("edit-profile")]
-        public async Task<ActionResult<AppUser>> UpdateProfile([FromForm] UpdateProfileFormDto updateProfileForm)
+
+        [Authorize] // A bearer JWT is needed to update a profile.
+        [HttpPatch("edit-profile")] // [PATCH] api/account/edit-profile
+        public async Task<ActionResult<ProfileInformationDto>> UpdateProfile([FromForm] UpdateProfileFormDto updateProfileForm)
         {
-
             return await _accountBL.UpdateProfile(updateProfileForm, User.GetUsername());
-            // var username = User.GetUsername();
-
-            // var user = await _accountRepository.GetUserByUsernameAsync(username);
-            // user.Country = editProfileDto.Country;
-            // user.Gender = editProfileDto.Gender;
-            // user.Bio = editProfileDto.Bio;
-            // try
-            // {
-            //     user.DateOfBirth = DateTime.Parse(editProfileDto.DateOfBirth);
-            // }
-            // catch when (editProfileDto.DateOfBirth == "")
-            // {
-            //     user.DateOfBirth = null;
-            // }
-            // catch
-            // {
-            //     Console.WriteLine("Invalid Request");
-            // }
-
-
-
-            // _context.Users.Attach(user);
-
-            // _context.Entry(user).Property(u => u.Country).IsModified = true;
-            // _context.Entry(user).Property(u => u.Country).IsModified = true;
-            // _context.Entry(user).Property(u => u.Gender).IsModified = true;
-            // _context.Entry(user).Property(u => u.DateOfBirth).IsModified = true;
-
-            // await _context.SaveChangesAsync();
-
-            // return await _accountRepository.GetUserByUsernameAsync(username);
         }
     }
 }
@@ -235,3 +203,38 @@ namespace API.Controllers
 //     return user.ProfilePicture;
 // }
 // return BadRequest("Failed to upload image");
+
+
+// update profile information
+
+// var username = User.GetUsername();
+
+// var user = await _accountRepository.GetUserByUsernameAsync(username);
+// user.Country = editProfileDto.Country;
+// user.Gender = editProfileDto.Gender;
+// user.Bio = editProfileDto.Bio;
+// try
+// {
+//     user.DateOfBirth = DateTime.Parse(editProfileDto.DateOfBirth);
+// }
+// catch when (editProfileDto.DateOfBirth == "")
+// {
+//     user.DateOfBirth = null;
+// }
+// catch
+// {
+//     Console.WriteLine("Invalid Request");
+// }
+
+
+
+// _context.Users.Attach(user);
+
+// _context.Entry(user).Property(u => u.Country).IsModified = true;
+// _context.Entry(user).Property(u => u.Country).IsModified = true;
+// _context.Entry(user).Property(u => u.Gender).IsModified = true;
+// _context.Entry(user).Property(u => u.DateOfBirth).IsModified = true;
+
+// await _context.SaveChangesAsync();
+
+// return await _accountRepository.GetUserByUsernameAsync(username);

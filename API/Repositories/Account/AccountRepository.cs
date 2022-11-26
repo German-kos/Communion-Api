@@ -23,26 +23,9 @@ namespace API.Repositories
             _context = context;
         }
 
-        public async Task<AppUser> GetUserByIdAsync(int id)
-        {
-            return await _context.Users.FindAsync(id);
-        }
 
-        public async Task<AppUser> GetUserByUsernameAsync(string username)
-        {
-            return await _context.Users
-            .Include(u => u.ProfilePicture)
-            .SingleOrDefaultAsync(user => user.Username.ToLower() == username.ToLower());
-        }
+        // Methods: 
 
-
-
-        public void Update(AppUser user)
-        {
-            _context.Entry(user).State = EntityState.Modified;
-        }
-
-        // new methods
 
         public async Task<ActionResult<AppUser>> SignUp(AppUser newUser)
         {
@@ -88,7 +71,7 @@ namespace API.Repositories
 
         public async Task<ActionResult<AppUser>> UpdateProfile(UpdateProfileFormDto updateProfileForm, List<PropertyInfo> fieldsToUpdate)
         {
-            var (dateOfBirth, gender, country, bio) = updateProfileForm;
+            var dateOfBirth = updateProfileForm.DateOfBirth;
             List<Error> errors = new List<Error>();
 
             var user = await GetUserByUsername(updateProfileForm.Username);
@@ -98,7 +81,7 @@ namespace API.Repositories
 
             foreach (var field in fieldsToUpdate)
             {
-                if (field.Name == "DateOfBirth")
+                if (field.Name == "DateOfBirth" && dateOfBirth != null)
                 {
                     try
                     {
@@ -110,7 +93,7 @@ namespace API.Repositories
                         errors.Add(new Error("DateOfBirth", "Invalid date format."));
                     }
                 }
-                else
+                else if (field.GetValue(updateProfileForm) != null)
                 {
 
                     try
@@ -118,7 +101,7 @@ namespace API.Repositories
                         user.GetType().GetProperty(field.Name)?.SetValue(user, updateProfileForm.GetType().GetProperty(field.Name)?.GetValue(updateProfileForm));
                         _context.Entry(user).Property(field.Name).IsModified = true;
                     }
-                    catch (InvalidCastException e)
+                    catch
                     {
                         errors.Add(new Error(field.Name, $"Couldn't update {field.Name}"));
                     }

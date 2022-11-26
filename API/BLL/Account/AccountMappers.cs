@@ -51,6 +51,7 @@ namespace API.BLL.Account
             };
         }
 
+
         public ProfilePictureDto ProfilePictureMapper(ProfilePicture pfp)
         {
             // Deconstruction
@@ -65,5 +66,20 @@ namespace API.BLL.Account
             };
         }
 
+
+        public ProfileInformationDto ProfileInfoMapper(AppUser user)
+        {
+            var (username, name, dateOfBirth, bio, gender, country) = user;
+
+            return new ProfileInformationDto
+            {
+                Username = username,
+                Name = name,
+                DateOfBirth = dateOfBirth,
+                Bio = bio,
+                Gender = gender,
+                Country = country
+            };
+        }
     }
 }

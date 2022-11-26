@@ -58,11 +58,13 @@ namespace API.Interfaces
         Task<ActionResult<ProfilePictureDto>> UploadPfp(UploadPfpFormDto uploadPfpForm, string? requestor);
 
         /// <summary>
-        /// 
+        /// Process the update profile information request, if the request is valid- update the user corresponding to the requestor.
         /// </summary>
-        /// <param name="editProfileForm"></param>
-        /// <param name="requestor"></param>
-        /// <returns></returns>
-        Task<ActionResult<AppUser>> UpdateProfile(UpdateProfileFormDto editProfileForm, string? requestor);
+        /// <param name="editProfileForm">The client submitted profile update form.</param>
+        /// <param name="requestor">The username of the requestor, extracted from the JWT.</param>
+        /// <returns>
+        /// <paramref name="ProfileInformationDto"/> of the updated profile.
+        /// </returns>
+        Task<ActionResult<ProfileInformationDto>> UpdateProfile(UpdateProfileFormDto editProfileForm, string? requestor);
     }
 }

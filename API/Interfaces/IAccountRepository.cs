@@ -14,11 +14,6 @@ namespace API.Interfaces
     /// </summary>
     public interface IAccountRepository
     {
-        void Update(AppUser user);
-        Task<AppUser> GetUserByIdAsync(int id);
-        Task<AppUser> GetUserByUsernameAsync(string username);
-
-
         /// <summary>
         /// Add a new user to the database.
         /// </summary>
@@ -72,6 +67,12 @@ namespace API.Interfaces
         Task<AppUser?> GetUserById(int id);
 
         // need to document
+        /// <summary>
+        /// Update a user in the database with new information submitted by the user.
+        /// </summary>
+        /// <param name="updateProfileForm">The client submitted update profile form.</param>
+        /// <param name="fieldsToUpdate">The properties in the user information that need to be updated.</param>
+        /// <returns>The updated user with the new information.</returns>
         Task<ActionResult<AppUser>> UpdateProfile(UpdateProfileFormDto updateProfileForm, List<PropertyInfo> fieldsToUpdate);
 
         /// <summary>
