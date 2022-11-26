@@ -11,3 +11,5 @@ JerryS  Password123!
 GeorgeC Password123!
 CosmoK  Password123!
 ```
+
+note to self: move account form proccessers to a seperate file
