@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Models;
@@ -69,6 +70,9 @@ namespace API.Interfaces
         /// <param name="id">The id of the user.</param>
         /// <returns>The user corresponding to the id.</returns>
         Task<AppUser?> GetUserById(int id);
+
+        // need to document
+        Task<ActionResult<AppUser>> UpdateProfile(UpdateProfileFormDto updateProfileForm, List<PropertyInfo> fieldsToUpdate);
 
         /// <summary>
         /// Save changes made to the database.

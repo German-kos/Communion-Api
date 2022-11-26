@@ -8,6 +8,7 @@ using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using API.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
 
 namespace API.Repositories
 {
@@ -82,6 +83,54 @@ namespace API.Repositories
         public async Task<AppUser?> GetUserById(int id)
         {
             return await _context.Users.FindAsync(id);
+        }
+
+
+        public async Task<ActionResult<AppUser>> UpdateProfile(UpdateProfileFormDto updateProfileForm, List<PropertyInfo> fieldsToUpdate)
+        {
+            var (dateOfBirth, gender, country, bio) = updateProfileForm;
+            List<Error> errors = new List<Error>();
+
+            var user = await GetUserByUsername(updateProfileForm.Username);
+            if (user == null)
+                return new NotFoundObjectResult("User does not exist.");
+            _context.Users.Attach(user);
+
+            foreach (var field in fieldsToUpdate)
+            {
+                if (field.Name == "DateOfBirth")
+                {
+                    try
+                    {
+                        user.DateOfBirth = DateTime.Parse(dateOfBirth);
+                        _context.Entry(user).Property(u => u.DateOfBirth).IsModified = true;
+                    }
+                    catch
+                    {
+                        errors.Add(new Error("DateOfBirth", "Invalid date format."));
+                    }
+                }
+                else
+                {
+
+                    try
+                    {
+                        user.GetType().GetProperty(field.Name)?.SetValue(user, updateProfileForm.GetType().GetProperty(field.Name)?.GetValue(updateProfileForm));
+                        _context.Entry(user).Property(field.Name).IsModified = true;
+                    }
+                    catch (InvalidCastException e)
+                    {
+                        errors.Add(new Error(field.Name, $"Couldn't update {field.Name}"));
+                    }
+                }
+            }
+
+            if (errors.Count > 0)
+                return new ConflictObjectResult(errors);
+
+            _context.Entry(user).State = EntityState.Modified;
+            await SaveAllAsync();
+            return user;
         }
 
 

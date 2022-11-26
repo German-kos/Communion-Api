@@ -96,14 +96,13 @@ namespace API.BLL.Account
             return await _img.UploadPfp(uploadPfpForm);
         }
 
-        public async Task<ActionResult<ProfileInformationDto>> UpdateProfile(UpdateProfileFormDto updateProfileForm, string requestor)
+        public async Task<ActionResult<AppUser>> UpdateProfile(UpdateProfileFormDto updateProfileForm, string? requestor)
         {
-            bool validUserRequest = _validate.UsernameRequestorMatch(updateProfileForm.username, requestor);
+            bool validUserRequest = _validate.UsernameRequestorMatch(updateProfileForm.Username, requestor);
             if (!validUserRequest)
                 return new UnauthorizedResult();
 
-            _update.ProcessUpdateProfile(updateProfileForm);
-            throw new NotImplementedException();
+            return await _update.ProcessUpdateProfile(updateProfileForm);
         }
     }
 }

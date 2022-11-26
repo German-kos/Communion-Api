@@ -21,5 +21,13 @@ namespace API.DTOs
             gender = Gender;
             bio = Bio;
         }
+
+        internal void Deconstruct(out string? dateOfBirth, out string? gender, out string? country, out string? bio)
+        {
+            dateOfBirth = DateOfBirth;
+            country = Country;
+            gender = Gender;
+            bio = Bio;
+        }
     }
 }

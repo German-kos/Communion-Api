@@ -68,39 +68,41 @@ namespace API.Controllers
         // left to rewrite VVV
         [Authorize]
         [HttpPatch("edit-profile")]
-        public async Task<ActionResult<AppUser>> UpdateProfile(UpdateProfileFormDto editProfileDto)
+        public async Task<ActionResult<AppUser>> UpdateProfile([FromForm] UpdateProfileFormDto updateProfileForm)
         {
-            var username = User.GetUsername();
 
-            var user = await _accountRepository.GetUserByUsernameAsync(username);
-            user.Country = editProfileDto.Country;
-            user.Gender = editProfileDto.Gender;
-            user.Bio = editProfileDto.Bio;
-            try
-            {
-                user.DateOfBirth = DateTime.Parse(editProfileDto.DateOfBirth);
-            }
-            catch when (editProfileDto.DateOfBirth == "")
-            {
-                user.DateOfBirth = null;
-            }
-            catch
-            {
-                Console.WriteLine("Invalid Request");
-            }
+            return await _accountBL.UpdateProfile(updateProfileForm, User.GetUsername());
+            // var username = User.GetUsername();
+
+            // var user = await _accountRepository.GetUserByUsernameAsync(username);
+            // user.Country = editProfileDto.Country;
+            // user.Gender = editProfileDto.Gender;
+            // user.Bio = editProfileDto.Bio;
+            // try
+            // {
+            //     user.DateOfBirth = DateTime.Parse(editProfileDto.DateOfBirth);
+            // }
+            // catch when (editProfileDto.DateOfBirth == "")
+            // {
+            //     user.DateOfBirth = null;
+            // }
+            // catch
+            // {
+            //     Console.WriteLine("Invalid Request");
+            // }
 
 
 
-            _context.Users.Attach(user);
+            // _context.Users.Attach(user);
 
-            _context.Entry(user).Property(u => u.Country).IsModified = true;
-            _context.Entry(user).Property(u => u.Country).IsModified = true;
-            _context.Entry(user).Property(u => u.Gender).IsModified = true;
-            _context.Entry(user).Property(u => u.DateOfBirth).IsModified = true;
+            // _context.Entry(user).Property(u => u.Country).IsModified = true;
+            // _context.Entry(user).Property(u => u.Country).IsModified = true;
+            // _context.Entry(user).Property(u => u.Gender).IsModified = true;
+            // _context.Entry(user).Property(u => u.DateOfBirth).IsModified = true;
 
-            await _context.SaveChangesAsync();
+            // await _context.SaveChangesAsync();
 
-            return await _accountRepository.GetUserByUsernameAsync(username);
+            // return await _accountRepository.GetUserByUsernameAsync(username);
         }
     }
 }

@@ -63,6 +63,6 @@ namespace API.Interfaces
         /// <param name="editProfileForm"></param>
         /// <param name="requestor"></param>
         /// <returns></returns>
-        Task<ActionResult<ProfileInformationDto>> UpdateProfile(UpdateProfileFormDto editProfileForm, string requestor);
+        Task<ActionResult<AppUser>> UpdateProfile(UpdateProfileFormDto editProfileForm, string? requestor);
     }
 }

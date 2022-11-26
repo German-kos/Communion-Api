@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs;
+using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Interfaces
@@ -17,6 +18,6 @@ namespace API.Interfaces
         /// </summary>
         /// <param name="editProfileForm"></param>
         /// <returns></returns>
-        Task<ActionResult<ProfileInformationDto>> ProcessUpdateProfile(UpdateProfileFormDto updateProfileForm);
+        Task<ActionResult<AppUser>> ProcessUpdateProfile(UpdateProfileFormDto updateProfileForm);
     }
 }
