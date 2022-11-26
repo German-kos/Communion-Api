@@ -6,7 +6,7 @@ using API.Models;
 
 namespace API.DTOs
 {
-    public class ForumCategoryDto
+    public class CategoryDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

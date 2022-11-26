@@ -27,7 +27,7 @@ namespace API.Controllers
 
 
         [HttpGet("get-category-list")] // [GET] api/category/get-category/list
-        public async Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories()
+        public async Task<ActionResult<List<CategoryDto>>> GetAllCategories()
         {
             // Get a list of the categories from the database.
             return await _categoryBL.GetAllCategories();
@@ -36,7 +36,7 @@ namespace API.Controllers
 
         [Authorize] // Role of an admin is required
         [HttpPost("create-new-category")] // [POST] api/category/create-new-category
-        public async Task<ActionResult<ForumCategoryDto>> CreateCategory([FromForm] CreateCategoryDto categoryForm)
+        public async Task<ActionResult<CategoryDto>> CreateCategory([FromForm] CreateCategoryDto categoryForm)
         {
             // Create a new category, return an updated category list.
             return await _categoryBL.CreateCategory(categoryForm, User.GetUsername());
@@ -54,7 +54,7 @@ namespace API.Controllers
 
         [Authorize] // Role of an admin is required
         [HttpPatch("edit-category")] // [PATCH] api/catagory/edit-category
-        public async Task<ActionResult<ForumCategoryDto>> UpdateCategory([FromForm] UpdateCategoryDto updateForm)
+        public async Task<ActionResult<CategoryDto>> UpdateCategory([FromForm] UpdateCategoryDto updateForm)
         {
             // Update a category by name, return the updated category.
             return await _categoryBL.UpdateCategory(updateForm, User.GetUsername());
@@ -63,7 +63,7 @@ namespace API.Controllers
 
         [Authorize] // Role of an admin is required
         [HttpPost("create-new-sub-category")] // [POST] api/category/create-new-sub-category
-        public async Task<ActionResult<ForumCategoryDto>> CreateSubCategory([FromForm] CreateSubCategoryDto subCategoryForm)
+        public async Task<ActionResult<CategoryDto>> CreateSubCategory([FromForm] CreateSubCategoryDto subCategoryForm)
         {
             // Create a sub category in the requested category, return the category with updated sub-category list
             return await _categoryBL.CreateSubCategory(subCategoryForm, User.GetUsername());

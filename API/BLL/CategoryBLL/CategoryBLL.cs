@@ -29,15 +29,15 @@ namespace API.BLL.CategoryBLL
         // Methods:
 
 
-        public async Task<ActionResult<List<ForumCategoryDto>>> GetAllCategories()
+        public async Task<ActionResult<List<CategoryDto>>> GetAllCategories()
         {
             // Pass request to data access layer, remap the get result
             var getResult = await _categoryRepository.GetAllCategories();
-            return CategoryMapper(getResult);
+            return _map.CategoryMapper(getResult);
         }
 
 
-        public async Task<ActionResult<ForumCategoryDto>> CreateCategory(CreateCategoryDto creationForm, string? requestor)
+        public async Task<ActionResult<CategoryDto>> CreateCategory(CreateCategoryDto creationForm, string? requestor)
         {
             // Deconstruction
             string categoryName = creationForm.Name;
@@ -75,7 +75,7 @@ namespace API.BLL.CategoryBLL
         }
 
 
-        public async Task<ActionResult<ForumCategoryDto>> UpdateCategory(UpdateCategoryDto updateForm, string? requestor)
+        public async Task<ActionResult<CategoryDto>> UpdateCategory(UpdateCategoryDto updateForm, string? requestor)
         {
             // Deconstruction
             var (id, name, newName, newInfo, newImageFile) = updateForm;
@@ -102,7 +102,7 @@ namespace API.BLL.CategoryBLL
         }
 
 
-        public async Task<ActionResult<ForumCategoryDto>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, string? username)
+        public async Task<ActionResult<CategoryDto>> CreateSubCategory(CreateSubCategoryDto subCategoryForm, string? username)
         {
 
             // Check requestor for admin rights
@@ -208,14 +208,14 @@ namespace API.BLL.CategoryBLL
         //
         // This method recieves a ForumCategory object, and maps it to a ForumCategoryDto,
         // more suitable for use in the client side
-        private ForumCategoryDto RemapCategory(Category category)
+        private CategoryDto RemapCategory(Category category)
         {
             // Remap the sub-categories to a suitable Dto
 
             var subCategoriesRemap = RemapSubCategories(category.SubCategories?.ToList<SubCategory>());
 
             // Mapping the category to a suitable Dto
-            return new ForumCategoryDto
+            return new CategoryDto
             {
                 Id = category.Id,
                 Name = category.Name,
@@ -228,10 +228,10 @@ namespace API.BLL.CategoryBLL
         //
         // This method recieves a list of ForumCategory, and maps it to a list of ForumCategoryDto,
         // more suitable for use in the client side
-        private List<ForumCategoryDto> RemapCategories(List<Category> categories)
+        private List<CategoryDto> RemapCategories(List<Category> categories)
         {
             // Initializing the list which will be returned
-            List<ForumCategoryDto> listOfCategories = new List<ForumCategoryDto>();
+            List<CategoryDto> listOfCategories = new List<CategoryDto>();
 
             // Mapping the categories to a suitable category list Dto
             foreach (var category in categories)
@@ -240,7 +240,7 @@ namespace API.BLL.CategoryBLL
                 new List<ForumSubCategoryDto>() { new ForumSubCategoryDto() { Name = "No sub-categories" } }
                 : RemapSubCategories(category.SubCategories.ToList<SubCategory>());
 
-                listOfCategories.Add(new ForumCategoryDto
+                listOfCategories.Add(new CategoryDto
                 {
                     Id = category.Id,
                     Name = category.Name,
@@ -314,7 +314,7 @@ namespace API.BLL.CategoryBLL
         //
         // This method processes the return of an a category list from the category repository,
         // check for if it has content in it, and determine what to return
-        private ActionResult<List<ForumCategoryDto>> CheckReturnedList(List<Category>? dbCategoryList)
+        private ActionResult<List<CategoryDto>> CheckReturnedList(List<Category>? dbCategoryList)
         {
             if (dbCategoryList == null || dbCategoryList.Count == 0)
                 return NoContent(); ;
@@ -324,7 +324,7 @@ namespace API.BLL.CategoryBLL
         //
         // This method processes the return of an ActionResult list of forum categories
         // and determines what to return from the content returned from the repository
-        private ActionResult<List<ForumCategoryDto>> CheckReturnedActionResult(ActionResult<List<Category>?> dbResponse)
+        private ActionResult<List<CategoryDto>> CheckReturnedActionResult(ActionResult<List<Category>?> dbResponse)
         {
             // If recieved an unexpected null action result, return status code error
             if (dbResponse == null)
@@ -412,7 +412,7 @@ namespace API.BLL.CategoryBLL
         /// <paramref name="ForumCategoryDto"/> Remapped category.<br/>
         /// - or -<br/>
         /// <paramref name="InternalError"/>.</returns>
-        private ActionResult<ForumCategoryDto> ProcessResult(ActionResult<Category>? result)
+        private ActionResult<CategoryDto> ProcessResult(ActionResult<Category>? result)
         {
             // Check for contents
             if (result != null)
@@ -470,13 +470,13 @@ namespace API.BLL.CategoryBLL
         /// </summary>
         /// <param name="category">The <paramref name="ForumCategory"/> to remap.</param>
         /// <returns><paramref name="ForumCategoryDto"/> Remapped category.</returns>
-        private ForumCategoryDto CategoryMapper(Category category)
+        private CategoryDto CategoryMapper(Category category)
         {
             // Deconstruction
             var (id, name, info, banner, subCategories) = category;
 
             // Return remap
-            return new ForumCategoryDto
+            return new CategoryDto
             {
                 Id = id,
                 Name = name,
@@ -499,14 +499,14 @@ namespace API.BLL.CategoryBLL
         /// <returns>A <paramref name="List"/> of remapped <paramref name="ForumSubCategoryDto"/><br/>
         /// - or -<br/>
         /// <paramref name="NoContent"/></returns>
-        private ActionResult<List<ForumCategoryDto>> CategoryMapper(List<Category>? categories)
+        private ActionResult<List<CategoryDto>> CategoryMapper(List<Category>? categories)
         {
             // Check for contents
             if (categories == null || categories.Count == 0)
                 return NoContent();
 
             // Initializing the list
-            List<ForumCategoryDto> listOfCategories = new List<ForumCategoryDto>();
+            List<CategoryDto> listOfCategories = new List<CategoryDto>();
 
             // Populating the list with remapped categories
             foreach (var category in categories)
@@ -574,4 +574,4 @@ namespace API.BLL.CategoryBLL
 
     }
 }
-// 466  lines of code...
+// 650  lines of code...
