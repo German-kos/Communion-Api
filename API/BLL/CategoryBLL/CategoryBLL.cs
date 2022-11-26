@@ -17,8 +17,12 @@ namespace API.BLL.CategoryBLL
         private readonly IUserRepository _userRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly ICategoryMappers _map;
-        public CategoryBLL(IUserRepository userRepository, ICategoryRepository categoryRepository, Validations validate, ICategoryMappers map)
+        private readonly IAdminValidation _adminValidation;
+        private readonly ICategoryValidations _categoryValidations;
+        public CategoryBLL(IUserRepository userRepository, Validations validate, ICategoryRepository categoryRepository, ICategoryMappers map, IAdminValidation adminValidation, ICategoryValidations categoryValidations)
         {
+            _categoryValidations = categoryValidations;
+            _adminValidation = adminValidation;
             _map = map;
             _validate = validate;
             _categoryRepository = categoryRepository;
@@ -42,13 +46,13 @@ namespace API.BLL.CategoryBLL
             // Deconstruction
             string categoryName = creationForm.Name;
 
-            // Check authorization
-            if (await _validate.NotAdmin(requestor))
-                return Unauthorized();
+            bool hasAdminRights = await _adminValidation.IsUserAdmin(requestor);
+            if (!hasAdminRights)
+                return new UnauthorizedObjectResult("User is not admin.");
 
-            // Check if the category exists already
-            if (await _validate.CategoryExists(categoryName))
-                return AlreadyExists(categoryName);
+            bool categoryExists = await _categoryValidations.CategoryExists(categoryName);
+            if (categoryExists)
+                return new UnauthorizedObjectResult("A category by that name already exists.");
 
             // Pass request to data access layer, process creation result
             var creationResult = await _categoryRepository.CreateCategory(creationForm);

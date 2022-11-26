@@ -23,6 +23,8 @@ namespace API.Extensions
                 .AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
+            // Admin
+            services.AddScoped<IAdminValidation, AdminValidation>();
 
             // Account
             services.AddScoped<IAccountBL, AccountBL>();
@@ -37,8 +39,10 @@ namespace API.Extensions
 
             // Category
             services.AddScoped<ICategoryBL, CategoryBLL>();
+            services.AddScoped<ICategoryValidations, CategoryValidations>();
             services.AddScoped<ICategoryMappers, CategoryMappers>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+
 
             // ***May be redundent***
             services.AddScoped<Validations>(); // *** maybe add an interface to this 
