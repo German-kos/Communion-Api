@@ -6,7 +6,7 @@ using API.DTOs;
 using API.Interfaces;
 using API.Models;
 
-namespace API.BLL.Account
+namespace API.BLL.AccountBLL
 {
     public class AccountMappers : IAccountMappers
     {

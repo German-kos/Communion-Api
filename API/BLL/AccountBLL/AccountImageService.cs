@@ -9,7 +9,7 @@ using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.BLL.Account
+namespace API.BLL.AccountBLL
 {
     public class AccountImageService : IAccountImageService
     {

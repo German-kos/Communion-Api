@@ -8,16 +8,18 @@ using static API.Helpers.HttpResponse;
 
 
 
-namespace API.BLL
+namespace API.BLL.CategoryBLL
 {
-    public class CategoryBL : ICategoryBL
+    public class CategoryBLL : ICategoryBL
     {
         // Dependency Injections
         private readonly Validations _validate;
         private readonly IUserRepository _userRepository;
         private readonly ICategoryRepository _categoryRepository;
-        public CategoryBL(IUserRepository userRepository, ICategoryRepository categoryRepository, Validations validate)
+        private readonly ICategoryMappers _map;
+        public CategoryBLL(IUserRepository userRepository, ICategoryRepository categoryRepository, Validations validate, ICategoryMappers map)
         {
+            _map = map;
             _validate = validate;
             _categoryRepository = categoryRepository;
             _userRepository = userRepository;

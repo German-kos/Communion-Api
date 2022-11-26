@@ -12,7 +12,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Collections.Concurrent;
 
-namespace API.BLL.Account
+namespace API.BLL.AccountBLL
 {
     public class AccountBL : IAccountBL
     {

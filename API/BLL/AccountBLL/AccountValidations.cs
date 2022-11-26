@@ -12,7 +12,7 @@ using API.Interfaces;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.BLL.Account
+namespace API.BLL.AccountBLL
 {
     public class AccountValidations : IAccountValidations
     {

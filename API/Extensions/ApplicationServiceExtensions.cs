@@ -10,8 +10,8 @@ using API.Interfaces;
 using API.Services;
 using API.Helpers;
 using API.Repositories;
-using API.BLL;
-using API.BLL.Account;
+using API.BLL.AccountBLL;
+using API.BLL.CategoryBLL;
 
 namespace API.Extensions
 {
@@ -36,7 +36,8 @@ namespace API.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
 
             // Category
-            services.AddScoped<ICategoryBL, CategoryBL>();
+            services.AddScoped<ICategoryBL, CategoryBLL>();
+            services.AddScoped<ICategoryMappers, CategoryMappers>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             // ***May be redundent***
