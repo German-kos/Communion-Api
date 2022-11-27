@@ -19,8 +19,10 @@ namespace API.BLL.CategoryBLL
         private readonly ICategoryMappers _map;
         private readonly IAdminValidation _adminValidation;
         private readonly ICategoryValidations _categoryValidations;
-        public CategoryBLL(IUserRepository userRepository, Validations validate, ICategoryRepository categoryRepository, ICategoryMappers map, IAdminValidation adminValidation, ICategoryValidations categoryValidations)
+        private readonly ICategoryRequestProcessors _process;
+        public CategoryBLL(IUserRepository userRepository, Validations validate, ICategoryRepository categoryRepository, ICategoryMappers map, IAdminValidation adminValidation, ICategoryValidations categoryValidations, ICategoryRequestProcessors process)
         {
+            _process = process;
             _categoryValidations = categoryValidations;
             _adminValidation = adminValidation;
             _map = map;

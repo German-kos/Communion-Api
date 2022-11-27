@@ -39,6 +39,7 @@ namespace API.Extensions
 
             // Category
             services.AddScoped<ICategoryBL, CategoryBLL>();
+            services.AddScoped<ICategoryRequestProcessors, CategoryRequestProcessors>();
             services.AddScoped<ICategoryValidations, CategoryValidations>();
             services.AddScoped<ICategoryMappers, CategoryMappers>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
